@@ -503,7 +503,7 @@ async function init() {
   const configs = initialState.agentConfigs || { ...DEFAULTS };
   const agentStatus = initialState.agentStatus || {};
   const grid = document.getElementById('agents-grid');
-  grid.innerHTML = Object.keys(DEFAULTS).map(key => renderCard(key, configs[key], agentStatus[key])).join('');
+  grid.innerHTML = Object.keys(DEFAULTS).map(key => renderCard(key, configs[key] || DEFAULTS[key], agentStatus[key])).join('');
 
   Object.keys(DEFAULTS).forEach(key => {
     const nameEl = document.getElementById(`name-${key}`);
