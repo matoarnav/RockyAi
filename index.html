@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>RockyAI — Panel de control</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz@1,9..144&family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+  --bg: #17130f;
+  --panel: #1e1912;
+  --ink: #eee6d8;
+  --dim: #a3937c;
+  --dim-2: #6b5e4c;
+  --line: #362d21;
+  --clay: #b5502d;
+  --moss: #6b7a4f;
+  --dust: #5e7583;
+  --ochre: #c08a2e;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse at 8% -10%, rgba(90,70,45,0.35), transparent 55%),
+    radial-gradient(ellipse at 100% 100%, rgba(60,45,30,0.3), transparent 55%);
+  color: var(--ink);
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  display:flex;
+}
+
+.sidebar{
+  width: 256px; min-width:256px;
+  border-right: 1px solid var(--line);
+  padding: 32px 26px;
+  display:flex; flex-direction:column; gap:38px;
+}
+.logo{ font-family:'Anton', sans-serif; font-size:19px; letter-spacing:0.03em; }
+.logo-sub{ font-family:'Fraunces', serif; font-style:italic; font-size:11px; color: var(--dim-2); margin-top:4px; }
+.nav-label{ font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color: var(--dim-2); margin-bottom:12px; }
+.nav-item{ display:flex; align-items:baseline; gap:10px; padding:11px 0; font-size:14px; color: var(--dim); border-bottom:1px solid var(--line); }
+.nav-item .idx{ font-family:'Anton', sans-serif; font-size:11px; color: var(--dim-2); }
+.nav-item.active{ color: var(--ink); }
+.nav-item.active .idx{ color: var(--clay); }
+.nav-item.disabled{ color: var(--dim-2); }
+.proj-delete{ margin-left:auto; color:var(--dim-2); cursor:pointer; font-size:14px; padding:0 4px; }
+.proj-delete:hover{ color: var(--clay); }
+.add-project{ font-size:12px; color: var(--clay); padding-top:14px; cursor:pointer; }
+.add-project-input{ margin-top:8px; width:100%; font-size:11px; background:rgba(0,0,0,0.2); border:1px solid var(--line); border-radius:4px; color:var(--dim); padding:6px 8px; }
+.sidebar-foot{ margin-top:auto; font-size:10px; color: var(--dim-2); line-height:1.7; border-top:1px solid var(--line); padding-top:16px; }
+.logout-link{ color: var(--clay); text-decoration:none; }
+
+.main{ flex:1; padding: 44px 52px; max-width: 1200px; }
+.eyebrow{ font-family:'Fraunces', serif; font-style:italic; font-size:14px; color: var(--clay); margin-bottom:10px; }
+.page-title{ font-family:'Anton', sans-serif; font-size: 42px; text-transform:uppercase; line-height:1; }
+.page-sub{ font-size:12px; color: var(--dim); margin-top:12px; }
+
+.kpi-row{ display:grid; grid-template-columns: repeat(4,1fr); border-top:1px solid var(--line); border-bottom:1px solid var(--line); margin:32px 0 44px; }
+.kpi{ padding: 22px 24px; border-right:1px solid var(--line); }
+.kpi:last-child{ border-right:none; }
+.kpi-label{ font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color: var(--dim); margin-bottom:10px; }
+.kpi-value{ font-family:'Anton', sans-serif; font-size:26px; }
+.kpi-value.muted{ color: var(--dim-2); font-family:'Inter',sans-serif; font-weight:600; font-size:15px; }
+
+.section-head{ display:flex; align-items:baseline; gap:12px; margin-bottom:20px; }
+.section-num{ font-family:'Anton', sans-serif; font-size:12px; color: var(--clay); }
+.section-title{ font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color: var(--dim); }
+
+.agents-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap:1px; background: var(--line); border:1px solid var(--line); margin-bottom: 20px; }
+.agent-card{ background: var(--panel); padding: 24px; display:flex; flex-direction:column; gap:14px; position:relative; }
+
+.agent-top{ display:flex; align-items:center; gap:14px; }
+.avatar{
+  width:52px; height:52px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Anton', sans-serif; font-size:15px; color:#1c1712;
+  position:relative; flex-shrink:0;
+}
+.avatar.ad{ background-color: var(--moss); }
+.avatar.an{ background-color: var(--dust); }
+.avatar.seo{ background-color: var(--ochre); }
+.avatar-ring{ position:absolute; inset:-4px; border-radius:50%; border: 1.5px solid var(--dim-2); }
+
+.name-input{
+  font-family:'Anton', sans-serif; font-size:17px; text-transform:uppercase;
+  background:transparent; border:none; border-bottom:1px dashed transparent;
+  color: var(--ink); width:100%; padding:2px 0;
+}
+.name-input:focus{ outline:none; border-bottom-color: var(--clay); }
+.role-fixed{ font-family:'Fraunces', serif; font-style:italic; font-size:11px; color: var(--dim-2); margin-top:2px; }
+
+.desc-label{ font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color: var(--dim-2); margin-bottom:6px; }
+.desc-input{
+  font-family:'Inter', sans-serif; font-size:12.5px; color: var(--dim);
+  background: rgba(0,0,0,0.15); border:1px solid var(--line); border-radius:6px;
+  padding:8px 10px; width:100%; resize:vertical; min-height:52px; line-height:1.5;
+}
+.desc-input:focus{ outline:none; border-color: var(--clay); }
+
+.status{ display:flex; align-items:center; gap:7px; font-size:10px; letter-spacing:0.06em; text-transform:uppercase; color: var(--dim-2); width:fit-content; }
+.status-dot{ width:6px; height:6px; border-radius:50%; background: var(--dim-2); }
+
+.agent-detail{ font-size:12px; color: var(--dim); line-height:1.7; border-top:1px solid var(--line); padding-top:12px; }
+.agent-detail strong{ color: var(--ink); font-weight:500; }
+
+.save-indicator{
+  position:absolute; top:14px; right:16px;
+  font-size:9px; letter-spacing:0.08em; text-transform:uppercase;
+  color: var(--moss); opacity:0; transition: opacity 0.4s ease;
+}
+.save-indicator.show{ opacity:1; }
+
+.hint{ font-size:11px; color: var(--dim-2); margin-bottom:28px; }
+.footnote{ font-size:11px; color: var(--dim-2); line-height:1.7; max-width:640px; border-top:1px solid var(--line); padding-top:20px; }
+
+.login-overlay{
+  position:fixed; inset:0; z-index:1000;
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse at 8% -10%, rgba(90,70,45,0.35), transparent 55%),
+    radial-gradient(ellipse at 100% 100%, rgba(60,45,30,0.3), transparent 55%);
+  display:flex; align-items:center; justify-content:center;
+}
+.login-box{ width:320px; padding:36px 32px; border:1px solid var(--line); background: var(--panel); border-radius:8px; }
+.login-title{ font-family:'Anton', sans-serif; font-size:20px; text-transform:uppercase; }
+.login-sub{ font-family:'Fraunces', serif; font-style:italic; font-size:12px; color: var(--dim-2); margin-top:6px; margin-bottom:26px; }
+.login-field{ margin-bottom:14px; }
+.login-label{ font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color: var(--dim-2); margin-bottom:6px; display:block; }
+.login-input{
+  width:100%; font-family:'Inter', sans-serif; font-size:13px; color: var(--ink);
+  background: rgba(0,0,0,0.2); border:1px solid var(--line); border-radius:6px; padding:9px 10px;
+}
+.login-input:focus{ outline:none; border-color: var(--clay); }
+.login-btn{
+  width:100%; margin-top:10px; padding:10px; background: var(--clay); color: var(--ink);
+  border:none; border-radius:6px; font-family:'Inter', sans-serif; font-weight:600; font-size:13px; cursor:pointer;
+}
+.login-btn:hover{ opacity:0.9; }
+.login-btn:disabled{ opacity:0.6; cursor:default; }
+.login-error{ font-size:11px; color:#d16a4a; margin-top:12px; min-height:14px; }
+</style>
+</head>
+<body>
+
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <div class="login-title">RockyAI</div>
+    <div class="login-sub">Acceso administrador</div>
+    <div class="login-field">
+      <label class="login-label" for="login-username">Usuario</label>
+      <input class="login-input" id="login-username" autocomplete="username" />
+    </div>
+    <div class="login-field">
+      <label class="login-label" for="login-password">Contraseña</label>
+      <input class="login-input" id="login-password" type="password" autocomplete="current-password" />
+    </div>
+    <button class="login-btn" id="login-btn">Entrar</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<div id="app" style="display:none; flex:1;">
+
+<div class="sidebar">
+  <div>
+    <div id="logo-image-wrap" style="display:none; margin-bottom:8px;">
+      <img id="logo-image" style="max-height:32px; max-width:100%;" />
+    </div>
+    <div class="logo">ROCKYAI</div>
+    <div class="logo-sub">Nombre provisorio</div>
+    <input id="logo-url-input" placeholder="Pega aquí la URL de tu logo (opcional)"
+      style="margin-top:10px; width:100%; font-size:10px; background:rgba(0,0,0,0.2); border:1px solid var(--line); border-radius:4px; color:var(--dim); padding:6px 8px;" />
+  </div>
+  <div>
+    <div class="nav-label">Proyectos</div>
+    <div id="projects-nav"></div>
+    <div class="add-project" id="add-project-toggle">+ Nuevo proyecto</div>
+    <input class="add-project-input" id="new-project-name" placeholder="Nombre del proyecto" style="display:none;" />
+  </div>
+  <div class="sidebar-foot">
+    Cuenta AWS<br>chileflyfishing &middot; us-east-2<br>Gasto del mes: $0 USD
+    <div style="margin-top:10px;"><a href="#" class="logout-link" id="logout-link">Cerrar sesión</a></div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="eyebrow">Proyecto activo</div>
+  <div class="page-title">Chile Fly Fishing</div>
+  <div class="page-sub">clientes/chile-fly-fishing &middot; 3 agentes desplegados y validados</div>
+
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-label">Piezas esta semana</div><div class="kpi-value">1</div></div>
+    <div class="kpi"><div class="kpi-label">Alertas activas</div><div class="kpi-value muted">Ver reportes</div></div>
+    <div class="kpi"><div class="kpi-label">Gasto AWS este mes</div><div class="kpi-value">$0</div></div>
+    <div class="kpi"><div class="kpi-label">Agentes desplegados</div><div class="kpi-value">3/3</div></div>
+  </div>
+
+  <div class="section-head">
+    <span class="section-num">02</span>
+    <span class="section-title">Agentes</span>
+  </div>
+  <div class="hint">Haz clic en el nombre o la descripción de cada agente para editarlos — se guardan solos.</div>
+
+  <div class="agents-grid" id="agents-grid"></div>
+
+  <div class="footnote">
+    ESTADO REAL — 16 JUL 2026. Los 3 agentes ya corrieron exitosamente al menos una vez de forma manual. Falta: automatizar con EventBridge y conectar el flujo de aprobación por email. Nombre y descripción de cada agente son personalizables y se guardan automáticamente en este panel.
+  </div>
+</div>
+
+</div>
+
+<script>
+const DEFAULTS = {
+  ad:  { name: "Art Director",     desc: "Decide qué publicar, arma el copy y elige la foto/video de cada pieza para RRSS.", avatarUrl: "" },
+  an:  { name: "Analytics",        desc: "Mide RRSS, web y email; entrega el reporte semanal en lenguaje simple, sin inventar cifras.", avatarUrl: "" },
+  seo: { name: "SEO / GEO / AEO",  desc: "Monitorea posiciones de búsqueda y cómo responden los motores conversacionales sobre la marca.", avatarUrl: "" }
+};
+const DEFAULT_LOGO_URL = "";
+const DEFAULT_PROJECTS = [
+  { id: "chile-fly-fishing", name: "Chile Fly Fishing", protected: true },
+  { id: "alto-castillo",     name: "Alto Castillo",     protected: false }
+];
+
+const AGENT_META = {
+  ad:  { cls: "ad",  initials: "AD",  detail: "Última pieza: <strong>\"The Man Who Reads the Water\"</strong><br>Estado: <strong>validado, corre manual</strong>" },
+  an:  { cls: "an",  initials: "AN",  detail: "Meta de temporada: <strong>$15.000.000 CLP</strong><br>Estado: <strong>validado, corre manual</strong>" },
+  seo: { cls: "seo", initials: "SEO", detail: "Keyword prioritaria: <strong>chile fly fishing</strong> (pos. 20.1)<br>Estado: <strong>validado, corre manual</strong>" }
+};
+
+let saveTimers = {};
+
+const CONFIG_API_URL = 'https://1gfa1uwd8i.execute-api.us-east-2.amazonaws.com/config';
+const TOKEN_STORAGE_KEY = 'rockyaiPanelToken';
+
+function defaultProjects() {
+  return DEFAULT_PROJECTS.map(p => ({ ...p }));
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function slugify(name) {
+  return name.toLowerCase().trim()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'proyecto';
+}
+
+// --- Sesion / autenticacion ---
+
+function getStoredToken() {
+  const token = localStorage.getItem(TOKEN_STORAGE_KEY);
+  if (!token) return null;
+  const expiry = parseInt(token.split('.')[0], 10);
+  if (!expiry || Date.now() / 1000 > expiry) {
+    localStorage.removeItem(TOKEN_STORAGE_KEY);
+    return null;
+  }
+  return token;
+}
+
+function setStoredToken(token) {
+  localStorage.setItem(TOKEN_STORAGE_KEY, token);
+}
+
+function clearStoredToken() {
+  localStorage.removeItem(TOKEN_STORAGE_KEY);
+}
+
+function authHeaders() {
+  const token = getStoredToken();
+  return token ? { 'Authorization': `Bearer ${token}` } : {};
+}
+
+function showLogin(message) {
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-overlay').style.display = 'flex';
+  document.getElementById('login-error').textContent = message || '';
+  document.getElementById('login-password').value = '';
+}
+
+function hideLogin() {
+  document.getElementById('login-overlay').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+}
+
+function handleUnauthorized() {
+  clearStoredToken();
+  showLogin('Tu sesión expiró, inicia sesión de nuevo.');
+}
+
+async function attemptLogin() {
+  const username = document.getElementById('login-username').value.trim();
+  const password = document.getElementById('login-password').value;
+  const btn = document.getElementById('login-btn');
+  const errorEl = document.getElementById('login-error');
+  errorEl.textContent = '';
+  btn.disabled = true;
+  btn.textContent = 'Entrando...';
+  try {
+    const res = await fetch(CONFIG_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ __action: 'login', username, password })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      setStoredToken(data.token);
+      hideLogin();
+      await init();
+    } else {
+      errorEl.textContent = 'Usuario o contraseña incorrectos.';
+    }
+  } catch (e) {
+    errorEl.textContent = 'Error de conexión, intenta de nuevo.';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Entrar';
+  }
+}
+
+// --- Estado remoto (config) ---
+
+async function loadState() {
+  try {
+    const res = await fetch(CONFIG_API_URL, { headers: { ...authHeaders() } });
+    if (res.status === 401) { handleUnauthorized(); return {}; }
+    const data = await res.json();
+    return data && typeof data === 'object' ? data : {};
+  } catch (e) {
+    console.log('Sin configuración guardada todavía, usando valores por defecto.');
+    return {};
+  }
+}
+
+async function saveState(state) {
+  try {
+    const res = await fetch(CONFIG_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      body: JSON.stringify(state)
+    });
+    if (res.status === 401) { handleUnauthorized(); }
+  } catch (e) {
+    console.error('Error guardando configuración', e);
+  }
+}
+
+async function loadConfigs() {
+  const state = await loadState();
+  return state.agentConfigs || { ...DEFAULTS };
+}
+
+async function saveConfigs(configs) {
+  const state = await loadState();
+  state.agentConfigs = configs;
+  await saveState(state);
+}
+
+async function loadLogo() {
+  const state = await loadState();
+  return state.logoUrl || DEFAULT_LOGO_URL;
+}
+
+async function saveLogo(url) {
+  const state = await loadState();
+  state.logoUrl = url;
+  await saveState(state);
+}
+
+// --- Proyectos ---
+
+function renderProjects(projects) {
+  const nav = document.getElementById('projects-nav');
+  nav.innerHTML = projects.map((p, i) => {
+    const idx = String(i + 1).padStart(2, '0');
+    const cls = p.protected ? 'nav-item active' : 'nav-item disabled';
+    const del = p.protected ? '' : `<span class="proj-delete" data-id="${p.id}" title="Eliminar proyecto">&times;</span>`;
+    return `<div class="${cls}"><span class="idx">${idx}</span> ${escapeHtml(p.name)}${del}</div>`;
+  }).join('');
+
+  nav.querySelectorAll('.proj-delete').forEach(el => {
+    el.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const id = el.getAttribute('data-id');
+      const state = await loadState();
+      const projects = (state.projects || defaultProjects()).filter(p => p.id !== id);
+      state.projects = projects;
+      await saveState(state);
+      renderProjects(projects);
+    });
+  });
+}
+
+async function initProjects() {
+  const state = await loadState();
+  const projects = state.projects || defaultProjects();
+  renderProjects(projects);
+
+  const toggle = document.getElementById('add-project-toggle');
+  const input = document.getElementById('new-project-name');
+
+  toggle.addEventListener('click', () => {
+    input.style.display = 'block';
+    input.value = '';
+    input.focus();
+  });
+
+  const commitNewProject = async () => {
+    const name = input.value.trim();
+    input.style.display = 'none';
+    if (!name) return;
+    const current = await loadState();
+    const currentProjects = current.projects || defaultProjects();
+    currentProjects.push({ id: `${slugify(name)}-${Date.now().toString(36)}`, name, protected: false });
+    current.projects = currentProjects;
+    await saveState(current);
+    renderProjects(currentProjects);
+  };
+
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') input.blur(); });
+  input.addEventListener('blur', commitNewProject);
+}
+
+// --- Agentes ---
+
+function showSaved(key) {
+  const el = document.getElementById(`saved-${key}`);
+  if (!el) return;
+  el.classList.add('show');
+  clearTimeout(saveTimers[key]);
+  saveTimers[key] = setTimeout(() => el.classList.remove('show'), 1200);
+}
+
+function renderCard(key, config) {
+  const meta = AGENT_META[key];
+  const avatarInner = config.avatarUrl
+    ? `<img src="${config.avatarUrl}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" onerror="this.style.display='none'; this.nextSibling.style.display='flex';" /><span style="display:none; align-items:center; justify-content:center; width:100%; height:100%;">${meta.initials}</span>`
+    : meta.initials;
+  return `
+    <div class="agent-card">
+      <div class="save-indicator" id="saved-${key}">Guardado</div>
+      <div class="agent-top">
+        <div class="avatar ${meta.cls}"><div class="avatar-ring"></div>${avatarInner}</div>
+        <div style="flex:1">
+          <input class="name-input" id="name-${key}" value="${config.name}" />
+          <div class="role-fixed">${meta.initials === 'AD' ? 'Contenido y RRSS' : meta.initials === 'AN' ? 'Métricas y reportes' : 'Posicionamiento'}</div>
+        </div>
+      </div>
+      <div class="status"><span class="status-dot"></span>No desplegado (corre manual)</div>
+      <div>
+        <div class="desc-label">Descripción</div>
+        <textarea class="desc-input" id="desc-${key}">${config.desc}</textarea>
+      </div>
+      <div>
+        <div class="desc-label">URL de foto/avatar (opcional)</div>
+        <input class="desc-input" id="avatar-${key}" value="${config.avatarUrl || ''}" placeholder="https://..." style="min-height:auto; padding:8px 10px;" />
+      </div>
+      <div class="agent-detail">${meta.detail}</div>
+    </div>
+  `;
+}
+
+async function init() {
+  const configs = await loadConfigs();
+  const grid = document.getElementById('agents-grid');
+  grid.innerHTML = Object.keys(DEFAULTS).map(key => renderCard(key, configs[key])).join('');
+
+  Object.keys(DEFAULTS).forEach(key => {
+    const nameEl = document.getElementById(`name-${key}`);
+    const descEl = document.getElementById(`desc-${key}`);
+    const avatarEl = document.getElementById(`avatar-${key}`);
+
+    const persist = async () => {
+      const current = await loadConfigs();
+      current[key] = { name: nameEl.value, desc: descEl.value, avatarUrl: avatarEl.value.trim() };
+      await saveConfigs(current);
+      showSaved(key);
+      // re-render this card's avatar without losing focus elsewhere
+      if (avatarEl.value.trim()) {
+        const avatarBox = avatarEl.closest('.agent-card').querySelector('.avatar');
+        avatarBox.innerHTML = `<div class="avatar-ring"></div><img src="${avatarEl.value.trim()}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" onerror="this.remove();" />`;
+      }
+    };
+
+    nameEl.addEventListener('blur', persist);
+    descEl.addEventListener('blur', persist);
+    avatarEl.addEventListener('blur', persist);
+  });
+
+  const logoUrl = await loadLogo();
+  const logoInput = document.getElementById('logo-url-input');
+  const logoImg = document.getElementById('logo-image');
+  const logoWrap = document.getElementById('logo-image-wrap');
+  logoInput.value = logoUrl;
+  if (logoUrl) { logoImg.src = logoUrl; logoWrap.style.display = 'block'; }
+
+  logoInput.addEventListener('blur', async () => {
+    const url = logoInput.value.trim();
+    await saveLogo(url);
+    if (url) { logoImg.src = url; logoWrap.style.display = 'block'; }
+    else { logoWrap.style.display = 'none'; }
+  });
+
+  await initProjects();
+}
+
+document.getElementById('login-btn').addEventListener('click', attemptLogin);
+document.getElementById('login-password').addEventListener('keydown', e => { if (e.key === 'Enter') attemptLogin(); });
+document.getElementById('login-username').addEventListener('keydown', e => { if (e.key === 'Enter') attemptLogin(); });
+document.getElementById('logout-link').addEventListener('click', (e) => {
+  e.preventDefault();
+  clearStoredToken();
+  showLogin('');
+});
+
+if (getStoredToken()) {
+  hideLogin();
+  init();
+} else {
+  showLogin('');
+}
+</script>
+
+</body>
+</html>
