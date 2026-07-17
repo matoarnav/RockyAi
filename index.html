@@ -148,6 +148,84 @@ body{
 .login-btn:hover{ opacity:0.9; }
 .login-btn:disabled{ opacity:0.6; cursor:default; }
 .login-error{ font-size:11px; color:#d16a4a; margin-top:12px; min-height:14px; }
+
+.agent-card{ cursor:pointer; }
+.agent-card:hover{ background: #221b13; }
+.agent-card input, .agent-card textarea{ cursor:auto; }
+
+.modal-overlay{
+  position:fixed; inset:0; z-index:2000;
+  background: rgba(10,8,5,0.72);
+  display:none; align-items:flex-start; justify-content:center;
+  overflow-y:auto; padding: 48px 20px;
+}
+.modal-overlay.show{ display:flex; }
+.modal-box{
+  width:100%; max-width:720px; background: var(--panel); border:1px solid var(--line);
+  border-radius:10px; padding:32px; position:relative;
+}
+.modal-close{
+  position:absolute; top:20px; right:20px; cursor:pointer; color: var(--dim-2);
+  font-size:20px; line-height:1; background:none; border:none;
+}
+.modal-close:hover{ color: var(--ink); }
+.modal-head{ display:flex; align-items:center; gap:16px; margin-bottom:20px; }
+.modal-title{ font-family:'Anton', sans-serif; font-size:22px; text-transform:uppercase; }
+.modal-role{ font-family:'Fraunces', serif; font-style:italic; font-size:12px; color: var(--dim-2); }
+
+.metrics-row{ display:grid; grid-template-columns: repeat(3,1fr); gap:1px; background: var(--line); border:1px solid var(--line); margin: 18px 0; }
+.metric{ background: var(--panel); padding:14px 16px; }
+.metric-label{ font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color: var(--dim-2); margin-bottom:6px; }
+.metric-value{ font-family:'Anton', sans-serif; font-size:18px; }
+
+.timeline{ margin:18px 0; }
+.timeline-item{ display:flex; gap:10px; padding:9px 0; border-bottom:1px solid var(--line); font-size:12px; }
+.timeline-item:last-child{ border-bottom:none; }
+.timeline-when{ color: var(--dim-2); white-space:nowrap; font-size:10.5px; padding-top:1px; }
+.timeline-text{ color: var(--dim); line-height:1.5; }
+.timeline-empty{ font-size:12px; color: var(--dim-2); padding:8px 0; }
+
+.manual-invoke{ margin-top:22px; border-top:1px solid var(--line); padding-top:18px; }
+.manual-invoke textarea{
+  width:100%; min-height:64px; font-family:'Inter', sans-serif; font-size:12.5px; color: var(--dim);
+  background: rgba(0,0,0,0.15); border:1px solid var(--line); border-radius:6px; padding:8px 10px; resize:vertical;
+}
+.manual-invoke-btn{
+  margin-top:10px; padding:9px 16px; background: var(--clay); color: var(--ink); border:none;
+  border-radius:6px; font-family:'Inter', sans-serif; font-weight:600; font-size:12px; cursor:pointer;
+}
+.manual-invoke-btn:hover{ opacity:0.9; }
+.manual-invoke-btn:disabled{ opacity:0.6; cursor:default; }
+.manual-invoke-msg{ font-size:11px; color: var(--moss); margin-top:8px; min-height:14px; }
+
+.calendar-section{ margin-top:24px; border-top:1px solid var(--line); padding-top:18px; }
+.calendar-grid{ display:grid; grid-template-columns: repeat(7, 1fr); gap:1px; background: var(--line); border:1px solid var(--line); margin-top:12px; }
+.calendar-dow{ background: #14100c; padding:6px 4px; font-size:9px; letter-spacing:0.08em; text-transform:uppercase; color: var(--dim-2); text-align:center; }
+.calendar-cell{ background: var(--panel); min-height:56px; padding:6px; font-size:10px; color: var(--dim-2); position:relative; }
+.calendar-cell.empty{ background: #17130f; }
+.calendar-cell.has-piece{ cursor:pointer; color: var(--ink); }
+.calendar-cell.has-piece:hover{ background: #221b13; }
+.calendar-daynum{ font-family:'Anton', sans-serif; font-size:11px; }
+.calendar-tag{
+  margin-top:4px; font-size:8.5px; letter-spacing:0.03em; padding:2px 5px; border-radius:3px;
+  background: rgba(192,138,46,0.18); color: var(--ochre); display:inline-block; line-height:1.4;
+}
+.calendar-tag.contrast{ background: rgba(125,143,106,0.22); color: var(--sage); }
+.calendar-empty-msg{ font-size:12px; color: var(--dim-2); padding:10px 0; }
+
+.post-popup-overlay{
+  position:fixed; inset:0; z-index:2100; background: rgba(10,8,5,0.8);
+  display:none; align-items:flex-start; justify-content:center; overflow-y:auto; padding:60px 20px;
+}
+.post-popup-overlay.show{ display:flex; }
+.post-popup-box{ width:100%; max-width:560px; background: var(--panel); border:1px solid var(--line); border-radius:10px; padding:28px; position:relative; }
+.post-popup-head{ font-family:'Anton', sans-serif; font-size:12px; color: var(--clay); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:6px; }
+.post-popup-headline{ font-family:'Fraunces', serif; font-size:19px; margin-bottom:14px; line-height:1.3; }
+.post-popup-field{ margin-bottom:14px; }
+.post-popup-field-label{ font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color: var(--dim-2); margin-bottom:5px; }
+.post-popup-field-value{ font-size:12.5px; color: var(--dim); line-height:1.6; white-space:pre-wrap; }
+.post-popup-hashtags{ display:flex; flex-wrap:wrap; gap:6px; }
+.post-popup-hashtag{ font-size:11px; color: var(--sage); background: rgba(125,143,106,0.12); padding:2px 8px; border-radius:10px; }
 </style>
 </head>
 <body>
@@ -220,6 +298,73 @@ body{
 
 </div>
 
+<div class="modal-overlay" id="agent-modal-overlay">
+  <div class="modal-box">
+    <button class="modal-close" id="agent-modal-close">&times;</button>
+    <div class="modal-head">
+      <div class="avatar" id="agent-modal-avatar"><div class="avatar-ring"></div></div>
+      <div>
+        <div class="modal-title" id="agent-modal-title"></div>
+        <div class="modal-role" id="agent-modal-role"></div>
+      </div>
+    </div>
+    <div class="status" id="agent-modal-status"></div>
+    <div class="metrics-row">
+      <div class="metric">
+        <div class="metric-label">Ejecuciones</div>
+        <div class="metric-value" id="agent-modal-execcount">0</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Tokens este mes</div>
+        <div class="metric-value" id="agent-modal-tokens">0</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Ultima actualizacion</div>
+        <div class="metric-value" id="agent-modal-updated" style="font-size:11px; font-family:'Inter',sans-serif; color:var(--dim);">—</div>
+      </div>
+    </div>
+    <div>
+      <div class="desc-label">Timeline de acciones</div>
+      <div class="timeline" id="agent-modal-timeline"></div>
+    </div>
+    <div id="agent-modal-calendar-wrap" style="display:none;"></div>
+    <div class="manual-invoke">
+      <div class="desc-label">Invocación manual</div>
+      <textarea id="agent-modal-manual-input" placeholder="Instrucción opcional para esta ejecución puntual..."></textarea>
+      <button class="manual-invoke-btn" id="agent-modal-manual-btn">Ejecutar invocación manual</button>
+      <div class="manual-invoke-msg" id="agent-modal-manual-msg"></div>
+    </div>
+  </div>
+</div>
+
+<div class="post-popup-overlay" id="post-popup-overlay">
+  <div class="post-popup-box">
+    <button class="modal-close" id="post-popup-close">&times;</button>
+    <div class="post-popup-head" id="post-popup-meta"></div>
+    <div class="post-popup-headline" id="post-popup-headline"></div>
+    <div class="post-popup-field">
+      <div class="post-popup-field-label">Copy</div>
+      <div class="post-popup-field-value" id="post-popup-copy"></div>
+    </div>
+    <div class="post-popup-field">
+      <div class="post-popup-field-label">Hashtags</div>
+      <div class="post-popup-hashtags" id="post-popup-hashtags"></div>
+    </div>
+    <div class="post-popup-field">
+      <div class="post-popup-field-label">Objetivo estratégico</div>
+      <div class="post-popup-field-value" id="post-popup-objetivo"></div>
+    </div>
+    <div class="post-popup-field">
+      <div class="post-popup-field-label">Nota visual para Art Director</div>
+      <div class="post-popup-field-value" id="post-popup-visual"></div>
+    </div>
+    <div class="post-popup-field">
+      <div class="post-popup-field-label">Notas de producción</div>
+      <div class="post-popup-field-value" id="post-popup-produccion"></div>
+    </div>
+  </div>
+</div>
+
 <script>
 const DEFAULTS = {
   ad:  { name: "Art Director",     desc: "Decide qué publicar, arma el copy y elige la foto/video de cada pieza para RRSS.", avatarUrl: "" },
@@ -246,6 +391,9 @@ const STATUS_META = {
   ERROR:           { label: "Error",           cls: "error" },
   NUNCA_EJECUTADO: { label: "Nunca ejecutado", cls: "never" }
 };
+
+let currentState = { agentConfigs: {}, agentStatus: {}, contentGrid: null };
+const DOW_LABELS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
 
 function statusMeta(status) {
   return STATUS_META[status] || { label: status || "Desconocido", cls: "never" };
@@ -472,7 +620,7 @@ function renderCard(key, config, status) {
     ? escapeHtml(status.last_action)
     : 'Todavía no ha corrido.';
   return `
-    <div class="agent-card">
+    <div class="agent-card" data-key="${key}">
       <div class="save-indicator" id="saved-${key}">Guardado</div>
       <div class="agent-top">
         <div class="avatar ${meta.cls}"><div class="avatar-ring"></div>${avatarInner}</div>
@@ -502,6 +650,9 @@ async function init() {
   const initialState = await loadState();
   const configs = initialState.agentConfigs || { ...DEFAULTS };
   const agentStatus = initialState.agentStatus || {};
+  currentState = initialState;
+  currentState.agentConfigs = configs;
+  currentState.agentStatus = agentStatus;
   const grid = document.getElementById('agents-grid');
   grid.innerHTML = Object.keys(DEFAULTS).map(key => renderCard(key, configs[key] || DEFAULTS[key], agentStatus[key])).join('');
 
@@ -527,6 +678,13 @@ async function init() {
     avatarEl.addEventListener('blur', persist);
   });
 
+  document.querySelectorAll('.agent-card').forEach(card => {
+    card.addEventListener('click', (e) => {
+      if (['INPUT', 'TEXTAREA', 'BUTTON'].includes(e.target.tagName)) return;
+      openAgentModal(card.getAttribute('data-key'));
+    });
+  });
+
   const logoUrl = await loadLogo();
   const logoInput = document.getElementById('logo-url-input');
   const logoImg = document.getElementById('logo-image');
@@ -543,6 +701,205 @@ async function init() {
 
   await initProjects();
 }
+
+// --- Command Center: modal de agente ---
+
+function formatTokens(status) {
+  const total = (status.tokens_input_total || 0) + (status.tokens_output_total || 0) + (status.tokens_thinking_total || 0);
+  return total.toLocaleString('es-CL');
+}
+
+function formatWhen(iso) {
+  if (!iso) return '';
+  try {
+    const withZone = /[zZ+-]\d{0,2}:?\d{0,2}$/.test(iso) ? iso : iso + 'Z';
+    const d = new Date(withZone);
+    if (isNaN(d.getTime())) return iso;
+    return d.toLocaleString('es-CL', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  } catch (e) { return iso; }
+}
+
+function renderTimeline(timeline) {
+  if (!timeline || !timeline.length) {
+    return '<div class="timeline-empty">Sin acciones registradas todavía.</div>';
+  }
+  return timeline.slice().reverse().map(entry => {
+    const sMeta = statusMeta(entry.status);
+    return `
+      <div class="timeline-item">
+        <span class="status-dot ${sMeta.cls}" style="margin-top:4px;"></span>
+        <div>
+          <div class="timeline-when">${formatWhen(entry.at)}</div>
+          <div class="timeline-text">${escapeHtml(entry.action || sMeta.label)}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openAgentModal(key) {
+  const meta = AGENT_META[key];
+  const config = (currentState.agentConfigs && currentState.agentConfigs[key]) || DEFAULTS[key];
+  const status = (currentState.agentStatus && currentState.agentStatus[key]) ||
+    { status: 'NUNCA_EJECUTADO', last_action: '', execution_count: 0, updated_at: '', timeline: [] };
+  const sMeta = statusMeta(status.status);
+
+  document.getElementById('agent-modal-overlay').setAttribute('data-current-key', key);
+  document.getElementById('agent-modal-title').textContent = config.name;
+  document.getElementById('agent-modal-role').textContent = meta.role;
+  const avatarEl = document.getElementById('agent-modal-avatar');
+  avatarEl.className = `avatar ${meta.cls}`;
+  avatarEl.innerHTML = `<div class="avatar-ring"></div>${config.avatarUrl ? `<img src="${config.avatarUrl}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" onerror="this.remove();" />` : meta.initials}`;
+
+  document.getElementById('agent-modal-status').innerHTML = `<span class="status-dot ${sMeta.cls}"></span>${sMeta.label}`;
+  document.getElementById('agent-modal-execcount').textContent = status.execution_count || 0;
+  document.getElementById('agent-modal-tokens').textContent = formatTokens(status);
+  document.getElementById('agent-modal-updated').textContent = status.updated_at ? formatWhen(status.updated_at) : 'Nunca';
+  document.getElementById('agent-modal-timeline').innerHTML = renderTimeline(status.timeline);
+
+  const calendarWrap = document.getElementById('agent-modal-calendar-wrap');
+  if (key === 'strategist') {
+    calendarWrap.style.display = 'block';
+    calendarWrap.innerHTML = renderCalendarSection(currentState.contentGrid);
+    wireCalendarClicks(calendarWrap, currentState.contentGrid);
+  } else {
+    calendarWrap.style.display = 'none';
+    calendarWrap.innerHTML = '';
+  }
+
+  document.getElementById('agent-modal-manual-input').value = '';
+  document.getElementById('agent-modal-manual-msg').textContent = '';
+
+  document.getElementById('agent-modal-overlay').classList.add('show');
+}
+
+function closeAgentModal() {
+  document.getElementById('agent-modal-overlay').classList.remove('show');
+}
+
+async function triggerManualInvoke() {
+  const key = document.getElementById('agent-modal-overlay').getAttribute('data-current-key');
+  const params = document.getElementById('agent-modal-manual-input').value;
+  const btn = document.getElementById('agent-modal-manual-btn');
+  const msg = document.getElementById('agent-modal-manual-msg');
+  btn.disabled = true;
+  btn.textContent = 'Disparando...';
+  msg.textContent = '';
+  try {
+    const res = await fetch(CONFIG_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      body: JSON.stringify({ __action: 'invoke_agent', agent_key: key, params })
+    });
+    if (res.status === 401) { handleUnauthorized(); return; }
+    if (res.ok) {
+      msg.textContent = 'Invocación disparada — el estado se actualizará en unos minutos.';
+    } else {
+      msg.textContent = 'No se pudo disparar la invocación.';
+    }
+  } catch (e) {
+    msg.textContent = 'Error de conexión.';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Ejecutar invocación manual';
+  }
+}
+
+// --- Calendario del Strategist ---
+
+function renderCalendarSection(contentGrid) {
+  if (!contentGrid || !contentGrid.calendario_semanal || !contentGrid.calendario_semanal.length) {
+    return `
+      <div class="calendar-section">
+        <div class="desc-label">Calendario de contenido</div>
+        <div class="calendar-empty-msg">Todavía no hay un calendario generado.</div>
+      </div>
+    `;
+  }
+  const piecesByDate = {};
+  contentGrid.calendario_semanal.forEach(week => {
+    (week.piezas || []).forEach(piece => {
+      if (piece.fecha) piecesByDate[piece.fecha] = piece;
+    });
+  });
+
+  const [year, month] = (contentGrid.mes || '').split('-').map(Number);
+  let gridCells = '';
+  if (year && month) {
+    const firstOfMonth = new Date(Date.UTC(year, month - 1, 1));
+    const lastDay = new Date(Date.UTC(year, month, 0)).getUTCDate();
+    let startOffset = firstOfMonth.getUTCDay() - 1;
+    if (startOffset < 0) startOffset = 6;
+
+    const dowRow = DOW_LABELS.map(d => `<div class="calendar-dow">${d}</div>`).join('');
+    let cells = '';
+    for (let i = 0; i < startOffset; i++) cells += '<div class="calendar-cell empty"></div>';
+    for (let day = 1; day <= lastDay; day++) {
+      const dateStr = `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+      const piece = piecesByDate[dateStr];
+      if (piece) {
+        const contrastTag = piece.contraste_competitivo_implicito
+          ? `<div class="calendar-tag contrast">Contraste</div>` : '';
+        cells += `<div class="calendar-cell has-piece" data-fecha="${dateStr}"><div class="calendar-daynum">${day}</div><div class="calendar-tag">${escapeHtml(piece.canal || '')}</div>${contrastTag}</div>`;
+      } else {
+        cells += `<div class="calendar-cell"><div class="calendar-daynum">${day}</div></div>`;
+      }
+    }
+    gridCells = `<div class="calendar-grid">${dowRow}${cells}</div>`;
+  }
+
+  const pilares = (contentGrid.pilares_narrativos || []).map(p => escapeHtml(p)).join(' · ');
+
+  return `
+    <div class="calendar-section">
+      <div class="desc-label">Calendario de contenido — ${escapeHtml(contentGrid.mes || '')}</div>
+      <div class="week-summary-text" style="margin-top:4px;">${pilares}</div>
+      ${gridCells}
+    </div>
+  `;
+}
+
+function wireCalendarClicks(container, contentGrid) {
+  if (!contentGrid || !contentGrid.calendario_semanal) return;
+  const piecesByDate = {};
+  contentGrid.calendario_semanal.forEach(week => {
+    (week.piezas || []).forEach(piece => {
+      if (piece.fecha) piecesByDate[piece.fecha] = piece;
+    });
+  });
+  container.querySelectorAll('.calendar-cell.has-piece').forEach(cell => {
+    cell.addEventListener('click', () => {
+      const piece = piecesByDate[cell.getAttribute('data-fecha')];
+      if (piece) openPostPopup(piece);
+    });
+  });
+}
+
+function openPostPopup(piece) {
+  document.getElementById('post-popup-meta').textContent = `${piece.fecha || ''} · ${piece.canal || ''} · ${piece.formato || ''}`;
+  document.getElementById('post-popup-headline').textContent = piece.headline || '';
+  document.getElementById('post-popup-copy').textContent = piece.copy || '';
+  const hashtagsEl = document.getElementById('post-popup-hashtags');
+  hashtagsEl.innerHTML = (piece.hashtags || []).map(h => `<span class="post-popup-hashtag">${escapeHtml(h.startsWith('#') ? h : '#' + h)}</span>`).join('');
+  document.getElementById('post-popup-objetivo').textContent = piece.objetivo_estrategico || '—';
+  document.getElementById('post-popup-visual').textContent = piece.nota_visual_para_art_director || '—';
+  document.getElementById('post-popup-produccion').textContent = piece.notas_produccion || '—';
+  document.getElementById('post-popup-overlay').classList.add('show');
+}
+
+function closePostPopup() {
+  document.getElementById('post-popup-overlay').classList.remove('show');
+}
+
+document.getElementById('agent-modal-close').addEventListener('click', closeAgentModal);
+document.getElementById('agent-modal-overlay').addEventListener('click', (e) => {
+  if (e.target.id === 'agent-modal-overlay') closeAgentModal();
+});
+document.getElementById('agent-modal-manual-btn').addEventListener('click', triggerManualInvoke);
+document.getElementById('post-popup-close').addEventListener('click', closePostPopup);
+document.getElementById('post-popup-overlay').addEventListener('click', (e) => {
+  if (e.target.id === 'post-popup-overlay') closePostPopup();
+});
 
 document.getElementById('login-btn').addEventListener('click', attemptLogin);
 document.getElementById('login-password').addEventListener('keydown', e => { if (e.key === 'Enter') attemptLogin(); });
