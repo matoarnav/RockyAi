@@ -17,6 +17,8 @@
   --moss: #6b7a4f;
   --dust: #5e7583;
   --ochre: #c08a2e;
+  --sage: #7d8f6a;
+  --err: #b5502d;
 }
 *{box-sizing:border-box; margin:0; padding:0;}
 body{
@@ -67,7 +69,7 @@ body{
 .section-num{ font-family:'Anton', sans-serif; font-size:12px; color: var(--clay); }
 .section-title{ font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color: var(--dim); }
 
-.agents-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap:1px; background: var(--line); border:1px solid var(--line); margin-bottom: 20px; }
+.agents-grid{ display:grid; grid-template-columns: repeat(2, 1fr); gap:1px; background: var(--line); border:1px solid var(--line); margin-bottom: 20px; }
 .agent-card{ background: var(--panel); padding: 24px; display:flex; flex-direction:column; gap:14px; position:relative; }
 
 .agent-top{ display:flex; align-items:center; gap:14px; }
@@ -80,6 +82,7 @@ body{
 .avatar.ad{ background-color: var(--moss); }
 .avatar.an{ background-color: var(--dust); }
 .avatar.seo{ background-color: var(--ochre); }
+.avatar.strategist{ background-color: var(--sage); }
 .avatar-ring{ position:absolute; inset:-4px; border-radius:50%; border: 1.5px solid var(--dim-2); }
 
 .name-input{
@@ -99,10 +102,16 @@ body{
 .desc-input:focus{ outline:none; border-color: var(--clay); }
 
 .status{ display:flex; align-items:center; gap:7px; font-size:10px; letter-spacing:0.06em; text-transform:uppercase; color: var(--dim-2); width:fit-content; }
-.status-dot{ width:6px; height:6px; border-radius:50%; background: var(--dim-2); }
+.status-dot{ width:6px; height:6px; border-radius:50%; background: var(--dim-2); flex-shrink:0; }
+.status-dot.processing{ background: var(--ochre); box-shadow: 0 0 0 3px rgba(192,138,46,0.25); }
+.status-dot.ready{ background: var(--moss); box-shadow: 0 0 0 3px rgba(107,122,79,0.25); }
+.status-dot.error{ background: var(--err); box-shadow: 0 0 0 3px rgba(181,80,45,0.25); }
+.status-dot.never{ background: var(--dim-2); }
+.exec-count{ color: var(--dim-2); }
 
 .agent-detail{ font-size:12px; color: var(--dim); line-height:1.7; border-top:1px solid var(--line); padding-top:12px; }
 .agent-detail strong{ color: var(--ink); font-weight:500; }
+.week-summary-text{ font-size:12px; color: var(--dim); line-height:1.6; }
 
 .save-indicator{
   position:absolute; top:14px; right:16px;
@@ -187,13 +196,13 @@ body{
 <div class="main">
   <div class="eyebrow">Proyecto activo</div>
   <div class="page-title">Chile Fly Fishing</div>
-  <div class="page-sub">clientes/chile-fly-fishing &middot; 3 agentes desplegados y validados</div>
+  <div class="page-sub">clientes/chile-fly-fishing &middot; 4 agentes desplegados y validados</div>
 
   <div class="kpi-row">
     <div class="kpi"><div class="kpi-label">Piezas esta semana</div><div class="kpi-value">1</div></div>
     <div class="kpi"><div class="kpi-label">Alertas activas</div><div class="kpi-value muted">Ver reportes</div></div>
     <div class="kpi"><div class="kpi-label">Gasto AWS este mes</div><div class="kpi-value">$0</div></div>
-    <div class="kpi"><div class="kpi-label">Agentes desplegados</div><div class="kpi-value">3/3</div></div>
+    <div class="kpi"><div class="kpi-label">Agentes desplegados</div><div class="kpi-value">4/4</div></div>
   </div>
 
   <div class="section-head">
@@ -205,7 +214,7 @@ body{
   <div class="agents-grid" id="agents-grid"></div>
 
   <div class="footnote">
-    ESTADO REAL — 16 JUL 2026. Los 3 agentes ya corrieron exitosamente al menos una vez de forma manual. Falta: automatizar con EventBridge y conectar el flujo de aprobación por email. Nombre y descripción de cada agente son personalizables y se guardan automáticamente en este panel.
+    ESTADO REAL — 17 JUL 2026. Los 4 agentes ya corrieron exitosamente al menos una vez de forma manual. Falta: automatizar con EventBridge y conectar el flujo de aprobación por email. Nombre y descripción de cada agente son personalizables y se guardan automáticamente en este panel. El estado de cada tarjeta (Procesando / Listo / Error) y "lo que hizo esta semana" se actualizan solos cada vez que el agente corre.
   </div>
 </div>
 
@@ -215,7 +224,8 @@ body{
 const DEFAULTS = {
   ad:  { name: "Art Director",     desc: "Decide qué publicar, arma el copy y elige la foto/video de cada pieza para RRSS.", avatarUrl: "" },
   an:  { name: "Analytics",        desc: "Mide RRSS, web y email; entrega el reporte semanal en lenguaje simple, sin inventar cifras.", avatarUrl: "" },
-  seo: { name: "SEO / GEO / AEO",  desc: "Monitorea posiciones de búsqueda y cómo responden los motores conversacionales sobre la marca.", avatarUrl: "" }
+  seo: { name: "SEO / GEO / AEO",  desc: "Monitorea posiciones de búsqueda y cómo responden los motores conversacionales sobre la marca.", avatarUrl: "" },
+  strategist: { name: "Content & Social Media Strategist", desc: "Define pilares narrativos y arma el calendario mensual completo, con el texto exacto de cada pieza.", avatarUrl: "" }
 };
 const DEFAULT_LOGO_URL = "";
 const DEFAULT_PROJECTS = [
@@ -224,10 +234,22 @@ const DEFAULT_PROJECTS = [
 ];
 
 const AGENT_META = {
-  ad:  { cls: "ad",  initials: "AD",  detail: "Última pieza: <strong>\"The Man Who Reads the Water\"</strong><br>Estado: <strong>validado, corre manual</strong>" },
-  an:  { cls: "an",  initials: "AN",  detail: "Meta de temporada: <strong>$15.000.000 CLP</strong><br>Estado: <strong>validado, corre manual</strong>" },
-  seo: { cls: "seo", initials: "SEO", detail: "Keyword prioritaria: <strong>chile fly fishing</strong> (pos. 20.1)<br>Estado: <strong>validado, corre manual</strong>" }
+  ad:  { cls: "ad",  initials: "AD",  role: "Contenido y RRSS" },
+  an:  { cls: "an",  initials: "AN",  role: "Métricas y reportes" },
+  seo: { cls: "seo", initials: "SEO", role: "Posicionamiento" },
+  strategist: { cls: "strategist", initials: "CS", role: "Estrategia y aprobación" }
 };
+
+const STATUS_META = {
+  PROCESSING:      { label: "Procesando",      cls: "processing" },
+  READY:           { label: "Listo",           cls: "ready" },
+  ERROR:           { label: "Error",           cls: "error" },
+  NUNCA_EJECUTADO: { label: "Nunca ejecutado", cls: "never" }
+};
+
+function statusMeta(status) {
+  return STATUS_META[status] || { label: status || "Desconocido", cls: "never" };
+}
 
 let saveTimers = {};
 
@@ -436,11 +458,19 @@ function showSaved(key) {
   saveTimers[key] = setTimeout(() => el.classList.remove('show'), 1200);
 }
 
-function renderCard(key, config) {
+function renderCard(key, config, status) {
   const meta = AGENT_META[key];
+  status = status || { status: 'NUNCA_EJECUTADO', last_action: '', execution_count: 0, updated_at: '' };
+  const sMeta = statusMeta(status.status);
   const avatarInner = config.avatarUrl
     ? `<img src="${config.avatarUrl}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" onerror="this.style.display='none'; this.nextSibling.style.display='flex';" /><span style="display:none; align-items:center; justify-content:center; width:100%; height:100%;">${meta.initials}</span>`
     : meta.initials;
+  const execCount = status.execution_count
+    ? ` <span class="exec-count">&middot; ${status.execution_count} ejecucion${status.execution_count === 1 ? '' : 'es'}</span>`
+    : '';
+  const weekSummary = status.last_action
+    ? escapeHtml(status.last_action)
+    : 'Todavía no ha corrido.';
   return `
     <div class="agent-card">
       <div class="save-indicator" id="saved-${key}">Guardado</div>
@@ -448,10 +478,10 @@ function renderCard(key, config) {
         <div class="avatar ${meta.cls}"><div class="avatar-ring"></div>${avatarInner}</div>
         <div style="flex:1">
           <input class="name-input" id="name-${key}" value="${config.name}" />
-          <div class="role-fixed">${meta.initials === 'AD' ? 'Contenido y RRSS' : meta.initials === 'AN' ? 'Métricas y reportes' : 'Posicionamiento'}</div>
+          <div class="role-fixed">${meta.role}</div>
         </div>
       </div>
-      <div class="status"><span class="status-dot"></span>No desplegado (corre manual)</div>
+      <div class="status"><span class="status-dot ${sMeta.cls}"></span>${sMeta.label}${execCount}</div>
       <div>
         <div class="desc-label">Descripción</div>
         <textarea class="desc-input" id="desc-${key}">${config.desc}</textarea>
@@ -460,15 +490,20 @@ function renderCard(key, config) {
         <div class="desc-label">URL de foto/avatar (opcional)</div>
         <input class="desc-input" id="avatar-${key}" value="${config.avatarUrl || ''}" placeholder="https://..." style="min-height:auto; padding:8px 10px;" />
       </div>
-      <div class="agent-detail">${meta.detail}</div>
+      <div class="agent-detail">
+        <div class="desc-label">Lo que hizo esta semana</div>
+        <div class="week-summary-text">${weekSummary}</div>
+      </div>
     </div>
   `;
 }
 
 async function init() {
-  const configs = await loadConfigs();
+  const initialState = await loadState();
+  const configs = initialState.agentConfigs || { ...DEFAULTS };
+  const agentStatus = initialState.agentStatus || {};
   const grid = document.getElementById('agents-grid');
-  grid.innerHTML = Object.keys(DEFAULTS).map(key => renderCard(key, configs[key])).join('');
+  grid.innerHTML = Object.keys(DEFAULTS).map(key => renderCard(key, configs[key], agentStatus[key])).join('');
 
   Object.keys(DEFAULTS).forEach(key => {
     const nameEl = document.getElementById(`name-${key}`);
