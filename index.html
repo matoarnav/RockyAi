@@ -654,7 +654,13 @@ async function init() {
   currentState.agentConfigs = configs;
   currentState.agentStatus = agentStatus;
   const grid = document.getElementById('agents-grid');
-  grid.innerHTML = Object.keys(DEFAULTS).map(key => renderCard(key, configs[key] || DEFAULTS[key], agentStatus[key])).join('');
+  try {
+    grid.innerHTML = Object.keys(DEFAULTS).map(key => renderCard(key, configs[key] || DEFAULTS[key], agentStatus[key])).join('');
+  } catch (e) {
+    console.error('Error renderizando las tarjetas de agentes', e);
+    grid.innerHTML = '<div style="padding:20px; color:var(--dim-2); font-size:12px;">No se pudieron cargar los agentes. Recarga la página.</div>';
+    return;
+  }
 
   Object.keys(DEFAULTS).forEach(key => {
     const nameEl = document.getElementById(`name-${key}`);
