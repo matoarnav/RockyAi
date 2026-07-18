@@ -176,25 +176,19 @@ body{
 .save-agent-btn:disabled{ opacity:0.6; cursor:default; }
 .card-actions{ display:flex; gap:10px; }
 
-.modal-overlay{
-  position:fixed; inset:0; z-index:2000;
-  background: rgba(10,8,5,0.72);
-  display:none; align-items:flex-start; justify-content:center;
-  overflow-y:auto; padding: 48px 20px;
+.agent-page{ display:none; }
+.agent-page.show{ display:block; }
+.agent-page-back{
+  display:inline-flex; align-items:center; gap:6px; color: var(--dim-2); text-decoration:none;
+  font-size:12px; margin-bottom:24px; cursor:pointer; background:none; border:none; font-family:'Inter', sans-serif;
 }
-.modal-overlay.show{ display:flex; }
-.modal-box{
-  width:100%; max-width:720px; background: var(--panel); border:1px solid var(--line);
-  border-radius:10px; padding:32px; position:relative;
-}
-.modal-close{
-  position:absolute; top:20px; right:20px; cursor:pointer; color: var(--dim-2);
-  font-size:20px; line-height:1; background:none; border:none;
-}
-.modal-close:hover{ color: var(--ink); }
-.modal-head{ display:flex; align-items:center; gap:16px; margin-bottom:20px; }
-.modal-title{ font-family:'Anton', sans-serif; font-size:22px; text-transform:uppercase; }
-.modal-role{ font-family:'Fraunces', serif; font-style:italic; font-size:12px; color: var(--dim-2); }
+.agent-page-back:hover{ color: var(--clay); }
+.agent-page-head{ display:flex; align-items:center; gap:20px; margin-bottom:8px; }
+.agent-page-head .avatar{ width:72px; height:72px; font-size:20px; }
+.agent-page-title{ font-family:'Anton', sans-serif; font-size:38px; text-transform:uppercase; line-height:1; }
+.agent-page-role{ font-family:'Fraunces', serif; font-style:italic; font-size:14px; color: var(--dim-2); margin-top:4px; }
+.agent-page-desc{ font-size:13px; color: var(--dim); line-height:1.7; max-width:640px; margin:18px 0 24px; }
+.agent-page-body{ max-width:900px; }
 
 .metrics-row{ display:grid; grid-template-columns: repeat(3,1fr); gap:1px; background: var(--line); border:1px solid var(--line); margin: 18px 0; }
 .metric{ background: var(--panel); padding:14px 16px; }
@@ -224,7 +218,7 @@ body{
 .calendar-section{ margin-top:24px; border-top:1px solid var(--line); padding-top:18px; }
 .calendar-grid{ display:grid; grid-template-columns: repeat(7, 1fr); gap:1px; background: var(--line); border:1px solid var(--line); margin-top:12px; }
 .calendar-dow{ background: #14100c; padding:6px 4px; font-size:9px; letter-spacing:0.08em; text-transform:uppercase; color: var(--dim-2); text-align:center; }
-.calendar-cell{ background: var(--panel); min-height:56px; padding:6px; font-size:10px; color: var(--dim-2); position:relative; }
+.calendar-cell{ background: var(--panel); min-height:92px; padding:8px; font-size:10.5px; color: var(--dim-2); position:relative; }
 .calendar-cell.empty{ background: #17130f; }
 .calendar-cell.has-piece{ cursor:pointer; color: var(--ink); }
 .calendar-cell.has-piece:hover{ background: #221b13; }
@@ -316,19 +310,18 @@ body{
   </div>
 </div>
 
-</div>
-
-<div class="modal-overlay" id="agent-modal-overlay">
-  <div class="modal-box">
-    <button class="modal-close" id="agent-modal-close">&times;</button>
-    <div class="modal-head">
-      <div class="avatar" id="agent-modal-avatar"><div class="avatar-ring"></div></div>
-      <div>
-        <div class="modal-title" id="agent-modal-title"></div>
-        <div class="modal-role" id="agent-modal-role"></div>
-      </div>
+<div class="main agent-page" id="agent-page">
+  <button class="agent-page-back" id="agent-page-back">&larr; Volver al panel</button>
+  <div class="agent-page-head">
+    <div class="avatar" id="agent-modal-avatar"><div class="avatar-ring"></div></div>
+    <div>
+      <div class="agent-page-title" id="agent-modal-title"></div>
+      <div class="agent-page-role" id="agent-modal-role"></div>
     </div>
+  </div>
+  <div class="agent-page-body">
     <div class="status" id="agent-modal-status"></div>
+    <div class="agent-page-desc" id="agent-modal-desc"></div>
     <div class="metrics-row">
       <div class="metric">
         <div class="metric-label">Ejecuciones</div>
@@ -355,6 +348,8 @@ body{
       <div class="manual-invoke-msg" id="agent-modal-manual-msg"></div>
     </div>
   </div>
+</div>
+
 </div>
 
 <div class="post-popup-overlay" id="post-popup-overlay">
@@ -501,6 +496,7 @@ async function attemptLogin() {
       setStoredToken(data.token);
       hideLogin();
       await init();
+      router();
     } else {
       errorEl.textContent = 'Usuario o contraseña incorrectos.';
     }
@@ -640,7 +636,7 @@ function renderCard(key, config, status) {
       <div class="status"><span class="status-dot ${sMeta.cls}"></span>${sMeta.label}${execCount}</div>
       <div>
         <div class="desc-label">Descripción</div>
-        <textarea class="desc-input" id="desc-${key}">${config.desc}</textarea>
+        <div class="week-summary-text">${escapeHtml(config.desc)}</div>
       </div>
       <div class="agent-detail">
         <div class="desc-label">Lo que hizo esta semana</div>
@@ -672,15 +668,15 @@ async function init() {
 
   Object.keys(DEFAULTS).forEach(key => {
     const nameEl = document.getElementById(`name-${key}`);
-    const descEl = document.getElementById(`desc-${key}`);
     const saveBtn = document.querySelector(`.save-agent-btn[data-key="${key}"]`);
 
     const persist = async () => {
       saveBtn.disabled = true;
       saveBtn.textContent = 'Guardando...';
       const current = await loadConfigs();
+      const existingDesc = (current[key] && current[key].desc) || DEFAULTS[key].desc;
       const existingAvatarUrl = (current[key] && current[key].avatarUrl) || '';
-      current[key] = { name: nameEl.value, desc: descEl.value, avatarUrl: existingAvatarUrl };
+      current[key] = { name: nameEl.value, desc: existingDesc, avatarUrl: existingAvatarUrl };
       await saveConfigs(current);
       showSaved(key);
       saveBtn.disabled = false;
@@ -746,16 +742,17 @@ function renderTimeline(timeline) {
   }).join('');
 }
 
-function openAgentModal(key) {
+function renderAgentPage(key) {
   const meta = AGENT_META[key];
   const config = (currentState.agentConfigs && currentState.agentConfigs[key]) || DEFAULTS[key];
   const status = (currentState.agentStatus && currentState.agentStatus[key]) ||
     { status: 'NUNCA_EJECUTADO', last_action: '', execution_count: 0, updated_at: '', timeline: [] };
   const sMeta = statusMeta(status.status);
 
-  document.getElementById('agent-modal-overlay').setAttribute('data-current-key', key);
+  document.getElementById('agent-page').setAttribute('data-current-key', key);
   document.getElementById('agent-modal-title').textContent = config.name;
   document.getElementById('agent-modal-role').textContent = meta.role;
+  document.getElementById('agent-modal-desc').textContent = config.desc;
   const avatarEl = document.getElementById('agent-modal-avatar');
   avatarEl.className = `avatar ${meta.cls}`;
   avatarEl.innerHTML = `<div class="avatar-ring"></div>${config.avatarUrl ? `<img src="${config.avatarUrl}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" onerror="this.remove();" />` : meta.initials}`;
@@ -778,16 +775,37 @@ function openAgentModal(key) {
 
   document.getElementById('agent-modal-manual-input').value = '';
   document.getElementById('agent-modal-manual-msg').textContent = '';
-
-  document.getElementById('agent-modal-overlay').classList.add('show');
 }
 
-function closeAgentModal() {
-  document.getElementById('agent-modal-overlay').classList.remove('show');
+function showDashboardView() {
+  document.getElementById('agent-page').classList.remove('show');
+  document.querySelector('.main:not(.agent-page)').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+
+function showAgentPageView(key) {
+  if (!AGENT_META[key]) { showDashboardView(); return; }
+  renderAgentPage(key);
+  document.querySelector('.main:not(.agent-page)').style.display = 'none';
+  document.getElementById('agent-page').classList.add('show');
+  window.scrollTo(0, 0);
+}
+
+function router() {
+  const match = location.hash.match(/^#agent\/(.+)$/);
+  if (match) {
+    showAgentPageView(match[1]);
+  } else {
+    showDashboardView();
+  }
+}
+
+function openAgentModal(key) {
+  location.hash = `agent/${key}`;
 }
 
 async function triggerManualInvoke() {
-  const key = document.getElementById('agent-modal-overlay').getAttribute('data-current-key');
+  const key = document.getElementById('agent-page').getAttribute('data-current-key');
   const params = document.getElementById('agent-modal-manual-input').value;
   const btn = document.getElementById('agent-modal-manual-btn');
   const msg = document.getElementById('agent-modal-manual-msg');
@@ -900,10 +918,8 @@ function closePostPopup() {
   document.getElementById('post-popup-overlay').classList.remove('show');
 }
 
-document.getElementById('agent-modal-close').addEventListener('click', closeAgentModal);
-document.getElementById('agent-modal-overlay').addEventListener('click', (e) => {
-  if (e.target.id === 'agent-modal-overlay') closeAgentModal();
-});
+document.getElementById('agent-page-back').addEventListener('click', () => { location.hash = ''; });
+window.addEventListener('hashchange', router);
 document.getElementById('agent-modal-manual-btn').addEventListener('click', triggerManualInvoke);
 document.getElementById('post-popup-close').addEventListener('click', closePostPopup);
 document.getElementById('post-popup-overlay').addEventListener('click', (e) => {
@@ -921,7 +937,7 @@ document.getElementById('logout-link').addEventListener('click', (e) => {
 
 if (getStoredToken()) {
   hideLogin();
-  init();
+  init().then(router);
 } else {
   showLogin('');
 }
