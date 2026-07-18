@@ -92,21 +92,13 @@ body{
 .avatar.strategist{ background-color: var(--sage); }
 .avatar-ring{ position:absolute; inset:-4px; border-radius:50%; border: 1.5px solid var(--dim-2); }
 
-.name-input{
+.name-fixed{
   font-family:'Anton', sans-serif; font-size:17px; text-transform:uppercase;
-  background:transparent; border:none; border-bottom:1px dashed transparent;
-  color: var(--ink); width:100%; padding:2px 0;
+  color: var(--ink); padding:2px 0;
 }
-.name-input:focus{ outline:none; border-bottom-color: var(--clay); }
 .role-fixed{ font-family:'Fraunces', serif; font-style:italic; font-size:11px; color: var(--dim-2); margin-top:2px; }
 
 .desc-label{ font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color: var(--dim-2); margin-bottom:6px; }
-.desc-input{
-  font-family:'Inter', sans-serif; font-size:12.5px; color: var(--dim);
-  background: rgba(0,0,0,0.15); border:1px solid var(--line); border-radius:6px;
-  padding:8px 10px; width:100%; resize:vertical; min-height:52px; line-height:1.5;
-}
-.desc-input:focus{ outline:none; border-color: var(--clay); }
 
 .status{ display:flex; align-items:center; gap:7px; font-size:10px; letter-spacing:0.06em; text-transform:uppercase; color: var(--dim-2); width:fit-content; }
 .status-dot{ width:6px; height:6px; border-radius:50%; background: var(--dim-2); flex-shrink:0; }
@@ -119,13 +111,6 @@ body{
 .agent-detail{ font-size:12px; color: var(--dim); line-height:1.7; border-top:1px solid var(--line); padding-top:12px; }
 .agent-detail strong{ color: var(--ink); font-weight:500; }
 .week-summary-text{ font-size:12px; color: var(--dim); line-height:1.6; }
-
-.save-indicator{
-  position:absolute; top:14px; right:16px;
-  font-size:9px; letter-spacing:0.08em; text-transform:uppercase;
-  color: var(--moss); opacity:0; transition: opacity 0.4s ease;
-}
-.save-indicator.show{ opacity:1; }
 
 .hint{ font-size:11px; color: var(--dim-2); margin-bottom:28px; }
 .footnote{ font-size:11px; color: var(--dim-2); line-height:1.7; max-width:640px; border-top:1px solid var(--line); padding-top:20px; }
@@ -167,13 +152,6 @@ body{
 }
 .enter-agent-btn:hover{ background: var(--clay); color: var(--ink); }
 
-.save-agent-btn{
-  align-self:flex-start; padding:8px 16px; background: var(--clay); color: var(--ink);
-  border:none; border-radius:6px; font-family:'Inter', sans-serif; font-weight:600;
-  font-size:11px; letter-spacing:0.02em; cursor:pointer;
-}
-.save-agent-btn:hover{ opacity:0.9; }
-.save-agent-btn:disabled{ opacity:0.6; cursor:default; }
 .card-actions{ display:flex; gap:10px; }
 
 .agent-page{ display:none; }
@@ -382,10 +360,10 @@ body{
 
 <script>
 const DEFAULTS = {
-  ad:  { name: "Jimi", desc: "Art Director & Visual Concept Creator. El guardián de la identidad visual de la agencia. Toma las estrategias de contenido y define las directrices estéticas, paletas de colores, encuadres y el lenguaje visual óptimo para exprimir al máximo el material capturado con la cámara Sony A7III y estabilizadores.", avatarUrl: "" },
-  an:  { name: "Neil", desc: "Performance & Data Analytics Specialist. Monitor de rendimiento de la fábrica. Audita las métricas de conversión, calcula el engagement real de las campañas y procesa los registros de ejecución y consumo de tokens en DynamoDB para garantizar la máxima eficiencia operativa y de costos.", avatarUrl: "" },
-  seo: { name: "Slash", desc: "Search, Geographic & AI Engine Optimization Expert. El estratega de visibilidad digital. Optimiza cada pieza de contenido, copy y estructura web para que la marca domine los motores de búsqueda tradicionales (SEO), las plataformas de mapas (GEO), y los motores de respuesta basados en IA (AEO).", avatarUrl: "" },
-  strategist: { name: "Dave", desc: "Content & Social Media Strategist. Encargado de la dirección editorial y la parrilla mensual de contenidos. Estructura el calendario de publicaciones asegurando el posicionamiento de la Patagonia Chilena (Coyhaique) como destino de clase mundial.", avatarUrl: "" }
+  ad:  { name: "Jimi", desc: "Art Director & Visual Concept Creator. La Guitarra Líder y la Estética Psicodélica. Guardián de la identidad visual; toma las partituras de Dave y las traduce en composiciones visuales, paletas de colores y encuadres brutales para exprimir el material de la Sony A7III.", avatarUrl: "" },
+  an:  { name: "Neil", desc: "Performance & Data Analytics Specialist. El Baterista Cronométrico de la Banda. Cerebro matemático que audita métricas de conversión, mide el impacto real y procesa el consumo de tokens en DynamoDB para garantizar un tempo perfecto y bajo costo.", avatarUrl: "" },
+  seo: { name: "Slash", desc: "Search, Geographic & AI Engine Optimization Expert. El Virtuoso de los Riffs de Destacado. Se asegura de que la banda domine los motores de búsqueda tradicionales (SEO), brille en geolocalización (GEO) y lidere los nuevos motores de respuesta de Inteligencia Artificial (AEO).", avatarUrl: "" },
+  strategist: { name: "Dave", desc: "Content & Social Media Strategist. El Frontman y Compositor de la Banda. Define el ritmo del show; analiza el engagement de los líderes de la industria para componer la parrilla mensual de contenidos, posicionando a la Patagonia Chilena (Coyhaique) como destino de clase mundial.", avatarUrl: "" }
 };
 const DEFAULT_PROJECTS = [
   { id: "chile-fly-fishing", name: "Chile Fly Fishing", protected: true },
@@ -412,8 +390,6 @@ const DOW_LABELS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
 function statusMeta(status) {
   return STATUS_META[status] || { label: status || "Desconocido", cls: "never" };
 }
-
-let saveTimers = {};
 
 const CONFIG_API_URL = 'https://1gfa1uwd8i.execute-api.us-east-2.amazonaws.com/config';
 const TOKEN_STORAGE_KEY = 'rockyaiPanelToken';
@@ -535,17 +511,6 @@ async function saveState(state) {
   }
 }
 
-async function loadConfigs() {
-  const state = await loadState();
-  return state.agentConfigs || { ...DEFAULTS };
-}
-
-async function saveConfigs(configs) {
-  const state = await loadState();
-  state.agentConfigs = configs;
-  await saveState(state);
-}
-
 // --- Proyectos ---
 
 function renderProjects(projects) {
@@ -602,14 +567,6 @@ async function initProjects() {
 
 // --- Agentes ---
 
-function showSaved(key) {
-  const el = document.getElementById(`saved-${key}`);
-  if (!el) return;
-  el.classList.add('show');
-  clearTimeout(saveTimers[key]);
-  saveTimers[key] = setTimeout(() => el.classList.remove('show'), 1200);
-}
-
 function renderCard(key, config, status) {
   const meta = AGENT_META[key];
   status = status || { status: 'NUNCA_EJECUTADO', last_action: '', execution_count: 0, updated_at: '' };
@@ -625,11 +582,10 @@ function renderCard(key, config, status) {
     : 'Todavía no ha corrido.';
   return `
     <div class="agent-card" data-key="${key}">
-      <div class="save-indicator" id="saved-${key}">Guardado</div>
       <div class="agent-top">
         <div class="avatar ${meta.cls}"><div class="avatar-ring"></div>${avatarInner}</div>
         <div style="flex:1">
-          <input class="name-input" id="name-${key}" value="${config.name}" />
+          <div class="name-fixed">${escapeHtml(config.name)}</div>
           <div class="role-fixed">${meta.role}</div>
         </div>
       </div>
@@ -643,7 +599,6 @@ function renderCard(key, config, status) {
         <div class="week-summary-text">${weekSummary}</div>
       </div>
       <div class="card-actions">
-        <button class="save-agent-btn" type="button" data-key="${key}">Guardar</button>
         <button class="enter-agent-btn" type="button" data-key="${key}">Entrar →</button>
       </div>
     </div>
@@ -665,29 +620,6 @@ async function init() {
     grid.innerHTML = '<div style="padding:20px; color:var(--dim-2); font-size:12px;">No se pudieron cargar los agentes. Recarga la página.</div>';
     return;
   }
-
-  Object.keys(DEFAULTS).forEach(key => {
-    const nameEl = document.getElementById(`name-${key}`);
-    const saveBtn = document.querySelector(`.save-agent-btn[data-key="${key}"]`);
-
-    const persist = async () => {
-      saveBtn.disabled = true;
-      saveBtn.textContent = 'Guardando...';
-      const current = await loadConfigs();
-      const existingDesc = (current[key] && current[key].desc) || DEFAULTS[key].desc;
-      const existingAvatarUrl = (current[key] && current[key].avatarUrl) || '';
-      current[key] = { name: nameEl.value, desc: existingDesc, avatarUrl: existingAvatarUrl };
-      await saveConfigs(current);
-      showSaved(key);
-      saveBtn.disabled = false;
-      saveBtn.textContent = 'Guardar';
-    };
-
-    saveBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      persist();
-    });
-  });
 
   document.querySelectorAll('.agent-card').forEach(card => {
     card.addEventListener('click', (e) => {
