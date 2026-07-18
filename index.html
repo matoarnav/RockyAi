@@ -167,6 +167,15 @@ body{
 }
 .enter-agent-btn:hover{ background: var(--clay); color: var(--ink); }
 
+.save-agent-btn{
+  align-self:flex-start; padding:8px 16px; background: var(--clay); color: var(--ink);
+  border:none; border-radius:6px; font-family:'Inter', sans-serif; font-weight:600;
+  font-size:11px; letter-spacing:0.02em; cursor:pointer;
+}
+.save-agent-btn:hover{ opacity:0.9; }
+.save-agent-btn:disabled{ opacity:0.6; cursor:default; }
+.card-actions{ display:flex; gap:10px; }
+
 .modal-overlay{
   position:fixed; inset:0; z-index:2000;
   background: rgba(10,8,5,0.72);
@@ -637,7 +646,10 @@ function renderCard(key, config, status) {
         <div class="desc-label">Lo que hizo esta semana</div>
         <div class="week-summary-text">${weekSummary}</div>
       </div>
-      <button class="enter-agent-btn" type="button" data-key="${key}">Entrar →</button>
+      <div class="card-actions">
+        <button class="save-agent-btn" type="button" data-key="${key}">Guardar</button>
+        <button class="enter-agent-btn" type="button" data-key="${key}">Entrar →</button>
+      </div>
     </div>
   `;
 }
@@ -661,17 +673,24 @@ async function init() {
   Object.keys(DEFAULTS).forEach(key => {
     const nameEl = document.getElementById(`name-${key}`);
     const descEl = document.getElementById(`desc-${key}`);
+    const saveBtn = document.querySelector(`.save-agent-btn[data-key="${key}"]`);
 
     const persist = async () => {
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Guardando...';
       const current = await loadConfigs();
       const existingAvatarUrl = (current[key] && current[key].avatarUrl) || '';
       current[key] = { name: nameEl.value, desc: descEl.value, avatarUrl: existingAvatarUrl };
       await saveConfigs(current);
       showSaved(key);
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Guardar';
     };
 
-    nameEl.addEventListener('blur', persist);
-    descEl.addEventListener('blur', persist);
+    saveBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      persist();
+    });
   });
 
   document.querySelectorAll('.agent-card').forEach(card => {
