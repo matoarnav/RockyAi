@@ -34,16 +34,19 @@ body{
 
 .sidebar{
   width: 256px; min-width:256px;
+  background: #ffffff;
   border-right: 1px solid var(--line);
   padding: 32px 26px;
   display:flex; flex-direction:column; gap:38px;
+  --ink: #241d15;
+  --dim: #6b5e4c;
+  --dim-2: #8a7a63;
+  --line: #e4ddd0;
 }
 .logo-image-wrap{
-  margin-bottom:8px; background: var(--ink); border-radius:8px; padding:10px 14px;
-  display:inline-block;
+  margin-bottom:8px; display:inline-block;
 }
 .logo-image{ max-height:44px; max-width:100%; display:block; }
-.logo-sub{ font-family:'Fraunces', serif; font-style:italic; font-size:11px; color: var(--dim-2); margin-top:4px; }
 .nav-label{ font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color: var(--dim-2); margin-bottom:12px; }
 .nav-item{ display:flex; align-items:baseline; gap:10px; padding:11px 0; font-size:14px; color: var(--dim); border-bottom:1px solid var(--line); }
 .nav-item .idx{ font-family:'Anton', sans-serif; font-size:11px; color: var(--dim-2); }
@@ -53,11 +56,26 @@ body{
 .proj-delete{ margin-left:auto; color:var(--dim-2); cursor:pointer; font-size:14px; padding:0 4px; }
 .proj-delete:hover{ color: var(--clay); }
 .add-project{ font-size:12px; color: var(--clay); padding-top:14px; cursor:pointer; }
-.add-project-input{ margin-top:8px; width:100%; font-size:11px; background:rgba(0,0,0,0.2); border:1px solid var(--line); border-radius:4px; color:var(--dim); padding:6px 8px; }
+.add-project-input{ margin-top:8px; width:100%; font-size:11px; background:rgba(0,0,0,0.04); border:1px solid var(--line); border-radius:4px; color:var(--dim); padding:6px 8px; }
 .sidebar-foot{ margin-top:auto; font-size:10px; color: var(--dim-2); line-height:1.7; border-top:1px solid var(--line); padding-top:16px; }
 .logout-link{ color: var(--clay); text-decoration:none; }
 
-.main{ flex:1; padding: 44px 52px; max-width: 1200px; }
+.main{
+  flex:1; padding: 44px 52px; max-width: 1200px;
+  background-image:
+    linear-gradient(165deg, rgba(23,19,15,0.90) 0%, rgba(23,19,15,0.72) 45%, rgba(23,19,15,0.95) 100%),
+    url('foto-nirehuao.jpg');
+  background-size: cover;
+  background-position: center 35%;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.credit-tag{
+  position: fixed; top: 22px; right: 32px; z-index: 50;
+  font-family:'Fraunces', serif; font-style: italic; font-size: 11px; color: var(--dim);
+  letter-spacing: 0.02em; pointer-events:none;
+}
 .eyebrow{ font-family:'Fraunces', serif; font-style:italic; font-size:14px; color: var(--clay); margin-bottom:10px; }
 .page-title{ font-family:'Anton', sans-serif; font-size: 42px; text-transform:uppercase; line-height:1; }
 .page-sub{ font-size:12px; color: var(--dim); margin-top:12px; }
@@ -244,12 +262,13 @@ body{
 
 <div id="app" style="display:none; flex:1;">
 
+<div class="credit-tag">By Matías Araneda</div>
+
 <div class="sidebar">
   <div>
     <div class="logo-image-wrap">
       <img class="logo-image" src="logo.jpg" alt="RockyAI" />
     </div>
-    <div class="logo-sub">Nombre provisorio</div>
   </div>
   <div>
     <div class="nav-label">Proyectos</div>
