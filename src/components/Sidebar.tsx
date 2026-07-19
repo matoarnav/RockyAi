@@ -21,6 +21,7 @@ export default function Sidebar() {
     <div className="sidebar">
       <div className="logo-row">
         <img className="logo-image" src="/rocky-brand-logo.png" alt="RockyAI" />
+        <div className="logo-tagline">AI Powered Brand &amp; Execution</div>
       </div>
 
       <div>
