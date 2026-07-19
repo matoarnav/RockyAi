@@ -54,7 +54,7 @@
 .logout-link{ color:var(--sidebar-accent); font-weight:600; }
 
 .main{
-  position:relative; flex:1; padding:44px 52px; min-width:0;
+  position:relative; isolation:isolate; flex:1; padding:44px 52px; min-width:0;
   background-image:
     radial-gradient(ellipse 900px 560px at var(--gx1,105%) var(--gy1,-8%), rgba(195,143,0,0.11), transparent 60%),
     radial-gradient(ellipse 700px 500px at var(--gx2,-8%) var(--gy2,108%), rgba(195,143,0,0.045), transparent 55%),
@@ -67,8 +67,9 @@
 }
 .main::after{
   content:''; position:absolute; inset:0; z-index:-1; pointer-events:none;
-  background-image: linear-gradient(160deg, rgba(20,22,26,0.6), rgba(16,18,22,0.4)), var(--hover-bg, none);
+  background-image: linear-gradient(160deg, rgba(20,22,26,0.86), rgba(16,18,22,0.72)), var(--hover-bg, none);
   background-size:cover; background-position:center;
+  filter:saturate(0.7) brightness(0.85) blur(1.5px);
   opacity:0; transition:opacity .6s ease;
 }
 .main[data-hovering="true"]::after{ opacity:1; }
