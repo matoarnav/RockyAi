@@ -2,19 +2,33 @@ import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { usePanelData } from '../context/PanelDataContext';
+import { AGENT_META, AGENT_FUNCTION_KEYS } from '../constants';
+import type { AgentKey } from '../types';
 
 export default function Sidebar() {
   const { logout } = useAuth();
   const { projects, activeProjectId, activeProjectName, setActiveProjectId, addProject, deleteProject } = usePanelData();
   const [adding, setAdding] = useState(false);
   const [newName, setNewName] = useState('');
+  const [newAgents, setNewAgents] = useState<AgentKey[]>(AGENT_FUNCTION_KEYS);
+
+  function toggleNewAgent(key: AgentKey) {
+    setNewAgents((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]));
+  }
+
+  function cancelAdding() {
+    setAdding(false);
+    setNewName('');
+    setNewAgents(AGENT_FUNCTION_KEYS);
+  }
 
   async function commitNewProject() {
-    setAdding(false);
     if (newName.trim()) {
-      await addProject(newName.trim());
+      await addProject(newName.trim(), newAgents);
     }
+    setAdding(false);
     setNewName('');
+    setNewAgents(AGENT_FUNCTION_KEYS);
   }
 
   return (
@@ -49,17 +63,45 @@ export default function Sidebar() {
           </div>
         ))}
         {adding ? (
-          <input
-            className="add-project-input"
-            autoFocus
-            placeholder="Nombre del proyecto"
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            onBlur={commitNewProject}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
-            }}
-          />
+          <div className="new-project-form">
+            <input
+              className="add-project-input"
+              autoFocus
+              placeholder="Nombre del proyecto"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') commitNewProject();
+                if (e.key === 'Escape') cancelAdding();
+              }}
+            />
+            <div className="new-project-agents-label">Agentes para este proyecto</div>
+            <div className="new-project-chips">
+              {AGENT_FUNCTION_KEYS.map((key) => {
+                const meta = AGENT_META[key];
+                const selected = newAgents.includes(key);
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    className={`agent-chip${selected ? ' selected' : ''}`}
+                    title={meta.short}
+                    onClick={() => toggleNewAgent(key)}
+                  >
+                    {meta.initials}
+                  </button>
+                );
+              })}
+            </div>
+            <div className="new-project-actions">
+              <button type="button" className="btn btn-primary btn-sm" onClick={commitNewProject} disabled={!newName.trim()}>
+                Crear
+              </button>
+              <button type="button" className="btn btn-ghost btn-sm" onClick={cancelAdding}>
+                Cancelar
+              </button>
+            </div>
+          </div>
         ) : (
           <div className="add-project" onClick={() => setAdding(true)}>
             <span>+</span> Agregar nuevo proyecto

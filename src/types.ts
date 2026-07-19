@@ -49,6 +49,7 @@ export interface Project {
   id: string;
   name: string;
   protected: boolean;
+  agents?: AgentKey[];
 }
 
 export interface PanelState {

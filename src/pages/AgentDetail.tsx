@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { usePanelData } from '../context/PanelDataContext';
 import { AGENT_META, AGENT_FUNCTION_KEYS, DEFAULTS, statusMeta } from '../constants';
-import { callAction, formatWhen, UnauthorizedError } from '../api';
+import { formatWhen, UnauthorizedError } from '../api';
 import { useAuth } from '../context/AuthContext';
 import ContentCalendar from '../components/ContentCalendar';
 import type { AgentKey } from '../types';
@@ -15,7 +15,7 @@ function formatTokens(status: { tokens_input_total?: number; tokens_output_total
 export default function AgentDetail() {
   const { key } = useParams<{ key: string }>();
   const navigate = useNavigate();
-  const { agentConfigs, agentStatus, contentGrid } = usePanelData();
+  const { agentConfigs, agentStatus, contentGrid, scopedAction } = usePanelData();
   const { handleUnauthorized } = useAuth();
   const [manualInput, setManualInput] = useState('');
   const [busy, setBusy] = useState(false);
@@ -42,7 +42,7 @@ export default function AgentDetail() {
     setBusy(true);
     setMsg('');
     try {
-      await callAction('invoke_agent', { agent_key: agentKey, params: manualInput });
+      await scopedAction('invoke_agent', { agent_key: agentKey, params: manualInput });
       setMsg('Invocación disparada — el estado se actualizará en unos minutos.');
     } catch (e) {
       if (e instanceof UnauthorizedError) {

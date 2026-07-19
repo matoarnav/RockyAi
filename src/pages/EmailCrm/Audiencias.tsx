@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { useCrmData } from '../../context/CrmDataContext';
-import { callAction } from '../../api';
 import { managementSegments, contactStatusLabel } from './crmUtils';
 
 export default function Audiencias() {
-  const { contacts, refetch } = useCrmData();
+  const { contacts, refetch, scopedAction } = useCrmData();
   const segments = managementSegments(contacts);
   const [activeSegment, setActiveSegment] = useState('all');
   const [search, setSearch] = useState('');
@@ -23,7 +22,7 @@ export default function Audiencias() {
 
   async function handleDelete(email: string) {
     if (!confirm(`¿Eliminar a ${email} de la audiencia?`)) return;
-    await callAction('delete_email_contact', { email });
+    await scopedAction('delete_email_contact', { email });
     await refetch();
   }
 
@@ -32,7 +31,7 @@ export default function Audiencias() {
       alert('Ingresa un email válido.');
       return;
     }
-    await callAction('save_email_contact', {
+    await scopedAction('save_email_contact', {
       name: name.trim(),
       email: email.trim(),
       tags: tags.split(',').map((t) => t.trim()).filter(Boolean),

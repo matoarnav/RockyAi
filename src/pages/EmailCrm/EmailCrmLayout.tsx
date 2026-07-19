@@ -12,7 +12,7 @@ const TABS = [
 ];
 
 export default function EmailCrmLayout() {
-  const { activeProjectName } = usePanelData();
+  const { activeProjectName, activeProjectId } = usePanelData();
   const navigate = useNavigate();
 
   return (
@@ -22,7 +22,7 @@ export default function EmailCrmLayout() {
       </button>
       <div className="eyebrow">CRM Email Marketing</div>
       <div className="page-title">{activeProjectName}</div>
-      <div className="page-sub">clientes/chile-fly-fishing</div>
+      <div className="page-sub">proyectos/{activeProjectId}</div>
 
       <div className="tabbar">
         {TABS.map((t) => (

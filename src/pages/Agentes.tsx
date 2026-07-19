@@ -4,21 +4,30 @@ import { AGENT_META, AGENT_FUNCTION_KEYS, DEFAULTS, statusMeta } from '../consta
 import Reveal from '../components/Reveal';
 
 export default function Agentes() {
-  const { agentConfigs, agentStatus } = usePanelData();
+  const { agentConfigs, agentStatus, activeProjectId, activeProject } = usePanelData();
   const navigate = useNavigate();
+
+  const projectAgentKeys = activeProject?.agents?.length ? activeProject.agents : AGENT_FUNCTION_KEYS;
 
   return (
     <div className="main">
       <div className="eyebrow">Proyecto activo</div>
       <div className="page-title">Agentes</div>
-      <div className="page-sub">clientes/chile-fly-fishing &middot; 4 agentes desplegados y validados</div>
+      <div className="page-sub">
+        proyectos/{activeProjectId} &middot; {projectAgentKeys.length} agente{projectAgentKeys.length === 1 ? '' : 's'} asignado
+        {projectAgentKeys.length === 1 ? '' : 's'}
+      </div>
 
       <div className="section-head" style={{ marginTop: 32 }}>
         <span className="section-title">Agentes</span>
       </div>
 
+      {!projectAgentKeys.length && (
+        <div className="card empty-state">Este proyecto no tiene agentes asignados todavía.</div>
+      )}
+
       <div className="agents-grid">
-        {AGENT_FUNCTION_KEYS.map((key, i) => {
+        {projectAgentKeys.map((key, i) => {
           const meta = AGENT_META[key];
           const config = agentConfigs[key] || DEFAULTS[key];
           const status = agentStatus[key] || { status: 'NUNCA_EJECUTADO', last_action: '', execution_count: 0 };
@@ -72,10 +81,10 @@ export default function Agentes() {
       </div>
 
       <div className="footnote">
-        ESTADO REAL — 17 JUL 2026. Los 4 agentes ya corrieron exitosamente al menos una vez de forma manual. Falta:
-        automatizar con EventBridge y conectar el flujo de aprobación por email. Nombre y descripción de cada agente
-        son personalizables y se guardan automáticamente en este panel. El estado de cada tarjeta (Procesando / Listo
-        / Error) y "lo que hizo esta semana" se actualizan solos cada vez que el agente corre.
+        Cada agente se invoca manualmente desde su página de detalle — todavía no hay automatización por horario
+        (EventBridge) ni flujo de aprobación por email. Nombre y descripción de cada agente son personalizables y se
+        guardan automáticamente en este panel. El estado de cada tarjeta (Procesando / Listo / Error) y "lo que hizo
+        esta semana" se actualizan solos cada vez que el agente corre para este proyecto.
       </div>
     </div>
   );

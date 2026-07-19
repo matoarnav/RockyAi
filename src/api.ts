@@ -42,8 +42,9 @@ export async function login(username: string, password: string): Promise<string>
   return data.token;
 }
 
-export async function loadState<T = Record<string, unknown>>(): Promise<T> {
-  const res = await fetch(CONFIG_API_URL, { headers: { ...authHeaders() } });
+export async function loadState<T = Record<string, unknown>>(projectId?: string): Promise<T> {
+  const url = projectId ? `${CONFIG_API_URL}?project_id=${encodeURIComponent(projectId)}` : CONFIG_API_URL;
+  const res = await fetch(url, { headers: { ...authHeaders() } });
   if (res.status === 401) throw new UnauthorizedError();
   const data = await res.json().catch(() => ({}));
   return (data && typeof data === 'object' ? data : {}) as T;

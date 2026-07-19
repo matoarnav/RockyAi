@@ -1,6 +1,7 @@
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
-import { callAction, UnauthorizedError } from '../api';
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
+import { UnauthorizedError } from '../api';
 import { useAuth } from './AuthContext';
+import { usePanelData } from './PanelDataContext';
 import type { EmailCampaign, EmailContact, EmailTemplate } from '../types';
 
 interface CrmDataValue {
@@ -9,25 +10,33 @@ interface CrmDataValue {
   campaigns: EmailCampaign[];
   loading: boolean;
   refetch: () => Promise<void>;
+  scopedAction: <T = unknown>(action: string, extra?: Record<string, unknown>) => Promise<T>;
 }
 
 const CrmDataContext = createContext<CrmDataValue | null>(null);
 
 export function CrmDataProvider({ children }: { children: ReactNode }) {
   const { handleUnauthorized } = useAuth();
+  const { activeProjectId, scopedAction } = usePanelData();
   const [contacts, setContacts] = useState<EmailContact[]>([]);
   const [templates, setTemplates] = useState<EmailTemplate[]>([]);
   const [campaigns, setCampaigns] = useState<EmailCampaign[]>([]);
   const [loading, setLoading] = useState(true);
+  const activeProjectIdRef = useRef(activeProjectId);
+  activeProjectIdRef.current = activeProjectId;
 
   const refetch = useCallback(async () => {
+    const requestedProjectId = activeProjectIdRef.current;
     setLoading(true);
     try {
       const [c, t, k] = await Promise.all([
-        callAction<{ contacts: EmailContact[] }>('list_email_contacts'),
-        callAction<{ templates: EmailTemplate[] }>('list_email_templates'),
-        callAction<{ campaigns: EmailCampaign[] }>('list_email_campaigns'),
+        scopedAction<{ contacts: EmailContact[] }>('list_email_contacts'),
+        scopedAction<{ templates: EmailTemplate[] }>('list_email_templates'),
+        scopedAction<{ campaigns: EmailCampaign[] }>('list_email_campaigns'),
       ]);
+      // Igual que en PanelDataContext: si el proyecto activo cambio mientras
+      // esta respuesta viajaba, se descarta - ya no corresponde.
+      if (activeProjectIdRef.current !== requestedProjectId) return;
       setContacts(c.contacts || []);
       setTemplates(t.templates || []);
       setCampaigns(k.campaigns || []);
@@ -38,15 +47,19 @@ export function CrmDataProvider({ children }: { children: ReactNode }) {
         console.error('Error cargando datos del CRM', e);
       }
     } finally {
-      setLoading(false);
+      if (activeProjectIdRef.current === requestedProjectId) setLoading(false);
     }
-  }, [handleUnauthorized]);
+  }, [handleUnauthorized, scopedAction]);
 
   useEffect(() => {
     refetch();
-  }, [refetch]);
+  }, [refetch, activeProjectId]);
 
-  return <CrmDataContext.Provider value={{ contacts, templates, campaigns, loading, refetch }}>{children}</CrmDataContext.Provider>;
+  return (
+    <CrmDataContext.Provider value={{ contacts, templates, campaigns, loading, refetch, scopedAction }}>
+      {children}
+    </CrmDataContext.Provider>
+  );
 }
 
 export function useCrmData() {

@@ -1,7 +1,7 @@
-import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
-import { loadState, saveState, UnauthorizedError } from '../api';
+import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from 'react';
+import { loadState, saveState, callAction, UnauthorizedError } from '../api';
 import { useAuth } from './AuthContext';
-import { DEFAULTS, DEFAULT_PROJECTS } from '../constants';
+import { DEFAULTS, DEFAULT_PROJECTS, AGENT_FUNCTION_KEYS } from '../constants';
 import type { AgentConfig, AgentKey, AgentStatus, ContentGrid, Project } from '../types';
 
 function slugify(name: string): string {
@@ -23,9 +23,12 @@ interface PanelDataValue {
   projects: Project[];
   activeProjectId: string;
   activeProjectName: string;
+  activeProject: Project | undefined;
   setActiveProjectId: (id: string) => void;
-  addProject: (name: string) => Promise<void>;
+  addProject: (name: string, agents?: AgentKey[]) => Promise<void>;
   deleteProject: (id: string) => Promise<void>;
+  updateProject: (id: string, patch: Partial<Project>) => Promise<void>;
+  scopedAction: <T = unknown>(action: string, extra?: Record<string, unknown>) => Promise<T>;
   loading: boolean;
   refetch: () => Promise<void>;
 }
@@ -41,8 +44,11 @@ export function PanelDataProvider({ children }: { children: ReactNode }) {
   const [activeProjectId, setActiveProjectId] = useState('chile-fly-fishing');
   const [loading, setLoading] = useState(true);
   const [rawState, setRawState] = useState<Record<string, unknown>>({});
+  const activeProjectIdRef = useRef(activeProjectId);
+  activeProjectIdRef.current = activeProjectId;
 
   const refetch = useCallback(async () => {
+    const requestedProjectId = activeProjectIdRef.current;
     setLoading(true);
     try {
       const state = await loadState<{
@@ -50,7 +56,11 @@ export function PanelDataProvider({ children }: { children: ReactNode }) {
         agentStatus?: Record<AgentKey, AgentStatus>;
         contentGrid?: ContentGrid | null;
         projects?: Project[];
-      }>();
+      }>(requestedProjectId);
+      // Si el usuario cambio de proyecto mientras esta respuesta viajaba, la
+      // descartamos - ya no corresponde al proyecto activo y no debe pisar
+      // el estado que si corresponde.
+      if (activeProjectIdRef.current !== requestedProjectId) return;
       setRawState(state as Record<string, unknown>);
       setAgentConfigs(state.agentConfigs || { ...DEFAULTS });
       setAgentStatus(state.agentStatus || ({} as Record<AgentKey, AgentStatus | undefined>));
@@ -63,7 +73,7 @@ export function PanelDataProvider({ children }: { children: ReactNode }) {
         console.error('Error cargando el estado del panel', e);
       }
     } finally {
-      setLoading(false);
+      if (activeProjectIdRef.current === requestedProjectId) setLoading(false);
     }
   }, [handleUnauthorized]);
 
@@ -71,13 +81,20 @@ export function PanelDataProvider({ children }: { children: ReactNode }) {
     if (isAuthenticated) {
       refetch();
     }
-  }, [isAuthenticated, refetch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated, activeProjectId, refetch]);
+
+  const scopedAction = useCallback(
+    <T = unknown,>(action: string, extra?: Record<string, unknown>) =>
+      callAction<T>(action, { ...extra, project_id: activeProjectId }),
+    [activeProjectId]
+  );
 
   const addProject = useCallback(
-    async (name: string) => {
+    async (name: string, agents: AgentKey[] = AGENT_FUNCTION_KEYS) => {
       const trimmed = name.trim();
       if (!trimmed) return;
-      const next = [...projects, { id: `${slugify(trimmed)}-${Date.now().toString(36)}`, name: trimmed, protected: false }];
+      const next = [...projects, { id: `${slugify(trimmed)}-${Date.now().toString(36)}`, name: trimmed, protected: false, agents }];
       setProjects(next);
       await saveState({ ...rawState, projects: next });
     },
@@ -94,7 +111,17 @@ export function PanelDataProvider({ children }: { children: ReactNode }) {
     [projects, rawState, activeProjectId]
   );
 
-  const activeProjectName = projects.find((p) => p.id === activeProjectId)?.name || 'Chile Fly Fishing';
+  const updateProject = useCallback(
+    async (id: string, patch: Partial<Project>) => {
+      const next = projects.map((p) => (p.id === id ? { ...p, ...patch } : p));
+      setProjects(next);
+      await saveState({ ...rawState, projects: next });
+    },
+    [projects, rawState]
+  );
+
+  const activeProject = projects.find((p) => p.id === activeProjectId);
+  const activeProjectName = activeProject?.name || 'Chile Fly Fishing';
 
   return (
     <PanelDataContext.Provider
@@ -105,9 +132,12 @@ export function PanelDataProvider({ children }: { children: ReactNode }) {
         projects,
         activeProjectId,
         activeProjectName,
+        activeProject,
         setActiveProjectId,
         addProject,
         deleteProject,
+        updateProject,
+        scopedAction,
         loading,
         refetch,
       }}

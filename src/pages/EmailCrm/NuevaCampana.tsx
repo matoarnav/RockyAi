@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCrmData } from '../../context/CrmDataContext';
-import { callAction } from '../../api';
 import { segmentFromKey } from './crmUtils';
 
 export default function NuevaCampana() {
-  const { templates, contacts, refetch } = useCrmData();
+  const { templates, contacts, refetch, scopedAction } = useCrmData();
   const navigate = useNavigate();
 
   const [name, setName] = useState('');
@@ -43,7 +42,7 @@ export default function NuevaCampana() {
     setMsgColor('var(--moss)');
     setMsg(sendAction === 'now' ? 'Enviando...' : 'Guardando...');
     try {
-      await callAction('create_email_campaign', {
+      await scopedAction('create_email_campaign', {
         name,
         subject,
         html_body: body,

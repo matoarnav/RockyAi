@@ -1,20 +1,24 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePanelData } from '../context/PanelDataContext';
-import { callAction, formatTodayEs } from '../api';
+import { formatTodayEs } from '../api';
 import { AGENT_META, AGENT_FUNCTION_KEYS, DEFAULTS } from '../constants';
 import type { HomeSummary } from '../types';
 import Reveal from '../components/Reveal';
 
 export default function Home() {
-  const { agentConfigs, agentStatus, activeProjectName } = usePanelData();
+  const { agentConfigs, agentStatus, activeProjectName, activeProject, activeProjectId, scopedAction } = usePanelData();
   const navigate = useNavigate();
   const [summary, setSummary] = useState<HomeSummary | null>(null);
   const [summaryError, setSummaryError] = useState(false);
 
+  const projectAgentKeys = activeProject?.agents?.length ? activeProject.agents : AGENT_FUNCTION_KEYS;
+
   useEffect(() => {
     let cancelled = false;
-    callAction<HomeSummary>('get_home_summary')
+    setSummary(null);
+    setSummaryError(false);
+    scopedAction<HomeSummary>('get_home_summary')
       .then((data) => {
         if (!cancelled) setSummary(data);
       })
@@ -25,9 +29,12 @@ export default function Home() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [activeProjectId, scopedAction]);
 
-  const activeCount = Object.values(agentStatus).filter((s) => s && (s.status === 'READY' || s.status === 'PROCESSING')).length;
+  const activeCount = projectAgentKeys.filter((key) => {
+    const s = agentStatus[key];
+    return s && (s.status === 'READY' || s.status === 'PROCESSING');
+  }).length;
 
   return (
     <div className="main">
@@ -37,7 +44,7 @@ export default function Home() {
         <span>{formatTodayEs()}</span>
         <span className="sep" />
         <span>
-          {activeCount || AGENT_FUNCTION_KEYS.length}/{AGENT_FUNCTION_KEYS.length} agentes activos
+          {activeCount || projectAgentKeys.length}/{projectAgentKeys.length} agentes activos
         </span>
       </div>
 
@@ -84,7 +91,7 @@ export default function Home() {
         <span className="section-title">Estado de los agentes</span>
       </div>
       <div className="services-grid">
-        {AGENT_FUNCTION_KEYS.map((key, i) => {
+        {projectAgentKeys.map((key, i) => {
           const meta = AGENT_META[key];
           const config = agentConfigs[key] || DEFAULTS[key];
           const status = agentStatus[key];

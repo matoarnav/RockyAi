@@ -44,8 +44,8 @@ export function statusMeta(status?: string) {
 }
 
 export const DEFAULT_PROJECTS: Project[] = [
-  { id: 'chile-fly-fishing', name: 'Chile Fly Fishing', protected: true },
-  { id: 'alto-castillo', name: 'Alto Castillo', protected: false },
+  { id: 'chile-fly-fishing', name: 'Chile Fly Fishing', protected: true, agents: AGENT_FUNCTION_KEYS },
+  { id: 'alto-castillo', name: 'Alto Castillo', protected: false, agents: AGENT_FUNCTION_KEYS },
 ];
 
 export const DOW_LABELS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];

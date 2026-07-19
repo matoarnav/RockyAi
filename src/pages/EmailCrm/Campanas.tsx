@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCrmData } from '../../context/CrmDataContext';
-import { callAction, formatWhen } from '../../api';
+import { formatWhen } from '../../api';
 import { statusLabel } from './crmUtils';
 
 export default function Campanas() {
-  const { campaigns, refetch } = useCrmData();
+  const { campaigns, refetch, scopedAction } = useCrmData();
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
 
@@ -16,7 +16,7 @@ export default function Campanas() {
 
   async function handleDelete(campaignId: string) {
     if (!confirm('¿Eliminar esta campaña del histórico?')) return;
-    await callAction('delete_email_campaign', { campaign_id: campaignId });
+    await scopedAction('delete_email_campaign', { campaign_id: campaignId });
     await refetch();
   }
 

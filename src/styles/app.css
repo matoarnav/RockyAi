@@ -27,6 +27,14 @@
 .add-project:hover{ color:var(--sidebar-accent); border-color:var(--sidebar-accent); }
 .add-project-input{ margin-top:8px; width:100%; font-size:12px; background:rgba(0,0,0,0.04); border:1px solid var(--sidebar-line); border-radius:6px; color:var(--sidebar-ink); padding:8px 9px; }
 
+.new-project-form{ margin-top:2px; padding:11px; border:1px solid var(--sidebar-line); border-radius:9px; background:rgba(0,0,0,0.02); }
+.new-project-form .add-project-input{ margin-top:0; }
+.new-project-agents-label{ font-size:8.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--sidebar-dim-2); margin-top:10px; margin-bottom:7px; font-weight:600; }
+.new-project-chips{ display:flex; gap:6px; }
+.agent-chip{ width:28px; height:28px; border-radius:50%; border:1.5px solid var(--sidebar-line); background:#fff; color:var(--sidebar-dim); font-size:9.5px; font-weight:800; cursor:pointer; transition:border-color .15s, color .15s, background .15s; }
+.agent-chip.selected{ border-color:var(--sidebar-accent); color:var(--sidebar-accent); background:rgba(202,150,0,0.08); }
+.new-project-actions{ display:flex; gap:8px; margin-top:11px; }
+
 .proj-active-panel{ background:#fff; border:1px solid var(--sidebar-line); border-radius:12px; padding:15px 16px; box-shadow:0 1px 2px rgba(20,15,10,0.04); }
 .proj-active-label{ font-size:8.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--sidebar-dim-2); margin-bottom:6px; font-weight:600; }
 .proj-active-name{ font-size:15px; font-weight:800; margin-bottom:11px; letter-spacing:-0.01em; }

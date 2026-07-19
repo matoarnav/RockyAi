@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useCrmData } from '../../context/CrmDataContext';
-import { callAction, formatWhen } from '../../api';
+import { formatWhen } from '../../api';
 import type { EmailTemplate } from '../../types';
 
 export default function Templates() {
-  const { templates, refetch } = useCrmData();
+  const { templates, refetch, scopedAction } = useCrmData();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState('');
@@ -24,7 +24,7 @@ export default function Templates() {
       alert('Ingresa un nombre para el template.');
       return;
     }
-    await callAction('save_email_template', {
+    await scopedAction('save_email_template', {
       template_id: editingId || '',
       name: name.trim(),
       subject: subject.trim(),
@@ -36,7 +36,7 @@ export default function Templates() {
 
   async function handleDelete(templateId: string) {
     if (!confirm('¿Eliminar este template?')) return;
-    await callAction('delete_email_template', { template_id: templateId });
+    await scopedAction('delete_email_template', { template_id: templateId });
     await refetch();
   }
 
