@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { usePanelData } from '../context/PanelDataContext';
 import { AGENT_META, AGENT_FUNCTION_KEYS } from '../constants';
@@ -8,6 +8,12 @@ import type { AgentKey } from '../types';
 export default function Sidebar() {
   const { logout } = useAuth();
   const { projects, activeProjectId, activeProjectName, setActiveProjectId, addProject, deleteProject } = usePanelData();
+  const navigate = useNavigate();
+
+  function goHome() {
+    setActiveProjectId(null);
+    navigate('/');
+  }
   const [adding, setAdding] = useState(false);
   const [newName, setNewName] = useState('');
   const [newAgents, setNewAgents] = useState<AgentKey[]>(AGENT_FUNCTION_KEYS);
@@ -33,7 +39,7 @@ export default function Sidebar() {
 
   return (
     <div className="sidebar">
-      <div className="logo-row">
+      <div className="logo-row" onClick={goHome} role="button" tabIndex={0} style={{ cursor: 'pointer' }}>
         <img className="logo-image" src="/rocky-brand-logo.png" alt="RockyAI" />
         <div className="logo-tagline">AI Powered Brand &amp; Execution</div>
       </div>

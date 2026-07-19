@@ -154,3 +154,16 @@ export interface MetricsReport {
   seo: { snapshots: MetricsSeoSnapshot[]; posicion_actual: number | null; keyword: string | null };
   content: { count: number; piezas: MetricsContentPiece[] };
 }
+
+export interface AgencyOverviewError {
+  project_id: string;
+  agent_key: string;
+  last_action: string;
+  updated_at: string;
+}
+
+export interface AgencyOverview {
+  billing: { available: boolean; month_to_date_usd: number | null; budget_usd: number | null; checked_at: string };
+  agents: { ready: number; processing: number; error: number; never_run: number; total: number };
+  errors: AgencyOverviewError[];
+}

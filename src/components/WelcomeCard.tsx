@@ -1,7 +1,37 @@
+import { useEffect, useState, type CSSProperties } from 'react';
 import { usePanelData } from '../context/PanelDataContext';
+import { callAction } from '../api';
+import { AGENT_META } from '../constants';
+import type { AgencyOverview, AgentKey } from '../types';
+
+const PROJECT_HOVER_IMAGE: Record<string, string> = {
+  'chile-fly-fishing': '/chile-fly-fishing-hover.avif',
+  'alto-castillo': '/alto-castillo-hover.avif',
+};
 
 export default function WelcomeCard() {
   const { projects, setActiveProjectId } = usePanelData();
+  const [overview, setOverview] = useState<AgencyOverview | null>(null);
+  const [overviewError, setOverviewError] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    callAction<AgencyOverview>('get_agency_overview', { project_ids: projects.map((p) => p.id) })
+      .then((data) => {
+        if (!cancelled) setOverview(data);
+      })
+      .catch((e) => {
+        console.error('Error cargando el resumen de la agencia', e);
+        if (!cancelled) setOverviewError(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projects.length]);
+
+  const projectName = (id: string) => projects.find((p) => p.id === id)?.name || id;
+  const money = (v: number | null) => (v === null ? '—' : `$${v.toFixed(2)}`);
 
   return (
     <div className="welcome-wrap">
@@ -30,14 +60,71 @@ export default function WelcomeCard() {
           <div className="welcome-projects">
             <div className="welcome-projects-label">Proyectos vigentes</div>
             <div className="welcome-projects-row">
-              {projects.map((p) => (
-                <button key={p.id} type="button" className="welcome-project-btn" onClick={() => setActiveProjectId(p.id)}>
-                  {p.name}
-                </button>
-              ))}
+              {projects.map((p) => {
+                const hoverImage = PROJECT_HOVER_IMAGE[p.id];
+                return (
+                  <button
+                    key={p.id}
+                    type="button"
+                    className="welcome-project-btn"
+                    style={hoverImage ? ({ '--hover-bg': `url(${hoverImage})` } as CSSProperties) : undefined}
+                    onClick={() => setActiveProjectId(p.id)}
+                  >
+                    <span>{p.name}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
+
+        <div className="welcome-metrics">
+          <div className="welcome-projects-label">Métricas de Rocky</div>
+          {overviewError && <div className="welcome-metrics-error">No se pudo cargar el estado de la agencia.</div>}
+          {!overviewError && (
+            <div className="welcome-metrics-grid">
+              <div className="welcome-metric-item">
+                <div className="welcome-metric-value tabular">
+                  {overview ? money(overview.billing.month_to_date_usd) : '…'}
+                </div>
+                <div className="welcome-metric-label">Gasto hasta la fecha</div>
+              </div>
+              <div className="welcome-metric-item">
+                <div className="welcome-metric-value tabular">{overview ? money(overview.billing.budget_usd) : '…'}</div>
+                <div className="welcome-metric-label">Presupuesto mensual</div>
+              </div>
+              <div className="welcome-metric-item">
+                <div className="welcome-metric-value tabular">
+                  {overview ? `${overview.agents.ready}/${overview.agents.total}` : '…'}
+                </div>
+                <div className="welcome-metric-label">Agentes listos</div>
+              </div>
+              <div className="welcome-metric-item">
+                <div
+                  className="welcome-metric-value tabular"
+                  style={{ color: overview && overview.errors.length ? 'var(--err)' : 'var(--moss)' }}
+                >
+                  {overview ? overview.errors.length : '…'}
+                </div>
+                <div className="welcome-metric-label">Errores activos</div>
+              </div>
+            </div>
+          )}
+
+          {overview && overview.errors.length > 0 && (
+            <div className="welcome-errors-list">
+              {overview.errors.map((e, i) => (
+                <div className="welcome-error-item" key={i}>
+                  <span className="status-dot error" />
+                  <span>
+                    <strong>{projectName(e.project_id)}</strong> · {AGENT_META[e.agent_key as AgentKey]?.short || e.agent_key}
+                    {e.last_action ? ` — ${e.last_action}` : ''}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         <div className="welcome-credit">By Matías Araneda</div>
       </div>
