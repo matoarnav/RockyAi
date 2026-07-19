@@ -5,8 +5,14 @@ import { formatTodayEs } from '../api';
 import { AGENT_META, AGENT_FUNCTION_KEYS, DEFAULTS } from '../constants';
 import type { HomeSummary } from '../types';
 import Reveal from '../components/Reveal';
+import WelcomeCard from '../components/WelcomeCard';
 
 export default function Home() {
+  const { activeProjectId } = usePanelData();
+  return <div className="main">{activeProjectId ? <ProjectDashboard /> : <WelcomeCard />}</div>;
+}
+
+function ProjectDashboard() {
   const { agentConfigs, agentStatus, activeProjectName, activeProject, activeProjectId, scopedAction } = usePanelData();
   const navigate = useNavigate();
   const [summary, setSummary] = useState<HomeSummary | null>(null);
@@ -37,7 +43,7 @@ export default function Home() {
   }).length;
 
   return (
-    <div className="main">
+    <Reveal>
       <div className="eyebrow">Proyecto activo</div>
       <div className="page-title">{activeProjectName}</div>
       <div className="page-date">
@@ -117,7 +123,7 @@ export default function Home() {
           );
         })}
       </div>
-    </div>
+    </Reveal>
   );
 }
 

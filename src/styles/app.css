@@ -80,6 +80,17 @@
 .section-title{ font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--dim); font-weight:700; }
 .desc-label{ font-size:9.5px; letter-spacing:0.09em; text-transform:uppercase; color:var(--dim-2); margin-bottom:7px; font-weight:600; }
 
+/* ===== Welcome / sin proyecto seleccionado ===== */
+.welcome-wrap{ min-height:calc(100vh - 88px); display:flex; align-items:center; justify-content:center; }
+.welcome-card{ width:100%; max-width:640px; padding:52px 56px; text-align:center; background:var(--panel); border:1px solid var(--line); border-radius:18px; }
+.welcome-logo{ display:block; margin:0 auto 22px; max-width:220px; max-height:64px; width:auto; height:auto; }
+.welcome-title{ font-size:29px; font-weight:900; letter-spacing:-0.01em; color:var(--ink); margin-bottom:34px; text-wrap:balance; }
+.welcome-list{ list-style:none; text-align:left; display:flex; flex-direction:column; gap:16px; }
+.welcome-list li{ position:relative; padding-left:20px; font-size:13.5px; line-height:1.65; color:var(--dim); }
+.welcome-list li::before{ content:''; position:absolute; left:0; top:8px; width:6px; height:6px; border-radius:50%; background:var(--accent); }
+.welcome-list strong{ color:var(--ink); font-weight:800; }
+.welcome-credit{ margin-top:38px; font-size:11px; color:var(--dim-2); }
+
 /* ===== Login ===== */
 .login-overlay{ position:fixed; inset:0; z-index:1000; background:var(--bg); display:flex; align-items:center; justify-content:center; }
 .login-box{ width:330px; padding:38px 34px; border:1px solid var(--line); background:var(--panel); border-radius:12px; }

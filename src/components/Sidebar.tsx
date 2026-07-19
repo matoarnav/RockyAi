@@ -109,30 +109,45 @@ export default function Sidebar() {
         )}
       </div>
 
-      <div>
-        <div className="nav-label">Proyecto activo</div>
-        <div className="proj-active-panel">
-          <div className="proj-active-label">Trabajando en</div>
-          <div className="proj-active-name">{activeProjectName}</div>
-          <div className="proj-active-links">
-            <NavLink to="/" end className={({ isActive }) => `proj-link${isActive ? ' current' : ''}`}>
-              <span className="ico">◆</span> Resumen
-            </NavLink>
-            <NavLink to="/agentes" className={({ isActive }) => `proj-link${isActive ? ' current' : ''}`}>
-              <span className="ico">◈</span> Agentes
-            </NavLink>
+      {activeProjectId ? (
+        <div>
+          <div className="nav-label">Proyecto activo</div>
+          <div className="proj-active-panel">
+            <div className="proj-active-label">Trabajando en</div>
+            <div className="proj-active-name">{activeProjectName}</div>
+            <div className="proj-active-links">
+              <NavLink to="/" end className={({ isActive }) => `proj-link${isActive ? ' current' : ''}`}>
+                <span className="ico">◆</span> Resumen
+              </NavLink>
+              <NavLink to="/agentes" className={({ isActive }) => `proj-link${isActive ? ' current' : ''}`}>
+                <span className="ico">◈</span> Agentes
+              </NavLink>
+            </div>
           </div>
         </div>
-      </div>
+      ) : null}
 
       <div className="tools-list">
         <div className="nav-label">Herramientas</div>
-        <NavLink to="/email-crm" className={({ isActive }) => `proj-link${isActive ? ' current' : ''}`}>
-          <span className="ico">✉</span> Email Marketing
-        </NavLink>
-        <NavLink to="/metricas" className={({ isActive }) => `proj-link${isActive ? ' current' : ''}`}>
-          <span className="ico">▤</span> Métricas
-        </NavLink>
+        {activeProjectId ? (
+          <>
+            <NavLink to="/email-crm" className={({ isActive }) => `proj-link${isActive ? ' current' : ''}`}>
+              <span className="ico">✉</span> Email Marketing
+            </NavLink>
+            <NavLink to="/metricas" className={({ isActive }) => `proj-link${isActive ? ' current' : ''}`}>
+              <span className="ico">▤</span> Métricas
+            </NavLink>
+          </>
+        ) : (
+          <>
+            <div className="proj-link disabled-soon">
+              <span className="ico">✉</span> Email Marketing <span className="soon-badge">Sin proyecto</span>
+            </div>
+            <div className="proj-link disabled-soon">
+              <span className="ico">▤</span> Métricas <span className="soon-badge">Sin proyecto</span>
+            </div>
+          </>
+        )}
       </div>
 
       <div className="sidebar-foot">

@@ -16,7 +16,7 @@ function formatTokens(status: { tokens_input_total?: number; tokens_output_total
 export default function AgentDetail() {
   const { key } = useParams<{ key: string }>();
   const navigate = useNavigate();
-  const { agentConfigs, agentStatus, contentGrid, scopedAction } = usePanelData();
+  const { agentConfigs, agentStatus, contentGrid, activeProjectId, scopedAction } = usePanelData();
   const { handleUnauthorized } = useAuth();
   const [manualInput, setManualInput] = useState('');
   const [busy, setBusy] = useState(false);
@@ -31,6 +31,11 @@ export default function AgentDetail() {
     } catch {
       setOpenResult({ contenido: entry.result });
     }
+  }
+
+  if (!activeProjectId) {
+    navigate('/', { replace: true });
+    return null;
   }
 
   const agentKey = key as AgentKey;

@@ -15,6 +15,11 @@ export default function EmailCrmLayout() {
   const { activeProjectName, activeProjectId } = usePanelData();
   const navigate = useNavigate();
 
+  if (!activeProjectId) {
+    navigate('/', { replace: true });
+    return null;
+  }
+
   return (
     <div className="main">
       <button className="back-link" onClick={() => navigate('/')}>

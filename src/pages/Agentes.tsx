@@ -7,6 +7,11 @@ export default function Agentes() {
   const { agentConfigs, agentStatus, activeProjectId, activeProject } = usePanelData();
   const navigate = useNavigate();
 
+  if (!activeProjectId) {
+    navigate('/', { replace: true });
+    return null;
+  }
+
   const projectAgentKeys = activeProject?.agents?.length ? activeProject.agents : AGENT_FUNCTION_KEYS;
 
   return (

@@ -21,10 +21,10 @@ interface PanelDataValue {
   agentStatus: Record<AgentKey, AgentStatus | undefined>;
   contentGrid: ContentGrid | null;
   projects: Project[];
-  activeProjectId: string;
+  activeProjectId: string | null;
   activeProjectName: string;
   activeProject: Project | undefined;
-  setActiveProjectId: (id: string) => void;
+  setActiveProjectId: (id: string | null) => void;
   addProject: (name: string, agents?: AgentKey[]) => Promise<void>;
   deleteProject: (id: string) => Promise<void>;
   updateProject: (id: string, patch: Partial<Project>) => Promise<void>;
@@ -41,7 +41,9 @@ export function PanelDataProvider({ children }: { children: ReactNode }) {
   const [agentStatus, setAgentStatus] = useState<Record<AgentKey, AgentStatus | undefined>>({} as Record<AgentKey, AgentStatus | undefined>);
   const [contentGrid, setContentGrid] = useState<ContentGrid | null>(null);
   const [projects, setProjects] = useState<Project[]>(DEFAULT_PROJECTS);
-  const [activeProjectId, setActiveProjectId] = useState('chile-fly-fishing');
+  // Sin proyecto seleccionado por defecto: el Home muestra la tarjeta de
+  // bienvenida hasta que el usuario elige un proyecto en el sidebar.
+  const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [rawState, setRawState] = useState<Record<string, unknown>>({});
   const activeProjectIdRef = useRef(activeProjectId);
@@ -56,7 +58,7 @@ export function PanelDataProvider({ children }: { children: ReactNode }) {
         agentStatus?: Record<AgentKey, AgentStatus>;
         contentGrid?: ContentGrid | null;
         projects?: Project[];
-      }>(requestedProjectId);
+      }>(requestedProjectId || undefined);
       // Si el usuario cambio de proyecto mientras esta respuesta viajaba, la
       // descartamos - ya no corresponde al proyecto activo y no debe pisar
       // el estado que si corresponde.
@@ -105,7 +107,7 @@ export function PanelDataProvider({ children }: { children: ReactNode }) {
     async (id: string) => {
       const next = projects.filter((p) => p.id !== id);
       setProjects(next);
-      if (activeProjectId === id) setActiveProjectId('chile-fly-fishing');
+      if (activeProjectId === id) setActiveProjectId(null);
       await saveState({ ...rawState, projects: next });
     },
     [projects, rawState, activeProjectId]
@@ -121,7 +123,7 @@ export function PanelDataProvider({ children }: { children: ReactNode }) {
   );
 
   const activeProject = projects.find((p) => p.id === activeProjectId);
-  const activeProjectName = activeProject?.name || 'Chile Fly Fishing';
+  const activeProjectName = activeProject?.name || '';
 
   return (
     <PanelDataContext.Provider
