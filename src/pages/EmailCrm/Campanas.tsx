@@ -65,6 +65,15 @@ export default function Campanas() {
                   <td className="tabular">{pct(s.rebotes)}</td>
                   <td>
                     <div className="row-actions">
+                      {c.status === 'draft' && (
+                        <span
+                          className="icon-btn"
+                          title="Retomar borrador"
+                          onClick={() => navigate(`../nueva?campaign_id=${c.campaign_id}`)}
+                        >
+                          ✎
+                        </span>
+                      )}
                       <span className="icon-btn danger" title="Eliminar" onClick={() => handleDelete(c.campaign_id)}>
                         🗑
                       </span>

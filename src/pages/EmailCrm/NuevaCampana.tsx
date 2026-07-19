@@ -1,11 +1,14 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useCrmData } from '../../context/CrmDataContext';
 import { segmentFromKey } from './crmUtils';
 
 export default function NuevaCampana() {
-  const { templates, contacts, refetch, scopedAction } = useCrmData();
+  const { templates, contacts, campaigns, refetch, scopedAction } = useCrmData();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const editingCampaignId = searchParams.get('campaign_id') || '';
+  const editingCampaign = editingCampaignId ? campaigns.find((c) => c.campaign_id === editingCampaignId) : undefined;
 
   const [name, setName] = useState('');
   const [subject, setSubject] = useState('');
@@ -15,6 +18,16 @@ export default function NuevaCampana() {
   const [msg, setMsg] = useState('');
   const [msgColor, setMsgColor] = useState('var(--dim)');
   const [busy, setBusy] = useState<'now' | 'draft' | null>(null);
+
+  useEffect(() => {
+    if (!editingCampaign) return;
+    setName(editingCampaign.name || '');
+    setSubject(editingCampaign.subject || '');
+    setTemplateId(editingCampaign.template_id || '');
+    setBody(editingCampaign.html_body || '');
+    setAudienceKey(editingCampaign.segment?.type === 'tag' && editingCampaign.segment.value ? `tag:${editingCampaign.segment.value}` : 'all');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editingCampaignId]);
 
   const subscribed = contacts.filter((c) => c.status === 'subscribed');
   const tags = Array.from(new Set(contacts.flatMap((c) => c.tags || []))).sort();
@@ -43,6 +56,7 @@ export default function NuevaCampana() {
     setMsg(sendAction === 'now' ? 'Enviando...' : 'Guardando...');
     try {
       await scopedAction('create_email_campaign', {
+        campaign_id: editingCampaignId || undefined,
         name,
         subject,
         html_body: body,
@@ -67,6 +81,12 @@ export default function NuevaCampana() {
 
   return (
     <div>
+      {editingCampaignId && (
+        <div className="desc-label" style={{ marginBottom: 14, color: 'var(--accent)' }}>
+          Retomando borrador — los cambios se guardan sobre la misma campaña
+        </div>
+      )}
+
       <div className="card form-section">
         <div className="form-section-title">1 · Información de la campaña</div>
         <div className="form-section-sub">Nombre interno para identificarla en el histórico — los destinatarios no lo ven.</div>
