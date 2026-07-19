@@ -4,6 +4,7 @@ import { PanelDataProvider } from './context/PanelDataContext';
 import Login from './pages/Login';
 import Layout from './components/Layout';
 import Home from './pages/Home';
+import Metricas from './pages/Metricas';
 import Agentes from './pages/Agentes';
 import AgentDetail from './pages/AgentDetail';
 import EmailCrmLayout from './pages/EmailCrm/EmailCrmLayout';
@@ -12,7 +13,7 @@ import Campanas from './pages/EmailCrm/Campanas';
 import NuevaCampana from './pages/EmailCrm/NuevaCampana';
 import Audiencias from './pages/EmailCrm/Audiencias';
 import Templates from './pages/EmailCrm/Templates';
-import Metricas from './pages/EmailCrm/Metricas';
+import CrmMetricas from './pages/EmailCrm/Metricas';
 
 function AppRoutes() {
   const { isAuthenticated } = useAuth();
@@ -30,6 +31,7 @@ function AppRoutes() {
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
+          <Route path="/metricas" element={<Metricas />} />
           <Route path="/agentes" element={<Agentes />} />
           <Route path="/agentes/:key" element={<AgentDetail />} />
           <Route path="/email-crm" element={<EmailCrmLayout />}>
@@ -38,7 +40,7 @@ function AppRoutes() {
             <Route path="nueva" element={<NuevaCampana />} />
             <Route path="audiencias" element={<Audiencias />} />
             <Route path="templates" element={<Templates />} />
-            <Route path="metricas" element={<Metricas />} />
+            <Route path="metricas" element={<CrmMetricas />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>

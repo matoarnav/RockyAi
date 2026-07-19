@@ -88,9 +88,9 @@ export default function Sidebar() {
         <NavLink to="/email-crm" className={({ isActive }) => `proj-link${isActive ? ' current' : ''}`}>
           <span className="ico">✉</span> Email Marketing
         </NavLink>
-        <div className="proj-link disabled-soon">
-          <span className="ico">▤</span> Métricas <span className="soon-badge">Pronto</span>
-        </div>
+        <NavLink to="/metricas" className={({ isActive }) => `proj-link${isActive ? ' current' : ''}`}>
+          <span className="ico">▤</span> Métricas
+        </NavLink>
       </div>
 
       <div className="sidebar-foot">

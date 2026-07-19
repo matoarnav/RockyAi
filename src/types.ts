@@ -105,3 +105,50 @@ export interface HomeSummary {
   seo: { keyword: string; posicion: number } | null;
   content_count: number;
 }
+
+export interface MetricsEmailCampaign {
+  name: string;
+  sent_at: string;
+  enviados: number;
+  aperturas: number;
+}
+
+export interface MetricsSocialPost {
+  media_id: string;
+  fecha: string;
+  tipo: string;
+  formato: string;
+  permalink: string;
+  caption: string;
+  likes: number;
+  comentarios: number;
+  alcance: number;
+  reproducciones: number | null;
+  engagement_rate_sobre_alcance_pct: number | null;
+}
+
+export interface MetricsSeoSnapshot {
+  fecha: string;
+  keyword: string | null;
+  posicion: number | null;
+}
+
+export interface MetricsContentPiece {
+  fecha: string;
+  canal: string;
+  headline: string;
+}
+
+export interface MetricsReport {
+  range: { from: string; to: string; days: number };
+  email: { enviados: number; aperturas: number; clics: number; rebotes: number; campaigns: MetricsEmailCampaign[] };
+  social: {
+    snapshots: { fecha: string; seguidores: number | null }[];
+    seguidores_actuales: number | null;
+    cambio_neto_periodo: number;
+    engagement_promedio_pct: number | null;
+    publicaciones: MetricsSocialPost[];
+  };
+  seo: { snapshots: MetricsSeoSnapshot[]; posicion_actual: number | null; keyword: string | null };
+  content: { count: number; piezas: MetricsContentPiece[] };
+}
