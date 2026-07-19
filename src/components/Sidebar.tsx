@@ -20,7 +20,7 @@ export default function Sidebar() {
   return (
     <div className="sidebar">
       <div className="logo-row">
-        <img className="logo-image" src="/logo.jpg" alt="RockyAI" />
+        <img className="logo-image" src="/rocky-brand-logo.png" alt="RockyAI" />
       </div>
 
       <div>

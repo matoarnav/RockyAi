@@ -26,6 +26,7 @@
 
 *{ box-sizing:border-box; margin:0; padding:0; }
 html, body, #root{ height:100%; }
+html{ scroll-behavior: smooth; }
 body{
   background: var(--bg);
   color: var(--ink);
@@ -40,3 +41,17 @@ button, input, textarea, select{ font-family:inherit; }
 ::selection{ background: var(--accent); color:#fff; }
 h1, h2, h3{ font-weight:900; letter-spacing:-0.01em; }
 .tabular{ font-variant-numeric: tabular-nums; }
+
+/* ===== Scroll-triggered reveal ===== */
+.reveal-item{
+  opacity:0;
+  transform:translateY(16px);
+  transition: opacity .6s cubic-bezier(.16,.8,.32,1), transform .6s cubic-bezier(.16,.8,.32,1);
+  will-change: opacity, transform;
+}
+.reveal-item.is-visible{ opacity:1; transform:translateY(0); }
+
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+  .reveal-item{ opacity:1; transform:none; transition:none; }
+}
