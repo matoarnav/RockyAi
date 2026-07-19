@@ -5,7 +5,8 @@ import { AGENT_META, AGENT_FUNCTION_KEYS, DEFAULTS, statusMeta } from '../consta
 import { formatWhen, UnauthorizedError } from '../api';
 import { useAuth } from '../context/AuthContext';
 import ContentCalendar from '../components/ContentCalendar';
-import type { AgentKey } from '../types';
+import TimelineResultModal from '../components/TimelineResultModal';
+import type { AgentKey, TimelineEntry } from '../types';
 
 function formatTokens(status: { tokens_input_total?: number; tokens_output_total?: number; tokens_thinking_total?: number } | undefined): string {
   const total = (status?.tokens_input_total || 0) + (status?.tokens_output_total || 0) + (status?.tokens_thinking_total || 0);
@@ -20,6 +21,17 @@ export default function AgentDetail() {
   const [manualInput, setManualInput] = useState('');
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState('');
+  const [openResult, setOpenResult] = useState<Record<string, unknown> | null>(null);
+
+  function openTimelineResult(entry: TimelineEntry) {
+    if (!entry.result) return;
+    try {
+      const parsed = JSON.parse(entry.result);
+      if (parsed && typeof parsed === 'object') setOpenResult(parsed as Record<string, unknown>);
+    } catch {
+      setOpenResult({ contenido: entry.result });
+    }
+  }
 
   const agentKey = key as AgentKey;
   if (!AGENT_FUNCTION_KEYS.includes(agentKey)) {
@@ -104,13 +116,19 @@ export default function AgentDetail() {
                 .reverse()
                 .map((entry, i) => {
                   const tMeta = statusMeta(entry.status);
+                  const clickable = !!entry.result;
                   return (
-                    <div className="timeline-item" key={i}>
+                    <div
+                      className={`timeline-item${clickable ? ' clickable' : ''}`}
+                      key={i}
+                      onClick={clickable ? () => openTimelineResult(entry) : undefined}
+                    >
                       <span className={`status-dot ${tMeta.cls}`} style={{ marginTop: 4 }} />
-                      <div>
+                      <div style={{ flex: 1 }}>
                         <div className="timeline-when">{formatWhen(entry.at)}</div>
                         <div className="timeline-text">{entry.action || tMeta.label}</div>
                       </div>
+                      {clickable && <span className="timeline-view-hint">Ver detalle →</span>}
                     </div>
                   );
                 })
@@ -135,6 +153,8 @@ export default function AgentDetail() {
           <div className="manual-invoke-msg">{msg}</div>
         </div>
       </div>
+
+      {openResult && <TimelineResultModal result={openResult} onClose={() => setOpenResult(null)} />}
     </div>
   );
 }

@@ -10,6 +10,7 @@ export interface TimelineEntry {
   status: string;
   action: string;
   at: string;
+  result?: string;
 }
 
 export interface AgentStatus {

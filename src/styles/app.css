@@ -187,8 +187,12 @@
 .metric-value{ font-size:19px; font-weight:800; }
 
 .timeline{ margin:18px 0; padding:6px 16px; border-radius:12px; border:1px solid var(--line); background:var(--panel); }
-.timeline-item{ display:flex; gap:10px; padding:10px 0; border-bottom:1px solid var(--line); font-size:12.5px; }
+.timeline-item{ display:flex; align-items:flex-start; gap:10px; padding:10px 0; border-bottom:1px solid var(--line); font-size:12.5px; }
 .timeline-item:last-child{ border-bottom:none; }
+.timeline-item.clickable{ cursor:pointer; transition:background .15s; border-radius:8px; }
+.timeline-item.clickable:hover{ background:rgba(255,255,255,0.03); }
+.timeline-item.clickable:hover .timeline-view-hint{ color:var(--accent); }
+.timeline-view-hint{ font-size:10.5px; color:var(--dim-2); font-weight:600; white-space:nowrap; align-self:center; transition:color .15s; }
 .timeline-when{ color:var(--dim-2); white-space:nowrap; font-size:10.5px; padding-top:1px; font-weight:600; }
 .timeline-text{ color:var(--dim); line-height:1.5; font-weight:500; }
 .timeline-empty{ font-size:12.5px; color:var(--dim-2); padding:9px 0; font-weight:500; }
@@ -223,6 +227,10 @@
 .post-popup-field-value{ font-size:12.5px; color:var(--dim); line-height:1.6; white-space:pre-wrap; font-weight:500; }
 .post-popup-hashtags{ display:flex; flex-wrap:wrap; gap:6px; }
 .post-popup-hashtag{ font-size:11px; color:var(--sage); background:rgba(125,143,106,0.12); padding:3px 9px; border-radius:11px; font-weight:600; }
+
+.result-list{ display:flex; flex-direction:column; gap:10px; }
+.result-list-item{ border:1px solid var(--line); border-radius:10px; padding:14px 16px; }
+.result-block-nested{ margin-top:2px; }
 
 /* ===== CRM ===== */
 .tabbar{ display:flex; gap:2px; margin:26px 0 28px; border-bottom:1px solid var(--line); flex-wrap:wrap; }
