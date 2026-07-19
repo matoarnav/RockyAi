@@ -82,10 +82,10 @@
 
 /* ===== Welcome / sin proyecto seleccionado ===== */
 .welcome-wrap{ min-height:calc(100vh - 88px); display:flex; align-items:center; justify-content:center; padding:20px 0; }
-.welcome-content{ width:100%; max-width:600px; text-align:center; }
+.welcome-content{ width:100%; max-width:860px; text-align:center; }
 .welcome-logo{ display:block; margin:0 auto 30px; max-width:340px; width:100%; height:auto; }
 .welcome-title{ font-size:34px; font-weight:900; letter-spacing:-0.015em; color:var(--ink); margin-bottom:40px; text-wrap:balance; }
-.welcome-list{ list-style:none; text-align:left; display:flex; flex-direction:column; gap:18px; }
+.welcome-list{ list-style:none; text-align:left; display:grid; grid-template-columns:repeat(2, 1fr); gap:24px 36px; }
 .welcome-list li{ position:relative; padding-left:22px; font-size:14px; line-height:1.7; color:var(--dim); }
 .welcome-list li::before{ content:''; position:absolute; left:0; top:9px; width:6px; height:6px; border-radius:50%; background:var(--accent); }
 .welcome-list strong{ color:var(--ink); font-weight:800; }
@@ -349,4 +349,5 @@ tbody tr:hover{ background:rgba(255,255,255,0.02); }
   .mini-dash{ grid-template-columns:repeat(2,1fr); }
   .services-grid, .agents-grid, .tpl-grid{ grid-template-columns:1fr; }
   .aud-layout{ grid-template-columns:1fr; }
+  .welcome-list{ grid-template-columns:1fr; }
 }
