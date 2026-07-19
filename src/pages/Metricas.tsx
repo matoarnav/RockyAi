@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { usePanelData } from '../context/PanelDataContext';
 import { callAction, formatWhen } from '../api';
 import type { MetricsReport } from '../types';
@@ -11,6 +12,7 @@ const RANGE_OPTIONS = [
 
 export default function Metricas() {
   const { activeProjectName } = usePanelData();
+  const navigate = useNavigate();
   const [days, setDays] = useState(30);
   const [report, setReport] = useState<MetricsReport | null>(null);
   const [loading, setLoading] = useState(true);
@@ -40,6 +42,10 @@ export default function Metricas() {
 
   return (
     <div className="main">
+      <button className="back-link no-print" onClick={() => navigate('/')}>
+        &larr; Volver al home
+      </button>
+
       <div className="metrics-toolbar no-print">
         <div>
           <div className="eyebrow">Herramientas</div>
