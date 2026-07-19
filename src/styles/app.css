@@ -81,15 +81,27 @@
 .desc-label{ font-size:9.5px; letter-spacing:0.09em; text-transform:uppercase; color:var(--dim-2); margin-bottom:7px; font-weight:600; }
 
 /* ===== Welcome / sin proyecto seleccionado ===== */
-.welcome-wrap{ min-height:calc(100vh - 88px); display:flex; align-items:center; justify-content:center; }
-.welcome-card{ width:100%; max-width:640px; padding:52px 56px; text-align:center; background:var(--panel); border:1px solid var(--line); border-radius:18px; }
-.welcome-logo{ display:block; margin:0 auto 22px; max-width:220px; max-height:64px; width:auto; height:auto; }
-.welcome-title{ font-size:29px; font-weight:900; letter-spacing:-0.01em; color:var(--ink); margin-bottom:34px; text-wrap:balance; }
-.welcome-list{ list-style:none; text-align:left; display:flex; flex-direction:column; gap:16px; }
-.welcome-list li{ position:relative; padding-left:20px; font-size:13.5px; line-height:1.65; color:var(--dim); }
-.welcome-list li::before{ content:''; position:absolute; left:0; top:8px; width:6px; height:6px; border-radius:50%; background:var(--accent); }
+.welcome-wrap{ min-height:calc(100vh - 88px); display:flex; align-items:center; justify-content:center; padding:20px 0; }
+.welcome-content{ width:100%; max-width:600px; text-align:center; }
+.welcome-logo{ display:block; margin:0 auto 30px; max-width:340px; width:100%; height:auto; }
+.welcome-title{ font-size:34px; font-weight:900; letter-spacing:-0.015em; color:var(--ink); margin-bottom:40px; text-wrap:balance; }
+.welcome-list{ list-style:none; text-align:left; display:flex; flex-direction:column; gap:18px; }
+.welcome-list li{ position:relative; padding-left:22px; font-size:14px; line-height:1.7; color:var(--dim); }
+.welcome-list li::before{ content:''; position:absolute; left:0; top:9px; width:6px; height:6px; border-radius:50%; background:var(--accent); }
 .welcome-list strong{ color:var(--ink); font-weight:800; }
-.welcome-credit{ margin-top:38px; font-size:11px; color:var(--dim-2); }
+
+.welcome-projects{ margin-top:44px; padding-top:30px; border-top:1px solid var(--line); }
+.welcome-projects-label{ font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--dim-2); font-weight:700; margin-bottom:14px; }
+.welcome-projects-row{ display:flex; flex-wrap:wrap; justify-content:center; gap:10px; }
+.welcome-project-btn{ font-size:12.5px; font-weight:700; color:var(--ink); background:rgba(255,255,255,0.03); border:1px solid var(--line); border-radius:9px; padding:10px 18px; cursor:pointer; transition:border-color .15s, background .15s, transform .15s; }
+.welcome-project-btn:hover{ border-color:var(--accent); color:var(--accent); background:rgba(202,150,0,0.06); transform:translateY(-1px); }
+
+.welcome-credit{ margin-top:36px; font-size:11px; color:var(--dim-2); }
+
+@media (prefers-reduced-motion: reduce){
+  .welcome-project-btn{ transition:none; }
+  .welcome-project-btn:hover{ transform:none; }
+}
 
 /* ===== Login ===== */
 .login-overlay{ position:fixed; inset:0; z-index:1000; background:var(--bg); display:flex; align-items:center; justify-content:center; }

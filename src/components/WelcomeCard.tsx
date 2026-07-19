@@ -1,8 +1,12 @@
+import { usePanelData } from '../context/PanelDataContext';
+
 export default function WelcomeCard() {
+  const { projects, setActiveProjectId } = usePanelData();
+
   return (
     <div className="welcome-wrap">
-      <div className="welcome-card">
-        <img className="welcome-logo" src="/rocky-brand-logo.png" alt="RockyAI" />
+      <div className="welcome-content">
+        <img className="welcome-logo" src="/rocky-brand-white.png" alt="RockyAI" />
         <h1 className="welcome-title">AI Powered Brand &amp; Execution</h1>
         <ul className="welcome-list">
           <li>
@@ -21,6 +25,20 @@ export default function WelcomeCard() {
             <strong>Nuestra Filosofía:</strong> Menos escritorio, más rodaje.
           </li>
         </ul>
+
+        {projects.length > 0 && (
+          <div className="welcome-projects">
+            <div className="welcome-projects-label">Proyectos vigentes</div>
+            <div className="welcome-projects-row">
+              {projects.map((p) => (
+                <button key={p.id} type="button" className="welcome-project-btn" onClick={() => setActiveProjectId(p.id)}>
+                  {p.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="welcome-credit">By Matías Araneda</div>
       </div>
     </div>
