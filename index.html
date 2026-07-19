@@ -7,13 +7,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz@1,9..144&family=Inter:wght@400;500;600;700&display=swap');
 
 :root{
-  --bg: #17130f;
-  --panel: #1e1912;
-  --ink: #eee6d8;
-  --dim: #a3937c;
-  --dim-2: #6b5e4c;
-  --line: #362d21;
-  --clay: #b5502d;
+  --bg: #14161a;
+  --panel: #1b1e23;
+  --ink: #f2f0ec;
+  --dim: #9a9690;
+  --dim-2: #5f5c58;
+  --line: #2a2d33;
+  --clay: #ca9600;
   --moss: #6b7a4f;
   --dust: #5e7583;
   --ochre: #c08a2e;
@@ -23,9 +23,6 @@
 *{box-sizing:border-box; margin:0; padding:0;}
 body{
   background: var(--bg);
-  background-image:
-    radial-gradient(ellipse at 8% -10%, rgba(90,70,45,0.35), transparent 55%),
-    radial-gradient(ellipse at 100% 100%, rgba(60,45,30,0.3), transparent 55%);
   color: var(--ink);
   font-family: 'Inter', sans-serif;
   min-height: 100vh;
@@ -34,46 +31,72 @@ body{
 
 .sidebar{
   width: 256px; min-width:256px;
-  background: #ffffff;
+  background: #faf8f5;
   border-right: 1px solid var(--line);
   padding: 32px 26px;
-  display:flex; flex-direction:column; gap:38px;
-  --ink: #241d15;
-  --dim: #6b5e4c;
-  --dim-2: #8a7a63;
-  --line: #e4ddd0;
+  display:flex; flex-direction:column; gap:30px;
+  --ink: #211f1c;
+  --dim: #75706a;
+  --dim-2: #a19a91;
+  --line: #e9e4dc;
+  --clay: #8f6a00;
 }
 .logo-image-wrap{
-  margin-bottom:8px; display:inline-block;
+  margin-bottom:2px; display:inline-block;
 }
 .logo-image{ max-height:44px; max-width:100%; display:block; }
-.nav-label{ font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color: var(--dim-2); margin-bottom:12px; }
-.nav-item{ display:flex; align-items:baseline; gap:10px; padding:11px 0; font-size:14px; color: var(--dim); border-bottom:1px solid var(--line); }
-.nav-item .idx{ font-family:'Anton', sans-serif; font-size:11px; color: var(--dim-2); }
-.nav-item.active{ color: var(--ink); }
-.nav-item.active .idx{ color: var(--clay); }
-.nav-item.disabled{ color: var(--dim-2); }
-.proj-delete{ margin-left:auto; color:var(--dim-2); cursor:pointer; font-size:14px; padding:0 4px; }
+.nav-label{ font-size:9.5px; letter-spacing:0.12em; text-transform:uppercase; color: var(--dim-2); margin-bottom:11px; font-weight:600; }
+
+.proj-item{
+  display:flex; align-items:center; gap:9px; padding:9px 10px; font-size:13px; color: var(--dim);
+  border-radius:7px; cursor:pointer; margin-bottom:2px; transition:background .12s;
+}
+.proj-item:hover{ background: rgba(0,0,0,0.03); }
+.proj-item .proj-dot{ width:6px; height:6px; border-radius:50%; background: var(--line); flex-shrink:0; }
+.proj-item.active{ color: var(--ink); font-weight:600; background: rgba(202,150,0,0.08); }
+.proj-item.active .proj-dot{ background: var(--clay); }
+.proj-item.disabled{ color: var(--dim-2); }
+.proj-delete{ margin-left:auto; opacity:0; color: var(--dim-2); cursor:pointer; font-size:13px; padding:0 2px; }
+.proj-item:hover .proj-delete{ opacity:1; }
 .proj-delete:hover{ color: var(--clay); }
-.add-project{ font-size:12px; color: var(--clay); padding-top:14px; cursor:pointer; }
+.add-project{
+  display:flex; align-items:center; gap:8px; padding:9px 10px; font-size:12px; color: var(--dim-2);
+  cursor:pointer; border-radius:7px; margin-top:2px; border:1px dashed var(--line);
+}
+.add-project:hover{ color: var(--clay); border-color: var(--clay); }
 .add-project-input{ margin-top:8px; width:100%; font-size:11px; background:rgba(0,0,0,0.04); border:1px solid var(--line); border-radius:4px; color:var(--dim); padding:6px 8px; }
+
+.proj-active-panel{
+  background:#fff; border:1px solid var(--line); border-radius:10px; padding:14px 15px;
+  box-shadow:0 1px 2px rgba(20,15,10,0.04);
+}
+.proj-active-label{ font-size:8.5px; letter-spacing:0.1em; text-transform:uppercase; color: var(--dim-2); margin-bottom:5px; }
+.proj-active-name{ font-family:'Anton', sans-serif; font-size:14px; text-transform:uppercase; margin-bottom:10px; }
+.proj-active-links{ display:flex; flex-direction:column; gap:1px; }
+.proj-active-link{
+  display:flex; align-items:center; gap:9px; padding:8px 8px; font-size:12px; color: var(--ink);
+  border-radius:6px; cursor:pointer; transition:background .12s; text-decoration:none;
+}
+.proj-active-link:hover{ background: rgba(0,0,0,0.035); }
+.proj-active-link.current{ background: rgba(202,150,0,0.1); color: var(--clay); font-weight:600; }
+.proj-active-link .ico{ width:15px; text-align:center; opacity:0.75; font-size:12px; }
+
+.tools-list .proj-active-link{ color: var(--dim); }
+.tools-list .proj-active-link:hover{ color: var(--ink); }
+.tools-list .proj-active-link.disabled-soon{ cursor:default; opacity:0.55; }
+.tools-list .proj-active-link.disabled-soon:hover{ background:none; color:var(--dim); }
+.soon-badge{ margin-left:auto; font-size:8px; letter-spacing:0.05em; text-transform:uppercase; color:var(--dim-2); border:1px solid var(--line); border-radius:10px; padding:1px 6px; }
+
 .sidebar-foot{ margin-top:auto; font-size:10px; color: var(--dim-2); line-height:1.7; border-top:1px solid var(--line); padding-top:16px; }
 .logout-link{ color: var(--clay); text-decoration:none; }
 
 .main{
   flex:1; padding: 44px 52px;
   background-image:
-    linear-gradient(165deg, rgba(14,11,7,0.94) 0%, rgba(14,11,7,0.82) 45%, rgba(14,11,7,0.96) 100%),
-    url('foto-nirehuao.jpg');
-  background-size: cover;
-  background-position: center 35%;
-  background-repeat: no-repeat;
+    radial-gradient(ellipse 900px 560px at 105% -8%, rgba(202,150,0,0.11), transparent 60%),
+    radial-gradient(ellipse 700px 500px at -8% 108%, rgba(202,150,0,0.045), transparent 55%),
+    linear-gradient(165deg, #191c22 0%, #14161a 55%, #101216 100%);
   background-attachment: fixed;
-  --ink: #f8f2e6;
-  --dim: #d3c3a8;
-  --dim-2: #ab9a80;
-  --line: rgba(248,242,230,0.16);
-  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
 }
 
 .credit-tag{
@@ -284,15 +307,6 @@ body{
 .post-popup-hashtag{ font-size:11px; color: var(--sage); background: rgba(125,143,106,0.12); padding:2px 8px; border-radius:10px; }
 
 /* ---------- CRM Email Marketing ---------- */
-.crm-nav-entry{
-  margin-top:6px; padding:12px 13px; border-radius:8px; background:#241d15; color:#eee6d8; cursor:pointer;
-  transition:opacity .15s;
-}
-.crm-nav-entry:hover{ opacity:0.88; }
-.crm-nav-entry-label{ font-size:8.5px; letter-spacing:0.1em; text-transform:uppercase; color:#a3937c; margin-bottom:3px; }
-.crm-nav-entry-title{ font-family:'Anton', sans-serif; font-size:12.5px; }
-.crm-nav-entry-arrow{ float:right; color:var(--clay); }
-
 .tabbar{ display:flex; gap:2px; margin:26px 0 28px; border-bottom:1px solid var(--line); flex-wrap:wrap; }
 .tab{
   padding:10px 15px; font-size:12px; color:var(--dim); cursor:pointer; border-bottom:2px solid transparent; user-select:none;
@@ -388,6 +402,31 @@ tbody tr:hover{ background:rgba(255,255,255,0.02); }
 .funnel-value{ text-align:right; font-size:11.5px; font-variant-numeric:tabular-nums; color:var(--ink); }
 
 .empty-state{ padding:34px 20px; text-align:center; color:var(--dim-2); font-size:12px; }
+
+/* ---------- Home de proyecto ---------- */
+.page-date{ font-size:12px; color:var(--dim); margin-top:10px; display:flex; align-items:center; gap:7px; }
+.page-date .sep{ width:4px; height:4px; border-radius:50%; background:var(--dim-2); }
+
+.mini-dash{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:22px; }
+.mini-card{ background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:20px; }
+.mini-card-icon{ width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; margin-bottom:16px; font-size:14px; }
+.mini-card.c-email .mini-card-icon{ background:rgba(202,150,0,0.12); color:var(--clay); }
+.mini-card.c-opens .mini-card-icon{ background:rgba(94,117,131,0.16); color:var(--dust); }
+.mini-card.c-seo .mini-card-icon{ background:rgba(192,138,46,0.16); color:var(--ochre); }
+.mini-card.c-social .mini-card-icon{ background:rgba(125,143,106,0.16); color:var(--sage); }
+.mini-card-label{ font-size:10px; letter-spacing:0.06em; text-transform:uppercase; color:var(--dim-2); margin-bottom:8px; }
+.mini-card-value{ font-family:'Anton', sans-serif; font-size:25px; font-variant-numeric:tabular-nums; }
+.mini-card-sub{ font-size:11px; color:var(--dim); margin-top:6px; }
+
+.services-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:14px; }
+.service-row{ background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:17px 19px; display:flex; align-items:center; gap:15px; cursor:pointer; transition:border-color .15s; }
+.service-row:hover{ border-color:var(--dim-2); }
+.service-info{ flex:1; min-width:0; }
+.service-name{ font-size:12.5px; color:var(--ink); font-weight:600; }
+.service-detail{ font-size:11px; color:var(--dim-2); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.service-stat{ text-align:right; flex-shrink:0; }
+.service-stat-value{ font-family:'Anton', sans-serif; font-size:16px; font-variant-numeric:tabular-nums; }
+.service-stat-label{ font-size:8.5px; color:var(--dim-2); text-transform:uppercase; letter-spacing:0.05em; margin-top:2px; }
 </style>
 </head>
 <body>
@@ -422,15 +461,24 @@ tbody tr:hover{ background:rgba(255,255,255,0.02); }
   <div>
     <div class="nav-label">Proyectos</div>
     <div id="projects-nav"></div>
-    <div class="add-project" id="add-project-toggle">+ Nuevo proyecto</div>
+    <div class="add-project" id="add-project-toggle"><span>+</span> Agregar nuevo proyecto</div>
     <input class="add-project-input" id="new-project-name" placeholder="Nombre del proyecto" style="display:none;" />
   </div>
   <div>
-    <div class="nav-label">Herramientas</div>
-    <div class="crm-nav-entry" id="crm-nav-entry">
-      <div class="crm-nav-entry-label">CRM</div>
-      <div class="crm-nav-entry-title">Email Marketing <span class="crm-nav-entry-arrow">→</span></div>
+    <div class="nav-label">Proyecto activo</div>
+    <div class="proj-active-panel">
+      <div class="proj-active-label">Trabajando en</div>
+      <div class="proj-active-name" id="active-project-name">Chile Fly Fishing</div>
+      <div class="proj-active-links">
+        <a href="#" class="proj-active-link" id="nav-link-home"><span class="ico">◆</span> Resumen</a>
+        <a href="#agentes" class="proj-active-link" id="nav-link-agentes"><span class="ico">◈</span> Agentes</a>
+      </div>
     </div>
+  </div>
+  <div class="tools-list">
+    <div class="nav-label">Herramientas</div>
+    <a href="#email-crm" class="proj-active-link" id="nav-link-crm"><span class="ico">✉</span> Email Marketing</a>
+    <div class="proj-active-link disabled-soon"><span class="ico">▤</span> Métricas <span class="soon-badge">Pronto</span></div>
   </div>
   <div class="sidebar-foot">
     Cuenta AWS<br>chileflyfishing &middot; us-east-2<br>Gasto del mes: $0 USD
@@ -438,19 +486,26 @@ tbody tr:hover{ background:rgba(255,255,255,0.02); }
   </div>
 </div>
 
-<div class="main" id="dashboard-page">
+<div class="main" id="home-page">
   <div class="eyebrow">Proyecto activo</div>
-  <div class="page-title">Chile Fly Fishing</div>
+  <div class="page-title" id="home-project-title">Chile Fly Fishing</div>
+  <div class="page-date"><span id="home-date"></span><span class="sep"></span><span id="home-agent-count">4 agentes activos</span></div>
+
+  <div class="mini-dash" id="home-mini-dash"></div>
+
+  <div class="section-head" style="margin-top:36px;">
+    <span class="section-num">02</span>
+    <span class="section-title">Estado de los agentes</span>
+  </div>
+  <div class="services-grid" id="home-services-grid"></div>
+</div>
+
+<div class="main" id="dashboard-page" style="display:none;">
+  <div class="eyebrow">Proyecto activo</div>
+  <div class="page-title">Agentes</div>
   <div class="page-sub">clientes/chile-fly-fishing &middot; 4 agentes desplegados y validados</div>
 
-  <div class="kpi-row">
-    <div class="kpi"><div class="kpi-label">Piezas esta semana</div><div class="kpi-value">1</div></div>
-    <div class="kpi"><div class="kpi-label">Alertas activas</div><div class="kpi-value muted">Ver reportes</div></div>
-    <div class="kpi"><div class="kpi-label">Gasto AWS este mes</div><div class="kpi-value">$0</div></div>
-    <div class="kpi"><div class="kpi-label">Agentes desplegados</div><div class="kpi-value">4/4</div></div>
-  </div>
-
-  <div class="section-head">
+  <div class="section-head" style="margin-top:32px;">
     <span class="section-num">02</span>
     <span class="section-title">Agentes</span>
   </div>
@@ -679,10 +734,10 @@ const DEFAULT_PROJECTS = [
 ];
 
 const AGENT_META = {
-  ad:  { cls: "ad",  initials: "JI", role: "Art Director & Visual Concept Creator" },
-  an:  { cls: "an",  initials: "NE", role: "Performance & Data Analytics Specialist" },
-  seo: { cls: "seo", initials: "SL", role: "Search, Geographic & AI Engine Optimization Expert" },
-  strategist: { cls: "strategist", initials: "DA", role: "Content & Social Media Strategist" }
+  ad:  { cls: "ad",  initials: "JI", role: "Art Director & Visual Concept Creator", short: "Art Director" },
+  an:  { cls: "an",  initials: "NE", role: "Performance & Data Analytics Specialist", short: "Analytics" },
+  seo: { cls: "seo", initials: "SL", role: "Search, Geographic & AI Engine Optimization Expert", short: "SEO / GEO / AEO" },
+  strategist: { cls: "strategist", initials: "DA", role: "Content & Social Media Strategist", short: "Content Strategist" }
 };
 
 const STATUS_META = {
@@ -821,24 +876,37 @@ async function saveState(state) {
 
 // --- Proyectos ---
 
+let activeProjectId = 'chile-fly-fishing';
+
 function renderProjects(projects) {
   const nav = document.getElementById('projects-nav');
-  nav.innerHTML = projects.map((p, i) => {
-    const idx = String(i + 1).padStart(2, '0');
-    const cls = p.protected ? 'nav-item active' : 'nav-item disabled';
+  nav.innerHTML = projects.map(p => {
+    const cls = p.id === activeProjectId ? 'proj-item active' : 'proj-item';
     const del = p.protected ? '' : `<span class="proj-delete" data-id="${p.id}" title="Eliminar proyecto">&times;</span>`;
-    return `<div class="${cls}"><span class="idx">${idx}</span> ${escapeHtml(p.name)}${del}</div>`;
+    return `<div class="${cls}" data-id="${p.id}"><span class="proj-dot"></span>${escapeHtml(p.name)}${del}</div>`;
   }).join('');
+
+  nav.querySelectorAll('.proj-item').forEach(el => {
+    el.addEventListener('click', (e) => {
+      if (e.target.classList.contains('proj-delete')) return;
+      const id = el.getAttribute('data-id');
+      activeProjectId = id;
+      const name = el.textContent.replace('×', '').trim();
+      document.getElementById('active-project-name').textContent = name;
+      document.getElementById('home-project-title').textContent = name;
+      renderProjects(projects);
+    });
+  });
 
   nav.querySelectorAll('.proj-delete').forEach(el => {
     el.addEventListener('click', async (e) => {
       e.stopPropagation();
       const id = el.getAttribute('data-id');
       const state = await loadState();
-      const projects = (state.projects || defaultProjects()).filter(p => p.id !== id);
-      state.projects = projects;
+      const remaining = (state.projects || defaultProjects()).filter(p => p.id !== id);
+      state.projects = remaining;
       await saveState(state);
-      renderProjects(projects);
+      renderProjects(remaining);
     });
   });
 }
@@ -1017,15 +1085,89 @@ function renderAgentPage(key) {
   document.getElementById('agent-modal-manual-msg').textContent = '';
 }
 
+// --- Home de proyecto ---
+
+function formatTodayEs() {
+  const s = new Date().toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+async function renderHome() {
+  document.getElementById('home-date').textContent = formatTodayEs();
+
+  const statuses = Object.values(currentState.agentStatus || {});
+  const activeCount = statuses.filter(s => s && (s.status === 'READY' || s.status === 'PROCESSING')).length;
+  document.getElementById('home-agent-count').textContent = `${activeCount || Object.keys(AGENT_META).length}/${Object.keys(AGENT_META).length} agentes activos`;
+
+  const dash = document.getElementById('home-mini-dash');
+  dash.innerHTML = `
+    <div class="mini-card c-email"><div class="mini-card-icon">✉</div><div class="mini-card-label">Envíos este mes</div><div class="mini-card-value num">—</div><div class="mini-card-sub">Cargando...</div></div>
+    <div class="mini-card c-opens"><div class="mini-card-icon">◎</div><div class="mini-card-label">Aperturas totales</div><div class="mini-card-value num">—</div><div class="mini-card-sub">Cargando...</div></div>
+    <div class="mini-card c-seo"><div class="mini-card-icon">▲</div><div class="mini-card-label">Posición SEO</div><div class="mini-card-value num">—</div><div class="mini-card-sub">Cargando...</div></div>
+    <div class="mini-card c-social"><div class="mini-card-icon">◈</div><div class="mini-card-label">Contenido generado (mes)</div><div class="mini-card-value num">—</div><div class="mini-card-sub">Cargando...</div></div>
+  `;
+
+  try {
+    const summary = await crmApi('get_home_summary');
+    const email = summary.email || { enviados_mes: 0, aperturas_totales: 0 };
+    const seo = summary.seo;
+    const seoValue = seo && seo.posicion != null ? seo.posicion : '—';
+    const seoSub = seo ? `"${escapeHtml(seo.keyword || '')}"` : 'Sin datos todavía';
+    dash.innerHTML = `
+      <div class="mini-card c-email"><div class="mini-card-icon">✉</div><div class="mini-card-label">Envíos este mes</div><div class="mini-card-value num">${email.enviados_mes}</div><div class="mini-card-sub">Email Marketing</div></div>
+      <div class="mini-card c-opens"><div class="mini-card-icon">◎</div><div class="mini-card-label">Aperturas totales</div><div class="mini-card-value num">${email.aperturas_totales}</div><div class="mini-card-sub">Histórico de campañas</div></div>
+      <div class="mini-card c-seo"><div class="mini-card-icon">▲</div><div class="mini-card-label">Posición SEO</div><div class="mini-card-value num">${seoValue}</div><div class="mini-card-sub">${seoSub}</div></div>
+      <div class="mini-card c-social"><div class="mini-card-icon">◈</div><div class="mini-card-label">Contenido generado (mes)</div><div class="mini-card-value num">${summary.content_count || 0}</div><div class="mini-card-sub">piezas en el calendario</div></div>
+    `;
+  } catch (e) {
+    console.error('Error cargando el resumen del home', e);
+    dash.querySelectorAll('.mini-card-value').forEach(el => el.textContent = '—');
+    dash.querySelectorAll('.mini-card-sub').forEach(el => el.textContent = 'No se pudo cargar');
+  }
+
+  const grid = document.getElementById('home-services-grid');
+  grid.innerHTML = Object.keys(AGENT_META).map(key => {
+    const meta = AGENT_META[key];
+    const config = (currentState.agentConfigs && currentState.agentConfigs[key]) || DEFAULTS[key];
+    const status = (currentState.agentStatus && currentState.agentStatus[key]) || { status: 'NUNCA_EJECUTADO', execution_count: 0, last_action: '' };
+    return `
+      <div class="service-row" data-key="${key}">
+        <div class="avatar ${meta.cls}" style="width:40px;height:40px;font-size:12px;"><div class="avatar-ring"></div>${meta.initials}</div>
+        <div class="service-info">
+          <div class="service-name">${escapeHtml(config.name)} · ${escapeHtml(meta.short)}</div>
+          <div class="service-detail">${escapeHtml(status.last_action || 'Todavía no ha corrido')}</div>
+        </div>
+        <div class="service-stat">
+          <div class="service-stat-value num">${status.execution_count || 0}</div>
+          <div class="service-stat-label">ejecuciones</div>
+        </div>
+      </div>`;
+  }).join('');
+  grid.querySelectorAll('.service-row').forEach(row => {
+    row.addEventListener('click', () => { location.hash = `agent/${row.dataset.key}`; });
+  });
+}
+
 function hideAllPages() {
+  document.getElementById('home-page').style.display = 'none';
   document.getElementById('dashboard-page').style.display = 'none';
   document.getElementById('agent-page').classList.remove('show');
   document.getElementById('email-crm-page').classList.remove('show');
+  document.querySelectorAll('.proj-active-link').forEach(l => l.classList.remove('current'));
+}
+
+function showHomeView() {
+  hideAllPages();
+  document.getElementById('home-page').style.display = 'block';
+  document.getElementById('nav-link-home').classList.add('current');
+  window.scrollTo(0, 0);
+  renderHome();
 }
 
 function showDashboardView() {
   hideAllPages();
   document.getElementById('dashboard-page').style.display = 'block';
+  document.getElementById('nav-link-agentes').classList.add('current');
   window.scrollTo(0, 0);
 }
 
@@ -1040,6 +1182,7 @@ function showAgentPageView(key) {
 function showEmailCrmView() {
   hideAllPages();
   document.getElementById('email-crm-page').classList.add('show');
+  document.getElementById('nav-link-crm').classList.add('current');
   window.scrollTo(0, 0);
   initEmailCrm();
 }
@@ -1050,8 +1193,10 @@ function router() {
     showAgentPageView(agentMatch[1]);
   } else if (location.hash === '#email-crm') {
     showEmailCrmView();
-  } else {
+  } else if (location.hash === '#agentes') {
     showDashboardView();
+  } else {
+    showHomeView();
   }
 }
 
@@ -1597,7 +1742,6 @@ function wireEmailCrmEvents() {
   });
 }
 
-document.getElementById('crm-nav-entry').addEventListener('click', () => { location.hash = 'email-crm'; });
 document.getElementById('crm-page-back').addEventListener('click', () => { location.hash = ''; });
 
 document.getElementById('agent-page-back').addEventListener('click', () => { location.hash = ''; });
