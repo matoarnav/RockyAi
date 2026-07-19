@@ -1,15 +1,26 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePanelData } from '../context/PanelDataContext';
 import { formatTodayEs } from '../api';
-import { AGENT_META, AGENT_FUNCTION_KEYS, DEFAULTS } from '../constants';
+import { AGENT_META, AGENT_FUNCTION_KEYS, DEFAULTS, PROJECT_HOVER_IMAGE } from '../constants';
 import type { HomeSummary } from '../types';
 import Reveal from '../components/Reveal';
 import WelcomeCard from '../components/WelcomeCard';
 
 export default function Home() {
   const { activeProjectId } = usePanelData();
-  return <div className="main">{activeProjectId ? <ProjectDashboard /> : <WelcomeCard />}</div>;
+  const [hoveredProjectId, setHoveredProjectId] = useState<string | null>(null);
+  const hoverImage = hoveredProjectId ? PROJECT_HOVER_IMAGE[hoveredProjectId] : undefined;
+
+  return (
+    <div
+      className="main"
+      data-hovering={hoverImage ? 'true' : undefined}
+      style={hoverImage ? ({ '--hover-bg': `url(${hoverImage})` } as CSSProperties) : undefined}
+    >
+      {activeProjectId ? <ProjectDashboard /> : <WelcomeCard onProjectHover={setHoveredProjectId} />}
+    </div>
+  );
 }
 
 function ProjectDashboard() {

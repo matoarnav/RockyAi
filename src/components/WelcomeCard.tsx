@@ -1,15 +1,10 @@
-import { useEffect, useState, type CSSProperties } from 'react';
+import { useEffect, useState } from 'react';
 import { usePanelData } from '../context/PanelDataContext';
 import { callAction } from '../api';
 import { AGENT_META } from '../constants';
 import type { AgencyOverview, AgentKey } from '../types';
 
-const PROJECT_HOVER_IMAGE: Record<string, string> = {
-  'chile-fly-fishing': '/chile-fly-fishing-hover.avif',
-  'alto-castillo': '/alto-castillo-hover.avif',
-};
-
-export default function WelcomeCard() {
+export default function WelcomeCard({ onProjectHover }: { onProjectHover: (id: string | null) => void }) {
   const { projects, setActiveProjectId } = usePanelData();
   const [overview, setOverview] = useState<AgencyOverview | null>(null);
   const [overviewError, setOverviewError] = useState(false);
@@ -60,20 +55,20 @@ export default function WelcomeCard() {
           <div className="welcome-projects">
             <div className="welcome-projects-label">Proyectos vigentes</div>
             <div className="welcome-projects-row">
-              {projects.map((p) => {
-                const hoverImage = PROJECT_HOVER_IMAGE[p.id];
-                return (
-                  <button
-                    key={p.id}
-                    type="button"
-                    className="welcome-project-btn"
-                    style={hoverImage ? ({ '--hover-bg': `url(${hoverImage})` } as CSSProperties) : undefined}
-                    onClick={() => setActiveProjectId(p.id)}
-                  >
-                    <span>{p.name}</span>
-                  </button>
-                );
-              })}
+              {projects.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  className="welcome-project-btn"
+                  onMouseEnter={() => onProjectHover(p.id)}
+                  onMouseLeave={() => onProjectHover(null)}
+                  onFocus={() => onProjectHover(p.id)}
+                  onBlur={() => onProjectHover(null)}
+                  onClick={() => setActiveProjectId(p.id)}
+                >
+                  <span>{p.name}</span>
+                </button>
+              ))}
             </div>
           </div>
         )}

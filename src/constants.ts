@@ -49,3 +49,8 @@ export const DEFAULT_PROJECTS: Project[] = [
 ];
 
 export const DOW_LABELS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+
+export const PROJECT_HOVER_IMAGE: Record<string, string> = {
+  'chile-fly-fishing': '/chile-fly-fishing-hover.avif',
+  'alto-castillo': '/alto-castillo-hover.avif',
+};
