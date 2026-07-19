@@ -1,14 +1,17 @@
-import { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useRef, useState } from 'react';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { usePanelData } from '../context/PanelDataContext';
 import { AGENT_META, AGENT_FUNCTION_KEYS, TOOL_META, TOOL_KEYS, PROJECT_LOGO } from '../constants';
+import { useSlidingIndicator } from '../hooks/useSlidingIndicator';
 import type { AgentKey, ToolKey } from '../types';
 
 export default function Sidebar() {
   const { logout } = useAuth();
   const { projects, activeProjectId, activeProjectName, activeProject, deleteProject, addProject } = usePanelData();
   const navigate = useNavigate();
+  const location = useLocation();
+  const activeLinksRef = useRef<HTMLDivElement>(null);
 
   function goHome() {
     navigate('/');
@@ -44,6 +47,7 @@ export default function Sidebar() {
   }
 
   const activeTools = activeProject?.tools?.length ? activeProject.tools : TOOL_KEYS;
+  useSlidingIndicator(activeLinksRef, '.proj-link.current', 'vertical', [location.pathname, activeProjectId, activeTools.join(',')]);
 
   return (
     <div className="sidebar">
@@ -154,7 +158,8 @@ export default function Sidebar() {
             )}
             <div className="proj-active-label">Trabajando en</div>
             <div className="proj-active-name">{activeProjectName}</div>
-            <div className="proj-active-links">
+            <div className="proj-active-links" ref={activeLinksRef}>
+              <div className="slide-indicator slide-indicator-v" />
               <NavLink to={`/p/${activeProjectId}`} end className={({ isActive }) => `proj-link${isActive ? ' current' : ''}`}>
                 <span className="ico">◆</span> Resumen
               </NavLink>
