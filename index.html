@@ -282,6 +282,112 @@ body{
 .post-popup-field-value{ font-size:12.5px; color: var(--dim); line-height:1.6; white-space:pre-wrap; }
 .post-popup-hashtags{ display:flex; flex-wrap:wrap; gap:6px; }
 .post-popup-hashtag{ font-size:11px; color: var(--sage); background: rgba(125,143,106,0.12); padding:2px 8px; border-radius:10px; }
+
+/* ---------- CRM Email Marketing ---------- */
+.crm-nav-entry{
+  margin-top:6px; padding:12px 13px; border-radius:8px; background:#241d15; color:#eee6d8; cursor:pointer;
+  transition:opacity .15s;
+}
+.crm-nav-entry:hover{ opacity:0.88; }
+.crm-nav-entry-label{ font-size:8.5px; letter-spacing:0.1em; text-transform:uppercase; color:#a3937c; margin-bottom:3px; }
+.crm-nav-entry-title{ font-family:'Anton', sans-serif; font-size:12.5px; }
+.crm-nav-entry-arrow{ float:right; color:var(--clay); }
+
+.tabbar{ display:flex; gap:2px; margin:26px 0 28px; border-bottom:1px solid var(--line); flex-wrap:wrap; }
+.tab{
+  padding:10px 15px; font-size:12px; color:var(--dim); cursor:pointer; border-bottom:2px solid transparent; user-select:none;
+}
+.tab:hover{ color:var(--ink); }
+.tab.active{ color:var(--ink); border-bottom-color:var(--clay); font-weight:600; }
+.crm-view{ display:none; }
+.crm-view.active{ display:block; }
+
+.btn{
+  font-family:'Inter', sans-serif; font-size:12.5px; font-weight:600; border-radius:7px; cursor:pointer;
+  padding:9px 16px; border:1px solid transparent; display:inline-flex; align-items:center; gap:7px;
+  transition:opacity .15s, background .15s;
+}
+.btn-primary{ background:var(--clay); color:var(--ink); }
+.btn-primary:hover{ opacity:0.9; }
+.btn-primary:disabled{ opacity:0.5; cursor:default; }
+.btn-ghost{ background:transparent; color:var(--dim); border-color:var(--line); }
+.btn-ghost:hover{ color:var(--ink); border-color:var(--dim-2); }
+.btn-sm{ padding:6px 11px; font-size:11px; }
+
+.crm-card{
+  background-image: linear-gradient(165deg, rgba(40,32,22,0.78), rgba(16,13,9,0.88));
+  backdrop-filter: blur(14px) saturate(1.1); -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  border:1px solid var(--line); border-radius:10px; box-shadow: 0 4px 24px rgba(0,0,0,0.35);
+}
+
+table{ width:100%; border-collapse:collapse; }
+th{ text-align:left; font-size:9px; letter-spacing:0.08em; text-transform:uppercase; color:var(--dim-2); padding:11px 16px; border-bottom:1px solid var(--line); font-weight:500; }
+td{ padding:12px 16px; font-size:12px; border-bottom:1px solid var(--line); vertical-align:middle; color:var(--dim); }
+tbody tr:last-child td{ border-bottom:none; }
+tbody tr:hover{ background:rgba(255,255,255,0.02); }
+.num{ font-variant-numeric:tabular-nums; }
+.cell-name{ color:var(--ink); font-weight:500; }
+.cell-sub{ color:var(--dim-2); font-size:10.5px; margin-top:1px; }
+
+.pill{ display:inline-flex; align-items:center; gap:5px; font-size:9.5px; letter-spacing:0.03em; padding:3px 9px; border-radius:20px; text-transform:uppercase; }
+.pill-dot{ width:5px; height:5px; border-radius:50%; }
+.pill.sent, .pill.subscribed{ background:rgba(125,143,106,0.15); color:var(--sage); }
+.pill.sent .pill-dot, .pill.subscribed .pill-dot{ background:var(--sage); }
+.pill.sending, .pill.scheduled{ background:rgba(192,138,46,0.15); color:var(--ochre); }
+.pill.sending .pill-dot, .pill.scheduled .pill-dot{ background:var(--ochre); }
+.pill.draft, .pill.unsubscribed{ background:rgba(163,147,124,0.15); color:var(--dim); }
+.pill.draft .pill-dot, .pill.unsubscribed .pill-dot{ background:var(--dim); }
+.pill.bounced{ background:rgba(181,80,45,0.15); color:var(--clay); }
+.pill.bounced .pill-dot{ background:var(--clay); }
+.tag{ font-size:9.5px; color:var(--dust); background:rgba(94,117,131,0.15); padding:2px 8px; border-radius:5px; margin-right:4px; display:inline-block; }
+
+.crm-toolbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; gap:12px; flex-wrap:wrap; }
+.crm-search{ background:rgba(0,0,0,0.2); border:1px solid var(--line); border-radius:6px; color:var(--ink); padding:8px 12px; font-size:12px; width:220px; }
+.row-actions{ display:flex; gap:6px; }
+.icon-btn{ width:24px; height:24px; border-radius:6px; display:inline-flex; align-items:center; justify-content:center; color:var(--dim-2); cursor:pointer; background:transparent; border:1px solid var(--line); font-size:11px; }
+.icon-btn:hover{ color:var(--ink); border-color:var(--dim-2); }
+.icon-btn.danger:hover{ color:var(--clay); border-color:var(--clay); }
+
+.form-section{ padding:20px 22px; margin-bottom:18px; max-width:720px; }
+.form-section-title{ font-family:'Anton', sans-serif; font-size:13px; text-transform:uppercase; margin-bottom:4px; }
+.form-section-sub{ font-size:11px; color:var(--dim-2); margin-bottom:16px; }
+.crm-field{ margin-bottom:13px; }
+.crm-field label{ display:block; font-size:9px; letter-spacing:0.08em; text-transform:uppercase; color:var(--dim-2); margin-bottom:6px; }
+.crm-field input, .crm-field select, .crm-field textarea{
+  width:100%; background:rgba(0,0,0,0.2); border:1px solid var(--line); border-radius:6px; color:var(--ink);
+  padding:8px 10px; font-size:12.5px; font-family:'Inter', sans-serif;
+}
+.crm-field textarea{ min-height:110px; resize:vertical; line-height:1.6; }
+.crm-pick-row{ display:flex; align-items:center; justify-content:space-between; padding:10px 13px; border:1px solid var(--line); border-radius:7px; cursor:pointer; margin-bottom:7px; }
+.crm-pick-row.selected{ border-color:var(--clay); background:rgba(181,80,45,0.1); }
+.crm-pick-count{ font-size:10.5px; color:var(--dim-2); }
+.send-actions{ display:flex; gap:10px; padding-top:4px; }
+
+.aud-layout{ display:grid; grid-template-columns:210px 1fr; gap:18px; }
+.seg-item{ display:flex; align-items:center; justify-content:space-between; padding:10px 15px; cursor:pointer; font-size:12px; color:var(--dim); border-left:2px solid transparent; }
+.seg-item:hover{ color:var(--ink); }
+.seg-item.active{ color:var(--ink); border-left-color:var(--clay); background:rgba(181,80,45,0.08); }
+.seg-count{ font-size:10px; color:var(--dim-2); font-variant-numeric:tabular-nums; }
+
+.tpl-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+.tpl-card{ padding:0; overflow:hidden; }
+.tpl-body{ padding:14px 15px; }
+.tpl-name{ font-size:12.5px; color:var(--ink); margin-bottom:2px; }
+.tpl-meta{ font-size:10px; color:var(--dim-2); margin-bottom:11px; }
+.tpl-actions{ display:flex; gap:7px; align-items:center; }
+.tpl-new-card{
+  border:1.5px dashed var(--line); border-radius:10px; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:8px; min-height:110px; cursor:pointer; color:var(--dim-2);
+}
+.tpl-new-card:hover{ border-color:var(--clay); color:var(--clay); }
+
+.funnel-row{ display:grid; grid-template-columns:110px 1fr 56px; align-items:center; gap:12px; margin-bottom:10px; }
+.funnel-label{ font-size:11px; color:var(--dim); }
+.funnel-bar-track{ height:20px; background:rgba(255,255,255,0.04); border-radius:5px; overflow:hidden; }
+.funnel-bar-fill{ height:100%; background:linear-gradient(90deg,var(--clay),var(--ochre)); border-radius:5px; }
+.funnel-value{ text-align:right; font-size:11.5px; font-variant-numeric:tabular-nums; color:var(--ink); }
+
+.empty-state{ padding:34px 20px; text-align:center; color:var(--dim-2); font-size:12px; }
 </style>
 </head>
 <body>
@@ -319,13 +425,20 @@ body{
     <div class="add-project" id="add-project-toggle">+ Nuevo proyecto</div>
     <input class="add-project-input" id="new-project-name" placeholder="Nombre del proyecto" style="display:none;" />
   </div>
+  <div>
+    <div class="nav-label">Herramientas</div>
+    <div class="crm-nav-entry" id="crm-nav-entry">
+      <div class="crm-nav-entry-label">CRM</div>
+      <div class="crm-nav-entry-title">Email Marketing <span class="crm-nav-entry-arrow">→</span></div>
+    </div>
+  </div>
   <div class="sidebar-foot">
     Cuenta AWS<br>chileflyfishing &middot; us-east-2<br>Gasto del mes: $0 USD
     <div style="margin-top:10px;"><a href="#" class="logout-link" id="logout-link">Cerrar sesión</a></div>
   </div>
 </div>
 
-<div class="main">
+<div class="main" id="dashboard-page">
   <div class="eyebrow">Proyecto activo</div>
   <div class="page-title">Chile Fly Fishing</div>
   <div class="page-sub">clientes/chile-fly-fishing &middot; 4 agentes desplegados y validados</div>
@@ -385,6 +498,140 @@ body{
       <textarea id="agent-modal-manual-input" placeholder="Instrucción opcional para esta ejecución puntual..."></textarea>
       <button class="manual-invoke-btn" id="agent-modal-manual-btn">Ejecutar invocación manual</button>
       <div class="manual-invoke-msg" id="agent-modal-manual-msg"></div>
+    </div>
+  </div>
+</div>
+
+<div class="main agent-page" id="email-crm-page">
+  <button class="agent-page-back" id="crm-page-back">&larr; Volver al panel</button>
+  <div class="eyebrow">CRM Email Marketing</div>
+  <div class="page-title">Chile Fly Fishing</div>
+  <div class="page-sub" id="crm-page-sub">clientes/chile-fly-fishing</div>
+
+  <div class="tabbar">
+    <div class="tab active" data-crm-tab="resumen">Resumen</div>
+    <div class="tab" data-crm-tab="campanas">Campañas</div>
+    <div class="tab" data-crm-tab="nueva">Nueva campaña</div>
+    <div class="tab" data-crm-tab="audiencias">Audiencias</div>
+    <div class="tab" data-crm-tab="templates">Templates</div>
+    <div class="tab" data-crm-tab="metricas">Métricas</div>
+  </div>
+
+  <!-- Resumen -->
+  <div class="crm-view active" id="crm-view-resumen">
+    <div class="kpi-row" id="crm-kpi-row"></div>
+    <div class="crm-card" style="padding:20px 20px 6px;">
+      <div class="desc-label">Actividad reciente</div>
+      <div id="crm-resumen-recent"></div>
+    </div>
+  </div>
+
+  <!-- Campañas -->
+  <div class="crm-view" id="crm-view-campanas">
+    <div class="crm-toolbar">
+      <input class="crm-search" id="crm-campaign-search" placeholder="Buscar campaña...">
+      <button class="btn btn-primary" id="crm-goto-nueva">+ Nueva campaña</button>
+    </div>
+    <div class="crm-card" style="overflow-x:auto;">
+      <table>
+        <thead><tr>
+          <th>Campaña</th><th>Estado</th><th>Fecha</th><th class="num">Enviados</th><th class="num">Apertura</th><th class="num">Clics</th><th class="num">Rebotes</th><th></th>
+        </tr></thead>
+        <tbody id="crm-campaigns-tbody"></tbody>
+      </table>
+      <div class="empty-state" id="crm-campaigns-empty" style="display:none;">Todavía no hay campañas — crea la primera desde "+ Nueva campaña".</div>
+    </div>
+  </div>
+
+  <!-- Nueva campaña -->
+  <div class="crm-view" id="crm-view-nueva">
+    <div class="crm-card form-section">
+      <div class="form-section-title">1 · Información de la campaña</div>
+      <div class="form-section-sub">Nombre interno para identificarla en el histórico — los destinatarios no lo ven.</div>
+      <div class="crm-field"><label>Nombre interno</label><input id="crm-new-name" placeholder="Ej. Últimos cupos — agosto"></div>
+      <div class="crm-field"><label>Asunto del correo</label><input id="crm-new-subject" placeholder="Lo que ve el destinatario en su bandeja de entrada"></div>
+    </div>
+
+    <div class="crm-card form-section">
+      <div class="form-section-title">2 · Contenido</div>
+      <div class="form-section-sub">Elige un template como base (opcional) y ajusta el cuerpo del correo. Variables disponibles: <code>{{name}}</code>, <code>{{unsubscribe_link}}</code>.</div>
+      <div class="crm-field"><label>Template base</label>
+        <select id="crm-new-template-pick"><option value="">Empezar en blanco</option></select>
+      </div>
+      <div class="crm-field"><label>Cuerpo del correo (HTML)</label><textarea id="crm-new-body" placeholder="&lt;h1&gt;Hola {{name}}&lt;/h1&gt;..."></textarea></div>
+    </div>
+
+    <div class="crm-card form-section">
+      <div class="form-section-title">3 · Audiencia</div>
+      <div class="form-section-sub">¿A quién le llega esta campaña? Nunca incluye contactos no-suscritos o rebotados, sin importar el segmento.</div>
+      <div id="crm-new-audience-picks"></div>
+    </div>
+
+    <div class="crm-card form-section">
+      <div class="form-section-title">4 · Enviar</div>
+      <div class="form-section-sub">Revisa antes de confirmar — no se puede deshacer un envío ya realizado.</div>
+      <div class="send-actions">
+        <button class="btn btn-primary" id="crm-send-now">Enviar ahora</button>
+        <button class="btn btn-ghost" id="crm-save-draft">Guardar borrador</button>
+      </div>
+      <div class="manual-invoke-msg" id="crm-new-msg"></div>
+    </div>
+  </div>
+
+  <!-- Audiencias -->
+  <div class="crm-view" id="crm-view-audiencias">
+    <div class="aud-layout">
+      <div class="crm-card" style="padding:8px 0;">
+        <div id="crm-segments-list"></div>
+      </div>
+      <div>
+        <div class="crm-toolbar">
+          <input class="crm-search" id="crm-contact-search" placeholder="Buscar contacto...">
+          <button class="btn btn-primary btn-sm" id="crm-add-contact-btn">+ Agregar contacto</button>
+        </div>
+        <div class="crm-card form-section" id="crm-add-contact-form" style="display:none; max-width:none;">
+          <div class="crm-field"><label>Nombre</label><input id="crm-contact-name"></div>
+          <div class="crm-field"><label>Email</label><input id="crm-contact-email" placeholder="nombre@dominio.com"></div>
+          <div class="crm-field"><label>Tags (separados por coma)</label><input id="crm-contact-tags" placeholder="cliente anterior, VIP"></div>
+          <div class="send-actions">
+            <button class="btn btn-primary btn-sm" id="crm-contact-save">Guardar contacto</button>
+            <button class="btn btn-ghost btn-sm" id="crm-contact-cancel">Cancelar</button>
+          </div>
+        </div>
+        <div class="crm-card" style="overflow-x:auto;">
+          <table>
+            <thead><tr><th>Contacto</th><th>Estado</th><th>Tags</th><th>Alta</th><th></th></tr></thead>
+            <tbody id="crm-contacts-tbody"></tbody>
+          </table>
+          <div class="empty-state" id="crm-contacts-empty" style="display:none;">Sin contactos en este segmento todavía.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Templates -->
+  <div class="crm-view" id="crm-view-templates">
+    <div class="crm-toolbar"><div class="desc-label" id="crm-templates-count">0 templates</div></div>
+    <div class="tpl-grid" id="crm-templates-grid"></div>
+    <div class="crm-card form-section" id="crm-template-form" style="display:none; margin-top:16px;">
+      <div class="form-section-title" id="crm-template-form-title">Nuevo template</div>
+      <input type="hidden" id="crm-template-id">
+      <div class="crm-field"><label>Nombre</label><input id="crm-template-name" placeholder="Ej. Newsletter mensual"></div>
+      <div class="crm-field"><label>Asunto por defecto</label><input id="crm-template-subject"></div>
+      <div class="crm-field"><label>Cuerpo (HTML)</label><textarea id="crm-template-body" placeholder="&lt;h1&gt;Hola {{name}}&lt;/h1&gt;..."></textarea></div>
+      <div class="send-actions">
+        <button class="btn btn-primary btn-sm" id="crm-template-save">Guardar template</button>
+        <button class="btn btn-ghost btn-sm" id="crm-template-cancel">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Metricas -->
+  <div class="crm-view" id="crm-view-metricas">
+    <div class="crm-card" style="padding:20px 22px; margin-bottom:18px;" id="crm-funnel-wrap"></div>
+    <div class="crm-card" style="padding:18px 20px;">
+      <div class="desc-label">Apertura por campaña</div>
+      <div id="crm-metrics-table"></div>
     </div>
   </div>
 </div>
@@ -770,24 +1017,39 @@ function renderAgentPage(key) {
   document.getElementById('agent-modal-manual-msg').textContent = '';
 }
 
-function showDashboardView() {
+function hideAllPages() {
+  document.getElementById('dashboard-page').style.display = 'none';
   document.getElementById('agent-page').classList.remove('show');
-  document.querySelector('.main:not(.agent-page)').style.display = 'block';
+  document.getElementById('email-crm-page').classList.remove('show');
+}
+
+function showDashboardView() {
+  hideAllPages();
+  document.getElementById('dashboard-page').style.display = 'block';
   window.scrollTo(0, 0);
 }
 
 function showAgentPageView(key) {
   if (!AGENT_META[key]) { showDashboardView(); return; }
   renderAgentPage(key);
-  document.querySelector('.main:not(.agent-page)').style.display = 'none';
+  hideAllPages();
   document.getElementById('agent-page').classList.add('show');
   window.scrollTo(0, 0);
 }
 
+function showEmailCrmView() {
+  hideAllPages();
+  document.getElementById('email-crm-page').classList.add('show');
+  window.scrollTo(0, 0);
+  initEmailCrm();
+}
+
 function router() {
-  const match = location.hash.match(/^#agent\/(.+)$/);
-  if (match) {
-    showAgentPageView(match[1]);
+  const agentMatch = location.hash.match(/^#agent\/(.+)$/);
+  if (agentMatch) {
+    showAgentPageView(agentMatch[1]);
+  } else if (location.hash === '#email-crm') {
+    showEmailCrmView();
   } else {
     showDashboardView();
   }
@@ -910,6 +1172,433 @@ function openPostPopup(piece) {
 function closePostPopup() {
   document.getElementById('post-popup-overlay').classList.remove('show');
 }
+
+// --- CRM Email Marketing ---
+
+let crmData = { contacts: [], templates: [], campaigns: [] };
+let crmActiveSegment = 'all';
+let crmSelectedAudienceKey = 'all';
+let crmEditingTemplateId = '';
+let crmEventsWired = false;
+
+async function crmApi(action, extra) {
+  const res = await fetch(CONFIG_API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify({ __action: action, ...(extra || {}) })
+  });
+  if (res.status === 401) { handleUnauthorized(); throw new Error('unauthorized'); }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || 'Error de conexión');
+  return data;
+}
+
+async function loadEmailCrmData() {
+  const [c, t, k] = await Promise.all([
+    crmApi('list_email_contacts'),
+    crmApi('list_email_templates'),
+    crmApi('list_email_campaigns'),
+  ]);
+  crmData.contacts = c.contacts || [];
+  crmData.templates = t.templates || [];
+  crmData.campaigns = k.campaigns || [];
+}
+
+async function initEmailCrm() {
+  document.getElementById('crm-page-sub').textContent =
+    `clientes/chile-fly-fishing · ${crmData.contacts.length || 0} contactos`;
+  try {
+    await loadEmailCrmData();
+  } catch (e) {
+    console.error('Error cargando datos del CRM', e);
+  }
+  renderCrmAll();
+  if (!crmEventsWired) { wireEmailCrmEvents(); crmEventsWired = true; }
+}
+
+function goCrmTab(name) {
+  document.querySelectorAll('#email-crm-page .tab').forEach(t => t.classList.toggle('active', t.dataset.crmTab === name));
+  document.querySelectorAll('#email-crm-page .crm-view').forEach(v => v.classList.toggle('active', v.id === 'crm-view-' + name));
+  window.scrollTo(0, 0);
+}
+
+function renderCrmAll() {
+  document.getElementById('crm-page-sub').textContent =
+    `clientes/chile-fly-fishing · ${crmData.contacts.length} contactos · ${crmData.templates.length} templates · ${crmData.campaigns.length} campañas`;
+  renderCrmResumen();
+  renderCrmCampaigns();
+  renderCrmSegments();
+  renderCrmContacts();
+  renderCrmTemplates();
+  renderCrmTemplatePickOptions();
+  renderCrmAudiencePicks();
+  renderCrmMetrics();
+}
+
+function crmComputeTags() {
+  const tagSet = new Set();
+  crmData.contacts.forEach(c => (c.tags || []).forEach(t => tagSet.add(t)));
+  return Array.from(tagSet).sort();
+}
+
+function crmManagementSegments() {
+  const segs = [
+    { key: 'all', label: 'Todos', filter: () => true },
+    { key: 'subscribed', label: 'Suscritos activos', filter: c => c.status === 'subscribed' },
+    { key: 'unsubscribed', label: 'No suscritos', filter: c => c.status === 'unsubscribed' },
+    { key: 'bounced', label: 'Rebotados', filter: c => c.status === 'bounced' },
+  ];
+  crmComputeTags().forEach(tag => segs.push({ key: 'tag:' + tag, label: tag, filter: c => (c.tags || []).includes(tag) }));
+  return segs;
+}
+
+// --- Resumen ---
+
+function crmSentCampaigns() {
+  return crmData.campaigns.filter(c => c.status === 'sent');
+}
+
+function renderCrmResumen() {
+  const sent = crmSentCampaigns();
+  const totals = sent.reduce((acc, c) => {
+    const s = c.stats || {};
+    acc.enviados += s.enviados || 0;
+    acc.aperturas += s.aperturas || 0;
+    acc.rebotes += s.rebotes || 0;
+    return acc;
+  }, { enviados: 0, aperturas: 0, rebotes: 0 });
+
+  const activeContacts = crmData.contacts.filter(c => c.status === 'subscribed').length;
+  const openRate = totals.enviados ? ((totals.aperturas / totals.enviados) * 100).toFixed(1) : '—';
+  const bounceRate = totals.enviados ? ((totals.rebotes / totals.enviados) * 100).toFixed(1) : '—';
+  const thisMonth = new Date().toISOString().slice(0, 7);
+  const sentThisMonth = sent.filter(c => (c.sent_at || '').slice(0, 7) === thisMonth).length;
+
+  document.getElementById('crm-kpi-row').innerHTML = `
+    <div class="kpi"><div class="kpi-label">Contactos activos</div><div class="kpi-value num">${activeContacts}</div></div>
+    <div class="kpi"><div class="kpi-label">Tasa de apertura promedio</div><div class="kpi-value num">${openRate === '—' ? '—' : openRate + '%'}</div></div>
+    <div class="kpi"><div class="kpi-label">Campañas enviadas (mes)</div><div class="kpi-value num">${sentThisMonth}</div></div>
+    <div class="kpi"><div class="kpi-label">Tasa de rebote</div><div class="kpi-value num">${bounceRate === '—' ? '—' : bounceRate + '%'}</div></div>
+  `;
+
+  const recent = crmData.campaigns.slice().sort((a, b) => (b.created_at || '').localeCompare(a.created_at || '')).slice(0, 5);
+  const recentHtml = recent.length ? recent.map(c => {
+    const s = c.stats || {};
+    const rate = (c.status === 'sent' && s.enviados) ? `${((s.aperturas || 0) / s.enviados * 100).toFixed(1)}% apertura` : crmStatusLabel(c.status);
+    return `
+      <div class="timeline-item">
+        <div>
+          <div class="timeline-text">${escapeHtml(c.name || 'Sin nombre')}</div>
+          <div class="timeline-when">${formatWhen(c.sent_at || c.created_at)}</div>
+        </div>
+        <span class="pill ${c.status}" style="margin-left:auto;"><span class="pill-dot"></span>${escapeHtml(rate)}</span>
+      </div>`;
+  }).join('') : '<div class="empty-state">Todavía no hay campañas.</div>';
+  document.getElementById('crm-resumen-recent').innerHTML = recentHtml;
+}
+
+function crmStatusLabel(status) {
+  return { sent: 'Enviada', sending: 'Enviando', draft: 'Borrador' }[status] || status;
+}
+
+// --- Campañas ---
+
+function renderCrmCampaigns() {
+  const tbody = document.getElementById('crm-campaigns-tbody');
+  const list = crmData.campaigns.slice().sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
+  document.getElementById('crm-campaigns-empty').style.display = list.length ? 'none' : 'block';
+  tbody.innerHTML = list.map(c => {
+    const s = c.stats || {};
+    const openPct = (c.status === 'sent' && s.enviados) ? ((s.aperturas || 0) / s.enviados * 100).toFixed(1) + '%' : '—';
+    const clickPct = (c.status === 'sent' && s.enviados) ? ((s.clics || 0) / s.enviados * 100).toFixed(1) + '%' : '—';
+    const bouncePct = (c.status === 'sent' && s.enviados) ? ((s.rebotes || 0) / s.enviados * 100).toFixed(1) + '%' : '—';
+    return `
+      <tr>
+        <td><div class="cell-name">${escapeHtml(c.name || 'Sin nombre')}</div><div class="cell-sub">${escapeHtml(c.subject || '')}</div></td>
+        <td><span class="pill ${c.status}"><span class="pill-dot"></span>${crmStatusLabel(c.status)}</span></td>
+        <td class="num">${formatWhen(c.sent_at || c.created_at) || '—'}</td>
+        <td class="num">${c.status === 'sent' ? (s.enviados || 0) : '—'}</td>
+        <td class="num">${openPct}</td>
+        <td class="num">${clickPct}</td>
+        <td class="num">${bouncePct}</td>
+        <td><div class="row-actions"><span class="icon-btn danger crm-delete-campaign" data-id="${c.campaign_id}" title="Eliminar">🗑</span></div></td>
+      </tr>`;
+  }).join('');
+
+  tbody.querySelectorAll('.crm-delete-campaign').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('¿Eliminar esta campaña del histórico?')) return;
+      await crmApi('delete_email_campaign', { campaign_id: btn.dataset.id });
+      await loadEmailCrmData();
+      renderCrmAll();
+    });
+  });
+}
+
+// --- Nueva campaña ---
+
+function renderCrmTemplatePickOptions() {
+  const select = document.getElementById('crm-new-template-pick');
+  const current = select.value;
+  select.innerHTML = '<option value="">Empezar en blanco</option>' +
+    crmData.templates.map(t => `<option value="${t.template_id}">${escapeHtml(t.name)}</option>`).join('');
+  select.value = current;
+}
+
+function renderCrmAudiencePicks() {
+  const wrap = document.getElementById('crm-new-audience-picks');
+  const subscribed = crmData.contacts.filter(c => c.status === 'subscribed');
+  const options = [{ key: 'all', label: 'Todos los suscritos', count: subscribed.length }]
+    .concat(crmComputeTags().map(tag => ({
+      key: 'tag:' + tag,
+      label: tag,
+      count: subscribed.filter(c => (c.tags || []).includes(tag)).length,
+    })));
+  wrap.innerHTML = options.map(o => `
+    <div class="crm-pick-row ${o.key === crmSelectedAudienceKey ? 'selected' : ''}" data-key="${o.key}">
+      <span>${escapeHtml(o.label)}</span><span class="crm-pick-count num">${o.count} contactos</span>
+    </div>`).join('');
+  wrap.querySelectorAll('.crm-pick-row').forEach(row => {
+    row.addEventListener('click', () => {
+      crmSelectedAudienceKey = row.dataset.key;
+      renderCrmAudiencePicks();
+    });
+  });
+}
+
+function crmSegmentFromKey(key) {
+  if (key.startsWith('tag:')) return { type: 'tag', value: key.slice(4) };
+  return { type: 'all' };
+}
+
+async function crmSubmitCampaign(sendAction) {
+  const name = document.getElementById('crm-new-name').value.trim();
+  const subject = document.getElementById('crm-new-subject').value.trim();
+  const html_body = document.getElementById('crm-new-body').value;
+  const template_id = document.getElementById('crm-new-template-pick').value;
+  const msg = document.getElementById('crm-new-msg');
+
+  if (!name || !subject || !html_body.trim()) {
+    msg.style.color = 'var(--clay)';
+    msg.textContent = 'Falta nombre, asunto o contenido.';
+    return;
+  }
+
+  const btn = sendAction === 'now' ? document.getElementById('crm-send-now') : document.getElementById('crm-save-draft');
+  btn.disabled = true;
+  msg.style.color = 'var(--moss)';
+  msg.textContent = sendAction === 'now' ? 'Enviando...' : 'Guardando...';
+
+  try {
+    await crmApi('create_email_campaign', {
+      name, subject, html_body, template_id,
+      segment: crmSegmentFromKey(crmSelectedAudienceKey),
+      send_action: sendAction,
+    });
+    msg.textContent = sendAction === 'now'
+      ? 'Campaña disparada — el estado se actualizará en unos minutos.'
+      : 'Borrador guardado.';
+    document.getElementById('crm-new-name').value = '';
+    document.getElementById('crm-new-subject').value = '';
+    document.getElementById('crm-new-body').value = '';
+    document.getElementById('crm-new-template-pick').value = '';
+    await loadEmailCrmData();
+    renderCrmAll();
+    goCrmTab('campanas');
+  } catch (e) {
+    msg.style.color = 'var(--clay)';
+    msg.textContent = 'Error: ' + e.message;
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// --- Audiencias ---
+
+function renderCrmSegments() {
+  const wrap = document.getElementById('crm-segments-list');
+  const segs = crmManagementSegments();
+  wrap.innerHTML = segs.map(s => `
+    <div class="seg-item ${s.key === crmActiveSegment ? 'active' : ''}" data-key="${s.key}">
+      <span>${escapeHtml(s.label)}</span><span class="seg-count num">${crmData.contacts.filter(s.filter).length}</span>
+    </div>`).join('');
+  wrap.querySelectorAll('.seg-item').forEach(item => {
+    item.addEventListener('click', () => {
+      crmActiveSegment = item.dataset.key;
+      renderCrmSegments();
+      renderCrmContacts();
+    });
+  });
+}
+
+function renderCrmContacts() {
+  const seg = crmManagementSegments().find(s => s.key === crmActiveSegment) || crmManagementSegments()[0];
+  const search = (document.getElementById('crm-contact-search').value || '').toLowerCase();
+  const list = crmData.contacts.filter(seg.filter).filter(c =>
+    !search || (c.email || '').toLowerCase().includes(search) || (c.name || '').toLowerCase().includes(search)
+  );
+  document.getElementById('crm-contacts-empty').style.display = list.length ? 'none' : 'block';
+  document.getElementById('crm-contacts-tbody').innerHTML = list.map(c => `
+    <tr>
+      <td><div class="cell-name">${escapeHtml(c.name || '(sin nombre)')}</div><div class="cell-sub">${escapeHtml(c.email)}</div></td>
+      <td><span class="pill ${c.status}"><span class="pill-dot"></span>${crmContactStatusLabel(c.status)}</span></td>
+      <td>${(c.tags || []).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</td>
+      <td class="num">${c.created_at || '—'}</td>
+      <td><div class="row-actions"><span class="icon-btn danger crm-delete-contact" data-email="${escapeHtml(c.email)}" title="Eliminar">🗑</span></div></td>
+    </tr>`).join('');
+
+  document.querySelectorAll('.crm-delete-contact').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!confirm(`¿Eliminar a ${btn.dataset.email} de la audiencia?`)) return;
+      await crmApi('delete_email_contact', { email: btn.dataset.email });
+      await loadEmailCrmData();
+      renderCrmAll();
+    });
+  });
+}
+
+function crmContactStatusLabel(status) {
+  return { subscribed: 'Suscrito', unsubscribed: 'No suscrito', bounced: 'Rebotado' }[status] || status;
+}
+
+async function crmSaveContact() {
+  const name = document.getElementById('crm-contact-name').value.trim();
+  const email = document.getElementById('crm-contact-email').value.trim();
+  const tags = document.getElementById('crm-contact-tags').value.split(',').map(t => t.trim()).filter(Boolean);
+  if (!email || !email.includes('@')) { alert('Ingresa un email válido.'); return; }
+  await crmApi('save_email_contact', { name, email, tags, status: 'subscribed' });
+  document.getElementById('crm-contact-name').value = '';
+  document.getElementById('crm-contact-email').value = '';
+  document.getElementById('crm-contact-tags').value = '';
+  document.getElementById('crm-add-contact-form').style.display = 'none';
+  await loadEmailCrmData();
+  renderCrmAll();
+}
+
+// --- Templates ---
+
+function renderCrmTemplates() {
+  document.getElementById('crm-templates-count').textContent = `${crmData.templates.length} template${crmData.templates.length === 1 ? '' : 's'}`;
+  const grid = document.getElementById('crm-templates-grid');
+  grid.innerHTML = crmData.templates.map(t => `
+    <div class="crm-card tpl-card">
+      <div class="tpl-body">
+        <div class="tpl-name">${escapeHtml(t.name)}</div>
+        <div class="tpl-meta">${t.updated_at ? formatWhen(t.updated_at) : ''}</div>
+        <div class="tpl-actions">
+          <button class="btn btn-ghost btn-sm crm-edit-template" data-id="${t.template_id}">Editar</button>
+          <span class="icon-btn danger crm-delete-template" data-id="${t.template_id}" style="margin-left:auto;" title="Eliminar">🗑</span>
+        </div>
+      </div>
+    </div>`).join('') + `<div class="tpl-new-card" id="crm-new-template-card"><div style="font-family:'Anton',sans-serif; font-size:22px;">+</div><div style="font-size:11.5px;">Nuevo template</div></div>`;
+
+  document.getElementById('crm-new-template-card').addEventListener('click', () => crmOpenTemplateForm());
+  grid.querySelectorAll('.crm-edit-template').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const t = crmData.templates.find(x => x.template_id === btn.dataset.id);
+      if (t) crmOpenTemplateForm(t);
+    });
+  });
+  grid.querySelectorAll('.crm-delete-template').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('¿Eliminar este template?')) return;
+      await crmApi('delete_email_template', { template_id: btn.dataset.id });
+      await loadEmailCrmData();
+      renderCrmAll();
+    });
+  });
+}
+
+function crmOpenTemplateForm(t) {
+  crmEditingTemplateId = t ? t.template_id : '';
+  document.getElementById('crm-template-form-title').textContent = t ? 'Editar template' : 'Nuevo template';
+  document.getElementById('crm-template-id').value = t ? t.template_id : '';
+  document.getElementById('crm-template-name').value = t ? t.name : '';
+  document.getElementById('crm-template-subject').value = t ? t.subject : '';
+  document.getElementById('crm-template-body').value = t ? t.html_body : '';
+  document.getElementById('crm-template-form').style.display = 'block';
+  document.getElementById('crm-template-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+async function crmSaveTemplate() {
+  const name = document.getElementById('crm-template-name').value.trim();
+  const subject = document.getElementById('crm-template-subject').value.trim();
+  const html_body = document.getElementById('crm-template-body').value;
+  if (!name) { alert('Ingresa un nombre para el template.'); return; }
+  await crmApi('save_email_template', { template_id: crmEditingTemplateId, name, subject, html_body });
+  document.getElementById('crm-template-form').style.display = 'none';
+  await loadEmailCrmData();
+  renderCrmAll();
+}
+
+// --- Metricas ---
+
+function renderCrmMetrics() {
+  const sent = crmSentCampaigns();
+  const totals = sent.reduce((acc, c) => {
+    const s = c.stats || {};
+    acc.enviados += s.enviados || 0;
+    acc.aperturas += s.aperturas || 0;
+    acc.clics += s.clics || 0;
+    return acc;
+  }, { enviados: 0, aperturas: 0, clics: 0 });
+
+  const funnelRow = (label, value, max) => `
+    <div class="funnel-row">
+      <span class="funnel-label">${label}</span>
+      <div class="funnel-bar-track"><div class="funnel-bar-fill" style="width:${max ? (value / max * 100) : 0}%"></div></div>
+      <span class="funnel-value num">${value}</span>
+    </div>`;
+  document.getElementById('crm-funnel-wrap').innerHTML = `
+    <div class="desc-label" style="margin-bottom:12px;">Funnel acumulado — todas las campañas enviadas</div>
+    ${funnelRow('Enviados', totals.enviados, totals.enviados)}
+    ${funnelRow('Aperturas', totals.aperturas, totals.enviados)}
+    ${funnelRow('Clics', totals.clics, totals.enviados)}
+  `;
+
+  const rows = sent.slice().sort((a, b) => (b.sent_at || '').localeCompare(a.sent_at || '')).map(c => {
+    const s = c.stats || {};
+    const rate = s.enviados ? ((s.aperturas || 0) / s.enviados * 100).toFixed(1) : '0.0';
+    return `<tr><td><div class="cell-name">${escapeHtml(c.name)}</div></td><td class="num">${s.enviados || 0}</td><td class="num">${rate}%</td><td class="num">${s.rebotes || 0}</td></tr>`;
+  }).join('');
+  document.getElementById('crm-metrics-table').innerHTML = sent.length
+    ? `<table><thead><tr><th>Campaña</th><th class="num">Enviados</th><th class="num">Apertura</th><th class="num">Rebotes</th></tr></thead><tbody>${rows}</tbody></table>`
+    : '<div class="empty-state">Todavía no hay campañas enviadas.</div>';
+}
+
+// --- Wiring (una sola vez) ---
+
+function wireEmailCrmEvents() {
+  document.querySelectorAll('#email-crm-page .tab').forEach(t => {
+    t.addEventListener('click', () => goCrmTab(t.dataset.crmTab));
+  });
+  document.getElementById('crm-goto-nueva').addEventListener('click', () => goCrmTab('nueva'));
+  document.getElementById('crm-send-now').addEventListener('click', () => crmSubmitCampaign('now'));
+  document.getElementById('crm-save-draft').addEventListener('click', () => crmSubmitCampaign('draft'));
+  document.getElementById('crm-new-template-pick').addEventListener('change', (e) => {
+    const t = crmData.templates.find(x => x.template_id === e.target.value);
+    if (t) {
+      document.getElementById('crm-new-subject').value = t.subject || '';
+      document.getElementById('crm-new-body').value = t.html_body || '';
+    }
+  });
+  document.getElementById('crm-campaign-search').addEventListener('input', renderCrmCampaigns);
+  document.getElementById('crm-contact-search').addEventListener('input', renderCrmContacts);
+  document.getElementById('crm-add-contact-btn').addEventListener('click', () => {
+    document.getElementById('crm-add-contact-form').style.display = 'block';
+  });
+  document.getElementById('crm-contact-cancel').addEventListener('click', () => {
+    document.getElementById('crm-add-contact-form').style.display = 'none';
+  });
+  document.getElementById('crm-contact-save').addEventListener('click', crmSaveContact);
+  document.getElementById('crm-template-save').addEventListener('click', crmSaveTemplate);
+  document.getElementById('crm-template-cancel').addEventListener('click', () => {
+    document.getElementById('crm-template-form').style.display = 'none';
+  });
+}
+
+document.getElementById('crm-nav-entry').addEventListener('click', () => { location.hash = 'email-crm'; });
+document.getElementById('crm-page-back').addEventListener('click', () => { location.hash = ''; });
 
 document.getElementById('agent-page-back').addEventListener('click', () => { location.hash = ''; });
 window.addEventListener('hashchange', router);
