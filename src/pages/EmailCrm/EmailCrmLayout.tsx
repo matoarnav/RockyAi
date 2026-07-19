@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { usePanelData } from '../../context/PanelDataContext';
 import { CrmDataProvider } from '../../context/CrmDataContext';
+import { TOOL_KEYS } from '../../constants';
 
 const TABS = [
   { to: '.', label: 'Resumen', end: true },
@@ -12,8 +13,14 @@ const TABS = [
 ];
 
 export default function EmailCrmLayout() {
-  const { activeProjectName, activeProjectId } = usePanelData();
+  const { activeProjectName, activeProjectId, activeProject } = usePanelData();
   const navigate = useNavigate();
+
+  const activeTools = activeProject?.tools?.length ? activeProject.tools : TOOL_KEYS;
+  if (!activeTools.includes('email-marketing')) {
+    navigate('..', { replace: true });
+    return null;
+  }
 
   return (
     <div className="main">

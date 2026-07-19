@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { usePanelData } from '../context/PanelDataContext';
-import { AGENT_META, AGENT_FUNCTION_KEYS, PROJECT_LOGO } from '../constants';
-import type { AgentKey } from '../types';
+import { AGENT_META, AGENT_FUNCTION_KEYS, TOOL_META, TOOL_KEYS, PROJECT_LOGO } from '../constants';
+import type { AgentKey, ToolKey } from '../types';
 
 export default function Sidebar() {
   const { logout } = useAuth();
-  const { projects, activeProjectId, activeProjectName, deleteProject, addProject } = usePanelData();
+  const { projects, activeProjectId, activeProjectName, activeProject, deleteProject, addProject } = usePanelData();
   const navigate = useNavigate();
 
   function goHome() {
@@ -16,25 +16,34 @@ export default function Sidebar() {
   const [adding, setAdding] = useState(false);
   const [newName, setNewName] = useState('');
   const [newAgents, setNewAgents] = useState<AgentKey[]>(AGENT_FUNCTION_KEYS);
+  const [newTools, setNewTools] = useState<ToolKey[]>(TOOL_KEYS);
 
   function toggleNewAgent(key: AgentKey) {
     setNewAgents((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]));
+  }
+
+  function toggleNewTool(key: ToolKey) {
+    setNewTools((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]));
   }
 
   function cancelAdding() {
     setAdding(false);
     setNewName('');
     setNewAgents(AGENT_FUNCTION_KEYS);
+    setNewTools(TOOL_KEYS);
   }
 
   async function commitNewProject() {
     if (newName.trim()) {
-      await addProject(newName.trim(), newAgents);
+      await addProject(newName.trim(), newAgents, newTools);
     }
     setAdding(false);
     setNewName('');
     setNewAgents(AGENT_FUNCTION_KEYS);
+    setNewTools(TOOL_KEYS);
   }
+
+  const activeTools = activeProject?.tools?.length ? activeProject.tools : TOOL_KEYS;
 
   return (
     <div className="sidebar">
@@ -98,6 +107,23 @@ export default function Sidebar() {
                 );
               })}
             </div>
+            <div className="new-project-agents-label">Herramientas para este proyecto</div>
+            <div className="new-project-tools">
+              {TOOL_KEYS.map((key) => {
+                const meta = TOOL_META[key];
+                const selected = newTools.includes(key);
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    className={`tool-chip${selected ? ' selected' : ''}`}
+                    onClick={() => toggleNewTool(key)}
+                  >
+                    <span className="ico">{meta.icon}</span> {meta.label}
+                  </button>
+                );
+              })}
+            </div>
             <div className="new-project-actions">
               <button type="button" className="btn btn-primary btn-sm" onClick={commitNewProject} disabled={!newName.trim()}>
                 Crear
@@ -112,15 +138,18 @@ export default function Sidebar() {
             <span>+</span> Agregar nuevo proyecto
           </div>
         )}
+        <NavLink to="/configuracion" className={({ isActive }) => `config-link${isActive ? ' current' : ''}`}>
+          <span className="ico">⚙</span> Configuración
+        </NavLink>
       </div>
 
       {activeProjectId ? (
         <div>
           <div className="nav-label">Proyecto activo</div>
           <div className="proj-active-panel">
-            {activeProjectId && PROJECT_LOGO[activeProjectId] && (
-              <div className="proj-active-logo-wrap">
-                <img className="proj-active-logo" src={PROJECT_LOGO[activeProjectId]} alt={activeProjectName} />
+            {PROJECT_LOGO[activeProjectId] && (
+              <div className="proj-active-logo-wrap proj-active-logo-wrap-lg">
+                <img className="proj-active-logo proj-active-logo-lg" src={PROJECT_LOGO[activeProjectId]} alt={activeProjectName} />
               </div>
             )}
             <div className="proj-active-label">Trabajando en</div>
@@ -129,36 +158,25 @@ export default function Sidebar() {
               <NavLink to={`/p/${activeProjectId}`} end className={({ isActive }) => `proj-link${isActive ? ' current' : ''}`}>
                 <span className="ico">◆</span> Resumen
               </NavLink>
-              <NavLink to={`/p/${activeProjectId}/agentes`} className={({ isActive }) => `proj-link${isActive ? ' current' : ''}`}>
-                <span className="ico">◈</span> Agentes
-              </NavLink>
+              {activeTools.includes('agentes') && (
+                <NavLink to={`/p/${activeProjectId}/agentes`} className={({ isActive }) => `proj-link${isActive ? ' current' : ''}`}>
+                  <span className="ico">◈</span> Agentes
+                </NavLink>
+              )}
+              {activeTools.includes('email-marketing') && (
+                <NavLink to={`/p/${activeProjectId}/email-crm`} className={({ isActive }) => `proj-link${isActive ? ' current' : ''}`}>
+                  <span className="ico">✉</span> Email Marketing
+                </NavLink>
+              )}
+              {activeTools.includes('metricas') && (
+                <NavLink to={`/p/${activeProjectId}/metricas`} className={({ isActive }) => `proj-link${isActive ? ' current' : ''}`}>
+                  <span className="ico">▤</span> Métricas
+                </NavLink>
+              )}
             </div>
           </div>
         </div>
       ) : null}
-
-      <div className="tools-list">
-        <div className="nav-label">Herramientas</div>
-        {activeProjectId ? (
-          <>
-            <NavLink to={`/p/${activeProjectId}/email-crm`} className={({ isActive }) => `proj-link${isActive ? ' current' : ''}`}>
-              <span className="ico">✉</span> Email Marketing
-            </NavLink>
-            <NavLink to={`/p/${activeProjectId}/metricas`} className={({ isActive }) => `proj-link${isActive ? ' current' : ''}`}>
-              <span className="ico">▤</span> Métricas
-            </NavLink>
-          </>
-        ) : (
-          <>
-            <div className="proj-link disabled-soon">
-              <span className="ico">✉</span> Email Marketing <span className="soon-badge">Sin proyecto</span>
-            </div>
-            <div className="proj-link disabled-soon">
-              <span className="ico">▤</span> Métricas <span className="soon-badge">Sin proyecto</span>
-            </div>
-          </>
-        )}
-      </div>
 
       <div className="sidebar-foot">
         Cuenta AWS

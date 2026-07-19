@@ -1,4 +1,5 @@
 export type AgentKey = 'ad' | 'an' | 'seo' | 'strategist';
+export type ToolKey = 'agentes' | 'email-marketing' | 'metricas';
 
 export interface AgentConfig {
   name: string;
@@ -51,6 +52,7 @@ export interface Project {
   name: string;
   protected: boolean;
   agents?: AgentKey[];
+  tools?: ToolKey[];
 }
 
 export interface PanelState {

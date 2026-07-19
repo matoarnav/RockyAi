@@ -1,4 +1,4 @@
-import type { AgentConfig, AgentKey, Project } from './types';
+import type { AgentConfig, AgentKey, Project, ToolKey } from './types';
 
 export const DEFAULTS: Record<AgentKey, AgentConfig> = {
   ad: {
@@ -32,6 +32,14 @@ export const AGENT_META: Record<AgentKey, { cls: string; initials: string; role:
 
 export const AGENT_FUNCTION_KEYS: AgentKey[] = ['ad', 'an', 'seo', 'strategist'];
 
+export const TOOL_META: Record<ToolKey, { label: string; icon: string }> = {
+  agentes: { label: 'Agentes', icon: '◈' },
+  'email-marketing': { label: 'Email Marketing', icon: '✉' },
+  metricas: { label: 'Métricas', icon: '▤' },
+};
+
+export const TOOL_KEYS: ToolKey[] = ['agentes', 'email-marketing', 'metricas'];
+
 export const STATUS_META: Record<string, { label: string; cls: string }> = {
   PROCESSING: { label: 'Procesando', cls: 'processing' },
   READY: { label: 'Listo', cls: 'ready' },
@@ -44,8 +52,8 @@ export function statusMeta(status?: string) {
 }
 
 export const DEFAULT_PROJECTS: Project[] = [
-  { id: 'chile-fly-fishing', name: 'Chile Fly Fishing', protected: true, agents: AGENT_FUNCTION_KEYS },
-  { id: 'alto-castillo', name: 'Alto Castillo', protected: false, agents: AGENT_FUNCTION_KEYS },
+  { id: 'chile-fly-fishing', name: 'Chile Fly Fishing', protected: true, agents: AGENT_FUNCTION_KEYS, tools: TOOL_KEYS },
+  { id: 'alto-castillo', name: 'Alto Castillo', protected: false, agents: AGENT_FUNCTION_KEYS, tools: TOOL_KEYS },
 ];
 
 export const DOW_LABELS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];

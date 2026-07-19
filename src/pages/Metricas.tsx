@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePanelData } from '../context/PanelDataContext';
 import { formatWhen } from '../api';
+import { TOOL_KEYS } from '../constants';
 import type { MetricsReport } from '../types';
 
 const RANGE_OPTIONS = [
@@ -11,7 +12,7 @@ const RANGE_OPTIONS = [
 ];
 
 export default function Metricas() {
-  const { activeProjectName, activeProjectId, scopedAction } = usePanelData();
+  const { activeProjectName, activeProjectId, activeProject, scopedAction } = usePanelData();
   const navigate = useNavigate();
   const [days, setDays] = useState(30);
   const [report, setReport] = useState<MetricsReport | null>(null);
@@ -37,6 +38,12 @@ export default function Metricas() {
       cancelled = true;
     };
   }, [days, activeProjectId, scopedAction]);
+
+  const activeTools = activeProject?.tools?.length ? activeProject.tools : TOOL_KEYS;
+  if (!activeTools.includes('metricas')) {
+    navigate('..', { replace: true });
+    return null;
+  }
 
   const openRate = report && report.email.enviados ? ((report.email.aperturas / report.email.enviados) * 100).toFixed(1) + '%' : '—';
 

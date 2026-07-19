@@ -1,8 +1,8 @@
 import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from 'react';
 import { loadState, saveState, callAction, UnauthorizedError } from '../api';
 import { useAuth } from './AuthContext';
-import { DEFAULTS, DEFAULT_PROJECTS, AGENT_FUNCTION_KEYS } from '../constants';
-import type { AgentConfig, AgentKey, AgentStatus, ContentGrid, Project } from '../types';
+import { DEFAULTS, DEFAULT_PROJECTS, AGENT_FUNCTION_KEYS, TOOL_KEYS } from '../constants';
+import type { AgentConfig, AgentKey, AgentStatus, ContentGrid, Project, ToolKey } from '../types';
 
 function slugify(name: string): string {
   return (
@@ -25,7 +25,7 @@ interface PanelDataValue {
   activeProjectName: string;
   activeProject: Project | undefined;
   setActiveProjectId: (id: string | null) => void;
-  addProject: (name: string, agents?: AgentKey[]) => Promise<void>;
+  addProject: (name: string, agents?: AgentKey[], tools?: ToolKey[]) => Promise<void>;
   deleteProject: (id: string) => Promise<void>;
   updateProject: (id: string, patch: Partial<Project>) => Promise<void>;
   scopedAction: <T = unknown>(action: string, extra?: Record<string, unknown>) => Promise<T>;
@@ -93,10 +93,10 @@ export function PanelDataProvider({ children }: { children: ReactNode }) {
   );
 
   const addProject = useCallback(
-    async (name: string, agents: AgentKey[] = AGENT_FUNCTION_KEYS) => {
+    async (name: string, agents: AgentKey[] = AGENT_FUNCTION_KEYS, tools: ToolKey[] = TOOL_KEYS) => {
       const trimmed = name.trim();
       if (!trimmed) return;
-      const next = [...projects, { id: `${slugify(trimmed)}-${Date.now().toString(36)}`, name: trimmed, protected: false, agents }];
+      const next = [...projects, { id: `${slugify(trimmed)}-${Date.now().toString(36)}`, name: trimmed, protected: false, agents, tools }];
       setProjects(next);
       await saveState({ ...rawState, projects: next });
     },

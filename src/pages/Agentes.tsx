@@ -1,11 +1,17 @@
 import { useNavigate } from 'react-router-dom';
 import { usePanelData } from '../context/PanelDataContext';
-import { AGENT_META, AGENT_FUNCTION_KEYS, DEFAULTS, statusMeta } from '../constants';
+import { AGENT_META, AGENT_FUNCTION_KEYS, DEFAULTS, TOOL_KEYS, statusMeta } from '../constants';
 import Reveal from '../components/Reveal';
 
 export default function Agentes() {
   const { agentConfigs, agentStatus, activeProjectId, activeProject } = usePanelData();
   const navigate = useNavigate();
+
+  const activeTools = activeProject?.tools?.length ? activeProject.tools : TOOL_KEYS;
+  if (!activeTools.includes('agentes')) {
+    navigate('..', { replace: true });
+    return null;
+  }
 
   const projectAgentKeys = activeProject?.agents?.length ? activeProject.agents : AGENT_FUNCTION_KEYS;
 

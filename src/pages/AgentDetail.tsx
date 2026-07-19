@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { usePanelData } from '../context/PanelDataContext';
-import { AGENT_META, AGENT_FUNCTION_KEYS, DEFAULTS, statusMeta } from '../constants';
+import { AGENT_META, AGENT_FUNCTION_KEYS, DEFAULTS, TOOL_KEYS, statusMeta } from '../constants';
 import { formatWhen, UnauthorizedError } from '../api';
 import { useAuth } from '../context/AuthContext';
 import ContentCalendar from '../components/ContentCalendar';
@@ -16,7 +16,7 @@ function formatTokens(status: { tokens_input_total?: number; tokens_output_total
 export default function AgentDetail() {
   const { key } = useParams<{ key: string }>();
   const navigate = useNavigate();
-  const { agentConfigs, agentStatus, contentGrid, scopedAction } = usePanelData();
+  const { agentConfigs, agentStatus, contentGrid, activeProject, scopedAction } = usePanelData();
   const { handleUnauthorized } = useAuth();
   const [manualInput, setManualInput] = useState('');
   const [busy, setBusy] = useState(false);
@@ -31,6 +31,12 @@ export default function AgentDetail() {
     } catch {
       setOpenResult({ contenido: entry.result });
     }
+  }
+
+  const activeTools = activeProject?.tools?.length ? activeProject.tools : TOOL_KEYS;
+  if (!activeTools.includes('agentes')) {
+    navigate('..', { replace: true });
+    return null;
   }
 
   const agentKey = key as AgentKey;

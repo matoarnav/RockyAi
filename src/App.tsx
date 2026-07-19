@@ -4,6 +4,7 @@ import { PanelDataProvider } from './context/PanelDataContext';
 import Login from './pages/Login';
 import Layout from './components/Layout';
 import Home from './pages/Home';
+import Configuracion from './pages/Configuracion';
 import ProjectRoute from './components/ProjectRoute';
 import ProjectHome from './pages/ProjectHome';
 import Metricas from './pages/Metricas';
@@ -33,6 +34,7 @@ function AppRoutes() {
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
+          <Route path="/configuracion" element={<Configuracion />} />
           <Route path="/p/:projectId" element={<ProjectRoute />}>
             <Route index element={<ProjectHome />} />
             <Route path="metricas" element={<Metricas />} />
