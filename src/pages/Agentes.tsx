@@ -7,11 +7,6 @@ export default function Agentes() {
   const { agentConfigs, agentStatus, activeProjectId, activeProject } = usePanelData();
   const navigate = useNavigate();
 
-  if (!activeProjectId) {
-    navigate('/', { replace: true });
-    return null;
-  }
-
   const projectAgentKeys = activeProject?.agents?.length ? activeProject.agents : AGENT_FUNCTION_KEYS;
 
   return (
@@ -39,7 +34,7 @@ export default function Agentes() {
           const sMeta = statusMeta(status.status);
           return (
             <Reveal key={key} delay={i * 70}>
-              <div className="agent-card" onClick={() => navigate(`/agentes/${key}`)}>
+              <div className="agent-card" onClick={() => navigate(key)}>
                 <div className="agent-top">
                   <div className={`avatar ${meta.cls}`}>
                     <div className="avatar-ring" />
@@ -73,7 +68,7 @@ export default function Agentes() {
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/agentes/${key}`);
+                      navigate(key);
                     }}
                   >
                     Entrar →

@@ -15,14 +15,9 @@ export default function EmailCrmLayout() {
   const { activeProjectName, activeProjectId } = usePanelData();
   const navigate = useNavigate();
 
-  if (!activeProjectId) {
-    navigate('/', { replace: true });
-    return null;
-  }
-
   return (
     <div className="main">
-      <button className="back-link" onClick={() => navigate('/')}>
+      <button className="back-link" onClick={() => navigate('..')}>
         &larr; Volver al panel
       </button>
       <div className="eyebrow">CRM Email Marketing</div>

@@ -2,16 +2,15 @@ import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { usePanelData } from '../context/PanelDataContext';
-import { AGENT_META, AGENT_FUNCTION_KEYS } from '../constants';
+import { AGENT_META, AGENT_FUNCTION_KEYS, PROJECT_LOGO } from '../constants';
 import type { AgentKey } from '../types';
 
 export default function Sidebar() {
   const { logout } = useAuth();
-  const { projects, activeProjectId, activeProjectName, setActiveProjectId, addProject, deleteProject } = usePanelData();
+  const { projects, activeProjectId, activeProjectName, deleteProject, addProject } = usePanelData();
   const navigate = useNavigate();
 
   function goHome() {
-    setActiveProjectId(null);
     navigate('/');
   }
   const [adding, setAdding] = useState(false);
@@ -50,7 +49,7 @@ export default function Sidebar() {
           <div
             key={p.id}
             className={`proj-item${p.id === activeProjectId ? ' active' : ''}`}
-            onClick={() => setActiveProjectId(p.id)}
+            onClick={() => navigate(`/p/${p.id}`)}
           >
             <span className="proj-dot" />
             {p.name}
@@ -119,13 +118,18 @@ export default function Sidebar() {
         <div>
           <div className="nav-label">Proyecto activo</div>
           <div className="proj-active-panel">
+            {activeProjectId && PROJECT_LOGO[activeProjectId] && (
+              <div className="proj-active-logo-wrap">
+                <img className="proj-active-logo" src={PROJECT_LOGO[activeProjectId]} alt={activeProjectName} />
+              </div>
+            )}
             <div className="proj-active-label">Trabajando en</div>
             <div className="proj-active-name">{activeProjectName}</div>
             <div className="proj-active-links">
-              <NavLink to="/" end className={({ isActive }) => `proj-link${isActive ? ' current' : ''}`}>
+              <NavLink to={`/p/${activeProjectId}`} end className={({ isActive }) => `proj-link${isActive ? ' current' : ''}`}>
                 <span className="ico">◆</span> Resumen
               </NavLink>
-              <NavLink to="/agentes" className={({ isActive }) => `proj-link${isActive ? ' current' : ''}`}>
+              <NavLink to={`/p/${activeProjectId}/agentes`} className={({ isActive }) => `proj-link${isActive ? ' current' : ''}`}>
                 <span className="ico">◈</span> Agentes
               </NavLink>
             </div>
@@ -137,10 +141,10 @@ export default function Sidebar() {
         <div className="nav-label">Herramientas</div>
         {activeProjectId ? (
           <>
-            <NavLink to="/email-crm" className={({ isActive }) => `proj-link${isActive ? ' current' : ''}`}>
+            <NavLink to={`/p/${activeProjectId}/email-crm`} className={({ isActive }) => `proj-link${isActive ? ' current' : ''}`}>
               <span className="ico">✉</span> Email Marketing
             </NavLink>
-            <NavLink to="/metricas" className={({ isActive }) => `proj-link${isActive ? ' current' : ''}`}>
+            <NavLink to={`/p/${activeProjectId}/metricas`} className={({ isActive }) => `proj-link${isActive ? ' current' : ''}`}>
               <span className="ico">▤</span> Métricas
             </NavLink>
           </>

@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { usePanelData } from '../context/PanelDataContext';
 import { callAction } from '../api';
 import { AGENT_META } from '../constants';
 import type { AgencyOverview, AgentKey } from '../types';
 
-export default function WelcomeCard({ onProjectHover }: { onProjectHover: (id: string | null) => void }) {
-  const { projects, setActiveProjectId } = usePanelData();
+export default function WelcomeCard() {
+  const { projects } = usePanelData();
+  const navigate = useNavigate();
   const [overview, setOverview] = useState<AgencyOverview | null>(null);
   const [overviewError, setOverviewError] = useState(false);
 
@@ -56,16 +58,7 @@ export default function WelcomeCard({ onProjectHover }: { onProjectHover: (id: s
             <div className="welcome-projects-label">Proyectos vigentes</div>
             <div className="welcome-projects-row">
               {projects.map((p) => (
-                <button
-                  key={p.id}
-                  type="button"
-                  className="welcome-project-btn"
-                  onMouseEnter={() => onProjectHover(p.id)}
-                  onMouseLeave={() => onProjectHover(null)}
-                  onFocus={() => onProjectHover(p.id)}
-                  onBlur={() => onProjectHover(null)}
-                  onClick={() => setActiveProjectId(p.id)}
-                >
+                <button key={p.id} type="button" className="welcome-project-btn" onClick={() => navigate(`/p/${p.id}`)}>
                   <span>{p.name}</span>
                 </button>
               ))}

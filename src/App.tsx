@@ -4,6 +4,8 @@ import { PanelDataProvider } from './context/PanelDataContext';
 import Login from './pages/Login';
 import Layout from './components/Layout';
 import Home from './pages/Home';
+import ProjectRoute from './components/ProjectRoute';
+import ProjectHome from './pages/ProjectHome';
 import Metricas from './pages/Metricas';
 import Agentes from './pages/Agentes';
 import AgentDetail from './pages/AgentDetail';
@@ -31,16 +33,19 @@ function AppRoutes() {
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
-          <Route path="/metricas" element={<Metricas />} />
-          <Route path="/agentes" element={<Agentes />} />
-          <Route path="/agentes/:key" element={<AgentDetail />} />
-          <Route path="/email-crm" element={<EmailCrmLayout />}>
-            <Route index element={<Resumen />} />
-            <Route path="campanas" element={<Campanas />} />
-            <Route path="nueva" element={<NuevaCampana />} />
-            <Route path="audiencias" element={<Audiencias />} />
-            <Route path="templates" element={<Templates />} />
-            <Route path="metricas" element={<CrmMetricas />} />
+          <Route path="/p/:projectId" element={<ProjectRoute />}>
+            <Route index element={<ProjectHome />} />
+            <Route path="metricas" element={<Metricas />} />
+            <Route path="agentes" element={<Agentes />} />
+            <Route path="agentes/:key" element={<AgentDetail />} />
+            <Route path="email-crm" element={<EmailCrmLayout />}>
+              <Route index element={<Resumen />} />
+              <Route path="campanas" element={<Campanas />} />
+              <Route path="nueva" element={<NuevaCampana />} />
+              <Route path="audiencias" element={<Audiencias />} />
+              <Route path="templates" element={<Templates />} />
+              <Route path="metricas" element={<CrmMetricas />} />
+            </Route>
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>

@@ -19,7 +19,6 @@ export default function Metricas() {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    if (!activeProjectId) return;
     let cancelled = false;
     setLoading(true);
     setError(false);
@@ -39,16 +38,11 @@ export default function Metricas() {
     };
   }, [days, activeProjectId, scopedAction]);
 
-  if (!activeProjectId) {
-    navigate('/', { replace: true });
-    return null;
-  }
-
   const openRate = report && report.email.enviados ? ((report.email.aperturas / report.email.enviados) * 100).toFixed(1) + '%' : '—';
 
   return (
     <div className="main">
-      <button className="back-link no-print" onClick={() => navigate('/')}>
+      <button className="back-link no-print" onClick={() => navigate('..')}>
         &larr; Volver al home
       </button>
 

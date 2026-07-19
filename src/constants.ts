@@ -50,7 +50,12 @@ export const DEFAULT_PROJECTS: Project[] = [
 
 export const DOW_LABELS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 
-export const PROJECT_HOVER_IMAGE: Record<string, string> = {
-  'chile-fly-fishing': '/chile-fly-fishing-hover.jpg',
-  'alto-castillo': '/alto-castillo-hover.jpg',
+// Logo del cliente, mostrado en el sidebar bajo "Proyecto activo" cuando
+// ese proyecto está activo. Convención por defecto para cada cliente/
+// proyecto nuevo: subir su logo a public/ y agregar la entrada acá con
+// su project id. Si un proyecto no tiene entrada, simplemente no se
+// muestra logo (no se inventa un placeholder).
+export const PROJECT_LOGO: Record<string, string> = {
+  'chile-fly-fishing': '/Logo-ChileFlyFishing.png',
+  'alto-castillo': '/logo-white.png',
 };
