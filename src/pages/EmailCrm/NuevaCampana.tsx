@@ -3,6 +3,21 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useCrmData } from '../../context/CrmDataContext';
 import { segmentFromKey } from './crmUtils';
 
+// Variables que si de verdad sustituye el envio manual de campanas - todo
+// lo demas ({{link_reservar}}, {{precio_programa}}, etc., usadas por los
+// templates de journeys) quedaria literal en el correo del cliente si no
+// se reemplaza a mano antes de enviar.
+const AUTO_FILLED_VARS = new Set(['name', 'unsubscribe_link']);
+
+function findUnresolvedVariables(html: string): string[] {
+  const matches = html.matchAll(/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/g);
+  const found = new Set<string>();
+  for (const m of matches) {
+    if (!AUTO_FILLED_VARS.has(m[1])) found.add(m[1]);
+  }
+  return Array.from(found);
+}
+
 export default function NuevaCampana() {
   const { templates, contacts, campaigns, refetch, scopedAction } = useCrmData();
   const navigate = useNavigate();
@@ -86,6 +101,16 @@ export default function NuevaCampana() {
       setMsgColor('var(--err)');
       setMsg('Elige fecha y hora de envío.');
       return;
+    }
+    if (sendAction === 'now' || sendAction === 'schedule') {
+      const unresolved = findUnresolvedVariables(body);
+      if (unresolved.length) {
+        const proceed = confirm(
+          `Este contenido tiene variables sin completar: ${unresolved.map((v) => `{{${v}}}`).join(', ')}.\n\n` +
+            `Si envías así, el cliente va a ver ese texto literal en el correo. ¿Enviar de todos modos?`
+        );
+        if (!proceed) return;
+      }
     }
     setBusy(sendAction);
     setMsgColor('var(--moss)');

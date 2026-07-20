@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useCrmData } from '../../context/CrmDataContext';
 import { formatWhen } from '../../api';
 import type { EmailTemplate } from '../../types';
@@ -10,6 +10,7 @@ export default function Templates() {
   const [name, setName] = useState('');
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
+  const formRef = useRef<HTMLDivElement>(null);
 
   function openForm(t?: EmailTemplate) {
     setEditingId(t ? t.template_id : '');
@@ -17,6 +18,9 @@ export default function Templates() {
     setSubject(t ? t.subject : '');
     setBody(t ? t.html_body : '');
     setShowForm(true);
+    // con muchos templates la grilla es alta - el formulario queda fuera
+    // de la vista si no hacemos scroll hasta el explicitamente
+    setTimeout(() => formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
   }
 
   async function handleSave() {
@@ -77,7 +81,7 @@ export default function Templates() {
       </div>
 
       {showForm && (
-        <div className="card form-section form-section-wide" style={{ marginTop: 16 }}>
+        <div ref={formRef} className="card form-section form-section-wide" style={{ marginTop: 16 }}>
           <div className="form-section-title">{editingId ? 'Editar template' : 'Nuevo template'}</div>
           <div className="crm-field">
             <label>Nombre</label>
