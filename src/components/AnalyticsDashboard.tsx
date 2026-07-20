@@ -45,19 +45,22 @@ function SourceRow({ name, connected, detail }: { name: string; connected: boole
 }
 
 export default function AnalyticsDashboard() {
-  const { scopedAction } = usePanelData();
+  const { scopedAction, activeProjectId } = usePanelData();
   const [report, setReport] = useState<MetricsReport | null>(null);
   const [loading, setLoading] = useState(true);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
+    if (!activeProjectId) return;
     let cancelled = false;
     setLoading(true);
+    setFailed(false);
     scopedAction<MetricsReport>('get_metrics_report', { days: 90 })
       .then((data) => {
         if (!cancelled) setReport(data);
       })
       .catch(() => {
-        /* Neil sigue mostrando su timeline normal aunque esto falle */
+        if (!cancelled) setFailed(true);
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -65,11 +68,10 @@ export default function AnalyticsDashboard() {
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [activeProjectId, scopedAction]);
 
-  if (loading) return <div className="empty-state" style={{ marginTop: 24 }}>Cargando fuentes de datos…</div>;
-  if (!report) return null;
+  if (!activeProjectId || loading) return <div className="empty-state" style={{ marginTop: 24 }}>Cargando fuentes de datos…</div>;
+  if (failed || !report) return null;
 
   const maxTraffic = report.youtube.fuentes_de_trafico[0]?.views || 1;
 
