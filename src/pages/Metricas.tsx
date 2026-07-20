@@ -111,7 +111,9 @@ export default function Metricas() {
               </div>
             </div>
             <div className="mini-card c-seo">
-              <div className="mini-card-icon">▲</div>
+              <div className="mini-card-icon">
+                <img src="/icons/google.svg" alt="" width={18} height={18} />
+              </div>
               <div className="mini-card-label">Posición SEO</div>
               <div className="mini-card-value tabular">{report.seo.posicion_actual ?? '—'}</div>
               <div className="mini-card-sub">{report.seo.keyword ? `"${report.seo.keyword}"` : 'Sin datos todavía'}</div>

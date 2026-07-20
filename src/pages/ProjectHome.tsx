@@ -62,19 +62,19 @@ export default function ProjectHome() {
           </Reveal>
           <Reveal delay={60}>
             <MiniCard
-              cls="c-opens"
-              icon={<img src="/icons/gmail.svg" alt="" width={18} height={18} />}
-              label="Aperturas totales"
-              value={summary ? summary.email.aperturas_totales : summaryError ? '—' : '…'}
-              sub="Histórico de campañas"
-              to="email-crm/metricas"
+              cls="c-social"
+              icon={<img src="/icons/instagram.svg" alt="" width={18} height={18} />}
+              label="Seguidores Instagram"
+              value={summary ? (summary.instagram_followers ?? '—') : summaryError ? '—' : '…'}
+              sub={summary && summary.instagram_followers === null ? 'Sin datos todavía' : 'Último snapshot'}
+              to="agentes/an"
             />
           </Reveal>
           <Reveal delay={120}>
             <MiniCard
               cls="c-seo"
-              icon="▲"
-              label="Posición SEO"
+              icon={<img src="/icons/google.svg" alt="" width={18} height={18} />}
+              label="Posición SEO actual"
               value={summary ? (summary.seo?.posicion ?? '—') : summaryError ? '—' : '…'}
               sub={summary?.seo ? `"${summary.seo.keyword}"` : 'Sin datos todavía'}
               to="agentes/seo"
@@ -82,12 +82,12 @@ export default function ProjectHome() {
           </Reveal>
           <Reveal delay={180}>
             <MiniCard
-              cls="c-social"
-              icon="◈"
-              label="Contenido generado (mes)"
-              value={summary ? summary.content_count : summaryError ? '—' : '…'}
-              sub="piezas en el calendario"
-              to="agentes/strategist"
+              cls="c-opens"
+              icon={<img src="/icons/youtube.svg" alt="" width={18} height={18} />}
+              label="Seguidores YouTube"
+              value={summary ? (summary.youtube_followers ?? '—') : summaryError ? '—' : '…'}
+              sub="Sin integración conectada todavía"
+              to="agentes/an"
             />
           </Reveal>
         </div>

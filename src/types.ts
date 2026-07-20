@@ -127,6 +127,8 @@ export interface HomeSummary {
   email: { enviados_mes: number; aperturas_totales: number };
   seo: { keyword: string; posicion: number } | null;
   content_count: number;
+  instagram_followers: number | null;
+  youtube_followers: number | null;
 }
 
 export interface MetricsEmailCampaign {

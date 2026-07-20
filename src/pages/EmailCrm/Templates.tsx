@@ -77,7 +77,7 @@ export default function Templates() {
       </div>
 
       {showForm && (
-        <div className="card form-section" style={{ marginTop: 16 }}>
+        <div className="card form-section form-section-wide" style={{ marginTop: 16 }}>
           <div className="form-section-title">{editingId ? 'Editar template' : 'Nuevo template'}</div>
           <div className="crm-field">
             <label>Nombre</label>
@@ -87,9 +87,21 @@ export default function Templates() {
             <label>Asunto por defecto</label>
             <input value={subject} onChange={(e) => setSubject(e.target.value)} />
           </div>
-          <div className="crm-field">
-            <label>Cuerpo (HTML)</label>
-            <textarea placeholder="<h1>Hola {{name}}</h1>..." value={body} onChange={(e) => setBody(e.target.value)} />
+          <div className="crm-preview-wrap">
+            <div className="crm-field">
+              <label>Cuerpo (HTML)</label>
+              <textarea placeholder="<h1>Hola {{name}}</h1>..." value={body} onChange={(e) => setBody(e.target.value)} />
+            </div>
+            <div className="crm-field">
+              <label>Preview en vivo</label>
+              <div className="crm-preview-frame-wrap">
+                {body.trim() ? (
+                  <iframe title="Preview del template" srcDoc={body} className="crm-preview-frame" sandbox="" />
+                ) : (
+                  <div className="empty-state">El preview aparece acá a medida que escribes el HTML.</div>
+                )}
+              </div>
+            </div>
           </div>
           <div className="send-actions">
             <button className="btn btn-primary btn-sm" onClick={handleSave}>

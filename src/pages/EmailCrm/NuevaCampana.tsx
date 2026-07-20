@@ -19,6 +19,10 @@ export default function NuevaCampana() {
   const [msg, setMsg] = useState('');
   const [msgColor, setMsgColor] = useState('var(--dim)');
   const [busy, setBusy] = useState<'now' | 'draft' | 'schedule' | null>(null);
+  const [testEmail, setTestEmail] = useState('');
+  const [testBusy, setTestBusy] = useState(false);
+  const [testMsg, setTestMsg] = useState('');
+  const [testMsgColor, setTestMsgColor] = useState('var(--dim)');
 
   useEffect(() => {
     if (!editingCampaign) return;
@@ -43,6 +47,32 @@ export default function NuevaCampana() {
     if (t) {
       setSubject(t.subject || '');
       setBody(t.html_body || '');
+    }
+  }
+
+  async function sendTest() {
+    if (!subject.trim() || !body.trim()) {
+      setTestMsgColor('var(--err)');
+      setTestMsg('Falta asunto o contenido.');
+      return;
+    }
+    if (!testEmail.trim()) {
+      setTestMsgColor('var(--err)');
+      setTestMsg('Escribe a qué correo mandar la prueba.');
+      return;
+    }
+    setTestBusy(true);
+    setTestMsgColor('var(--moss)');
+    setTestMsg('Enviando prueba...');
+    try {
+      await scopedAction('send_test_email', { subject, html_body: body, test_email: testEmail.trim() });
+      setTestMsgColor('var(--moss)');
+      setTestMsg(`Prueba enviada a ${testEmail.trim()}.`);
+    } catch (e) {
+      setTestMsgColor('var(--err)');
+      setTestMsg('Error: ' + (e instanceof Error ? e.message : 'desconocido'));
+    } finally {
+      setTestBusy(false);
     }
   }
 
@@ -176,6 +206,24 @@ export default function NuevaCampana() {
       <div className="card form-section">
         <div className="form-section-title">4 · Enviar</div>
         <div className="form-section-sub">Revisa antes de confirmar — no se puede deshacer un envío ya realizado.</div>
+
+        <div className="crm-schedule-row">
+          <input
+            type="email"
+            placeholder="tu-correo@ejemplo.com"
+            value={testEmail}
+            onChange={(e) => setTestEmail(e.target.value)}
+          />
+          <button className="btn btn-ghost" onClick={sendTest} disabled={testBusy}>
+            {testBusy ? 'Enviando...' : 'Enviar prueba'}
+          </button>
+        </div>
+        {testMsg && (
+          <div className="manual-invoke-msg" style={{ color: testMsgColor, marginBottom: 14 }}>
+            {testMsg}
+          </div>
+        )}
+
         <div className="crm-schedule-row">
           <input
             type="datetime-local"
