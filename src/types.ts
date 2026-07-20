@@ -1,4 +1,4 @@
-export type AgentKey = 'ad' | 'an' | 'seo' | 'strategist';
+export type AgentKey = 'ad' | 'an' | 'seo' | 'strategist' | 'fm';
 export type ToolKey = 'agentes' | 'email-marketing' | 'metricas';
 
 export interface AgentConfig {
