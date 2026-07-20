@@ -110,6 +110,18 @@ export default function Metricas() {
                 {report.social.cambio_neto_periodo} en el período
               </div>
             </div>
+            <div className="mini-card c-youtube">
+              <div className="mini-card-icon">
+                <img src="/icons/youtube.svg" alt="" width={18} height={18} />
+              </div>
+              <div className="mini-card-label">Suscriptores YouTube</div>
+              <div className="mini-card-value tabular">{report.youtube.suscriptores_actuales ?? '—'}</div>
+              <div className="mini-card-sub">
+                {report.youtube.suscriptores_actuales != null
+                  ? `${report.youtube.suscriptores_ganados_periodo >= 0 ? '+' : ''}${report.youtube.suscriptores_ganados_periodo - report.youtube.suscriptores_perdidos_periodo} en el período`
+                  : 'Sin conectar todavía'}
+              </div>
+            </div>
             <div className="mini-card c-seo">
               <div className="mini-card-icon">
                 <img src="/icons/google.svg" alt="" width={18} height={18} />
@@ -187,6 +199,65 @@ export default function Metricas() {
               </tbody>
             </table>
             {!report.social.publicaciones.length && <div className="empty-state">Sin publicaciones registradas en este período.</div>}
+          </div>
+
+          <div className="section-head" style={{ marginTop: 30 }}>
+            <span className="section-title">Social — YouTube</span>
+          </div>
+          <div className="card" style={{ overflowX: 'auto' }}>
+            <table>
+              <thead>
+                <tr>
+                  <th>Video</th>
+                  <th className="tabular">Vistas</th>
+                  <th className="tabular">Min. vistos</th>
+                  <th className="tabular">Duración prom.</th>
+                  <th className="tabular">Likes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {report.youtube.top_videos.map((v) => (
+                  <tr key={v.video}>
+                    <td>
+                      <a
+                        href={`https://youtube.com/watch?v=${v.video}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="cell-name"
+                        style={{ textDecoration: 'underline' }}
+                      >
+                        {v.video}
+                      </a>
+                    </td>
+                    <td className="tabular">{v.views}</td>
+                    <td className="tabular">{v.estimatedMinutesWatched}</td>
+                    <td className="tabular">{v.averageViewDuration}s</td>
+                    <td className="tabular">{v.likes}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {!report.youtube.top_videos.length && <div className="empty-state">Sin datos de YouTube en este período.</div>}
+            {!!report.youtube.fuentes_de_trafico.length && (
+              <div style={{ marginTop: 18, paddingTop: 18, borderTop: '1px solid var(--line)' }}>
+                <div className="mini-card-label" style={{ marginBottom: 10 }}>Fuentes de tráfico</div>
+                {report.youtube.fuentes_de_trafico.map((f) => (
+                  <div key={f.insightTrafficSourceType} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+                    <div style={{ width: 140, fontSize: 12, color: 'var(--dim)' }}>{f.insightTrafficSourceType}</div>
+                    <div style={{ flex: 1, background: 'var(--line)', borderRadius: 4, height: 8, overflow: 'hidden' }}>
+                      <div
+                        style={{
+                          width: `${(f.views / report.youtube.fuentes_de_trafico[0].views) * 100}%`,
+                          background: 'var(--youtube-red)',
+                          height: '100%',
+                        }}
+                      />
+                    </div>
+                    <div className="tabular" style={{ width: 60, textAlign: 'right', fontSize: 12 }}>{f.views}</div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="section-head" style={{ marginTop: 30 }}>

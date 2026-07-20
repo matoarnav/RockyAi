@@ -164,6 +164,19 @@ export interface MetricsContentPiece {
   headline: string;
 }
 
+export interface MetricsYoutubeTrafficSource {
+  insightTrafficSourceType: string;
+  views: number;
+}
+
+export interface MetricsYoutubeVideo {
+  video: string;
+  views: number;
+  estimatedMinutesWatched: number;
+  averageViewDuration: number;
+  likes: number;
+}
+
 export interface MetricsReport {
   range: { from: string; to: string; days: number };
   email: { enviados: number; aperturas: number; clics: number; rebotes: number; campaigns: MetricsEmailCampaign[] };
@@ -173,6 +186,17 @@ export interface MetricsReport {
     cambio_neto_periodo: number;
     engagement_promedio_pct: number | null;
     publicaciones: MetricsSocialPost[];
+  };
+  youtube: {
+    snapshots: { fecha: string; suscriptores: number | null }[];
+    suscriptores_actuales: number | null;
+    suscriptores_ganados_periodo: number;
+    suscriptores_perdidos_periodo: number;
+    vistas_periodo: number;
+    minutos_vistos_periodo: number | null;
+    duracion_promedio_vista_seg: number | null;
+    fuentes_de_trafico: MetricsYoutubeTrafficSource[];
+    top_videos: MetricsYoutubeVideo[];
   };
   seo: { snapshots: MetricsSeoSnapshot[]; posicion_actual: number | null; keyword: string | null };
   content: { count: number; piezas: MetricsContentPiece[] };

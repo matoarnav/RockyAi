@@ -82,11 +82,11 @@ export default function ProjectHome() {
           </Reveal>
           <Reveal delay={180}>
             <MiniCard
-              cls="c-opens"
+              cls="c-youtube"
               icon={<img src="/icons/youtube.svg" alt="" width={18} height={18} />}
-              label="Seguidores YouTube"
+              label="Suscriptores YouTube"
               value={summary ? (summary.youtube_followers ?? '—') : summaryError ? '—' : '…'}
-              sub="Sin integración conectada todavía"
+              sub={summary && summary.youtube_followers === null ? 'Sin integración conectada todavía' : 'Último snapshot'}
               to="agentes/an"
             />
           </Reveal>

@@ -5,6 +5,7 @@ import { AGENT_META, AGENT_FUNCTION_KEYS, DEFAULTS, TOOL_KEYS, statusMeta } from
 import { formatWhen, UnauthorizedError } from '../api';
 import { useAuth } from '../context/AuthContext';
 import ContentCalendar from '../components/ContentCalendar';
+import AnalyticsDashboard from '../components/AnalyticsDashboard';
 import TimelineResultModal from '../components/TimelineResultModal';
 import type { AgentKey, TimelineEntry } from '../types';
 
@@ -145,6 +146,7 @@ export default function AgentDetail() {
         </div>
 
         {agentKey === 'strategist' ? <ContentCalendar grid={contentGrid} /> : null}
+        {agentKey === 'an' ? <AnalyticsDashboard /> : null}
 
         <div className="manual-invoke">
           <div className="desc-label">Invocación manual</div>
