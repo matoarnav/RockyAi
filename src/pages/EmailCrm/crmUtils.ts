@@ -29,7 +29,7 @@ export function segmentFromKey(key: string): { type: string; value?: string } {
 }
 
 export function statusLabel(status: string): string {
-  return { sent: 'Enviada', sending: 'Enviando', draft: 'Borrador' }[status] || status;
+  return { sent: 'Enviada', sending: 'Enviando', draft: 'Borrador', scheduled: 'Programada' }[status] || status;
 }
 
 export function contactStatusLabel(status: string): string {

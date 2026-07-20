@@ -98,10 +98,29 @@ export interface EmailCampaign {
   html_body: string;
   template_id: string;
   segment: { type: string; value?: string };
-  status: 'draft' | 'sending' | 'sent';
+  status: 'draft' | 'scheduled' | 'sending' | 'sent';
   created_at: string;
+  scheduled_at?: string;
   sent_at: string;
   stats: CampaignStats;
+}
+
+export interface CampaignRecipient {
+  contact_email: string;
+  sent_at?: string;
+  opened: boolean;
+  opened_at?: string;
+  clicked: boolean;
+  clicked_at?: string;
+  clicked_links?: string[];
+  bounced: boolean;
+}
+
+export interface EmailJourney {
+  track_id: string;
+  trigger_event: string;
+  paused: boolean;
+  contact_count: number;
 }
 
 export interface HomeSummary {

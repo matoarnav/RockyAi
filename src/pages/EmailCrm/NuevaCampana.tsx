@@ -15,9 +15,10 @@ export default function NuevaCampana() {
   const [templateId, setTemplateId] = useState('');
   const [body, setBody] = useState('');
   const [audienceKey, setAudienceKey] = useState('all');
+  const [scheduledAt, setScheduledAt] = useState('');
   const [msg, setMsg] = useState('');
   const [msgColor, setMsgColor] = useState('var(--dim)');
-  const [busy, setBusy] = useState<'now' | 'draft' | null>(null);
+  const [busy, setBusy] = useState<'now' | 'draft' | 'schedule' | null>(null);
 
   useEffect(() => {
     if (!editingCampaign) return;
@@ -45,30 +46,48 @@ export default function NuevaCampana() {
     }
   }
 
-  async function submit(sendAction: 'now' | 'draft') {
+  async function submit(sendAction: 'now' | 'draft' | 'schedule') {
     if (!name.trim() || !subject.trim() || !body.trim()) {
       setMsgColor('var(--err)');
       setMsg('Falta nombre, asunto o contenido.');
       return;
     }
+    if (sendAction === 'schedule' && !scheduledAt) {
+      setMsgColor('var(--err)');
+      setMsg('Elige fecha y hora de envío.');
+      return;
+    }
     setBusy(sendAction);
     setMsgColor('var(--moss)');
-    setMsg(sendAction === 'now' ? 'Enviando...' : 'Guardando...');
+    setMsg(sendAction === 'now' ? 'Enviando...' : sendAction === 'schedule' ? 'Programando...' : 'Guardando...');
     try {
-      await scopedAction('create_email_campaign', {
+      const result = await scopedAction<{ campaign_id: string }>('create_email_campaign', {
         campaign_id: editingCampaignId || undefined,
         name,
         subject,
         html_body: body,
         template_id: templateId,
         segment: segmentFromKey(audienceKey),
-        send_action: sendAction,
+        send_action: sendAction === 'schedule' ? 'draft' : sendAction,
       });
-      setMsg(sendAction === 'now' ? 'Campaña disparada — el estado se actualizará en unos minutos.' : 'Borrador guardado.');
+      if (sendAction === 'schedule') {
+        await scopedAction('schedule_email_campaign', {
+          campaign_id: result.campaign_id,
+          scheduled_at: new Date(scheduledAt).toISOString(),
+        });
+      }
+      setMsg(
+        sendAction === 'now'
+          ? 'Campaña disparada — el estado se actualizará en unos minutos.'
+          : sendAction === 'schedule'
+            ? 'Campaña programada.'
+            : 'Borrador guardado.'
+      );
       setName('');
       setSubject('');
       setBody('');
       setTemplateId('');
+      setScheduledAt('');
       await refetch();
       navigate('../campanas');
     } catch (e) {
@@ -104,7 +123,7 @@ export default function NuevaCampana() {
         </div>
       </div>
 
-      <div className="card form-section">
+      <div className="card form-section form-section-wide">
         <div className="form-section-title">2 · Contenido</div>
         <div className="form-section-sub">
           Elige un template como base (opcional) y ajusta el cuerpo del correo. Variables disponibles: <code>{'{{name}}'}</code>,{' '}
@@ -121,9 +140,21 @@ export default function NuevaCampana() {
             ))}
           </select>
         </div>
-        <div className="crm-field">
-          <label>Cuerpo del correo (HTML)</label>
-          <textarea placeholder="<h1>Hola {{name}}</h1>..." value={body} onChange={(e) => setBody(e.target.value)} />
+        <div className="crm-preview-wrap">
+          <div className="crm-field">
+            <label>Cuerpo del correo (HTML)</label>
+            <textarea placeholder="<h1>Hola {{name}}</h1>..." value={body} onChange={(e) => setBody(e.target.value)} />
+          </div>
+          <div className="crm-field">
+            <label>Preview en vivo</label>
+            <div className="crm-preview-frame-wrap">
+              {body.trim() ? (
+                <iframe title="Preview del correo" srcDoc={body} className="crm-preview-frame" sandbox="" />
+              ) : (
+                <div className="empty-state">El preview aparece acá a medida que escribes el HTML.</div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -145,6 +176,17 @@ export default function NuevaCampana() {
       <div className="card form-section">
         <div className="form-section-title">4 · Enviar</div>
         <div className="form-section-sub">Revisa antes de confirmar — no se puede deshacer un envío ya realizado.</div>
+        <div className="crm-schedule-row">
+          <input
+            type="datetime-local"
+            value={scheduledAt}
+            onChange={(e) => setScheduledAt(e.target.value)}
+            min={new Date().toISOString().slice(0, 16)}
+          />
+          <button className="btn btn-ghost" onClick={() => submit('schedule')} disabled={busy !== null || !scheduledAt}>
+            {busy === 'schedule' ? 'Programando...' : 'Programar envío'}
+          </button>
+        </div>
         <div className="send-actions">
           <button className="btn btn-primary" onClick={() => submit('now')} disabled={busy !== null}>
             {busy === 'now' ? 'Enviando...' : 'Enviar ahora'}

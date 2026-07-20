@@ -47,7 +47,7 @@ export default function Campanas() {
               const s = c.stats || { enviados: 0, aperturas: 0, clics: 0, rebotes: 0, quejas: 0 };
               const pct = (n: number) => (c.status === 'sent' && s.enviados ? ((n / s.enviados) * 100).toFixed(1) + '%' : '—');
               return (
-                <tr key={c.campaign_id}>
+                <tr key={c.campaign_id} className="row-clickable" onClick={() => navigate(`../campanas/${c.campaign_id}`)}>
                   <td>
                     <div className="cell-name">{c.name || 'Sin nombre'}</div>
                     <div className="cell-sub">{c.subject}</div>
@@ -69,12 +69,22 @@ export default function Campanas() {
                         <span
                           className="icon-btn"
                           title="Retomar borrador"
-                          onClick={() => navigate(`../nueva?campaign_id=${c.campaign_id}`)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`../nueva?campaign_id=${c.campaign_id}`);
+                          }}
                         >
                           ✎
                         </span>
                       )}
-                      <span className="icon-btn danger" title="Eliminar" onClick={() => handleDelete(c.campaign_id)}>
+                      <span
+                        className="icon-btn danger"
+                        title="Eliminar"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(c.campaign_id);
+                        }}
+                      >
                         🗑
                       </span>
                     </div>

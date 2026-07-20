@@ -2,12 +2,13 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState, ty
 import { UnauthorizedError } from '../api';
 import { useAuth } from './AuthContext';
 import { usePanelData } from './PanelDataContext';
-import type { EmailCampaign, EmailContact, EmailTemplate } from '../types';
+import type { EmailCampaign, EmailContact, EmailJourney, EmailTemplate } from '../types';
 
 interface CrmDataValue {
   contacts: EmailContact[];
   templates: EmailTemplate[];
   campaigns: EmailCampaign[];
+  journeys: EmailJourney[];
   loading: boolean;
   refetch: () => Promise<void>;
   scopedAction: <T = unknown>(action: string, extra?: Record<string, unknown>) => Promise<T>;
@@ -21,6 +22,7 @@ export function CrmDataProvider({ children }: { children: ReactNode }) {
   const [contacts, setContacts] = useState<EmailContact[]>([]);
   const [templates, setTemplates] = useState<EmailTemplate[]>([]);
   const [campaigns, setCampaigns] = useState<EmailCampaign[]>([]);
+  const [journeys, setJourneys] = useState<EmailJourney[]>([]);
   const [loading, setLoading] = useState(true);
   const activeProjectIdRef = useRef(activeProjectId);
   activeProjectIdRef.current = activeProjectId;
@@ -29,10 +31,11 @@ export function CrmDataProvider({ children }: { children: ReactNode }) {
     const requestedProjectId = activeProjectIdRef.current;
     setLoading(true);
     try {
-      const [c, t, k] = await Promise.all([
+      const [c, t, k, j] = await Promise.all([
         scopedAction<{ contacts: EmailContact[] }>('list_email_contacts'),
         scopedAction<{ templates: EmailTemplate[] }>('list_email_templates'),
         scopedAction<{ campaigns: EmailCampaign[] }>('list_email_campaigns'),
+        scopedAction<{ journeys: EmailJourney[] }>('list_email_journeys'),
       ]);
       // Igual que en PanelDataContext: si el proyecto activo cambio mientras
       // esta respuesta viajaba, se descarta - ya no corresponde.
@@ -40,6 +43,7 @@ export function CrmDataProvider({ children }: { children: ReactNode }) {
       setContacts(c.contacts || []);
       setTemplates(t.templates || []);
       setCampaigns(k.campaigns || []);
+      setJourneys(j.journeys || []);
     } catch (e) {
       if (e instanceof UnauthorizedError) {
         handleUnauthorized();
@@ -56,7 +60,7 @@ export function CrmDataProvider({ children }: { children: ReactNode }) {
   }, [refetch, activeProjectId]);
 
   return (
-    <CrmDataContext.Provider value={{ contacts, templates, campaigns, loading, refetch, scopedAction }}>
+    <CrmDataContext.Provider value={{ contacts, templates, campaigns, journeys, loading, refetch, scopedAction }}>
       {children}
     </CrmDataContext.Provider>
   );

@@ -17,6 +17,8 @@ import NuevaCampana from './pages/EmailCrm/NuevaCampana';
 import Audiencias from './pages/EmailCrm/Audiencias';
 import Templates from './pages/EmailCrm/Templates';
 import CrmMetricas from './pages/EmailCrm/Metricas';
+import CampanaDetalle from './pages/EmailCrm/CampanaDetalle';
+import Automatizaciones from './pages/EmailCrm/Automatizaciones';
 
 function AppRoutes() {
   const { isAuthenticated } = useAuth();
@@ -43,10 +45,12 @@ function AppRoutes() {
             <Route path="email-crm" element={<EmailCrmLayout />}>
               <Route index element={<Resumen />} />
               <Route path="campanas" element={<Campanas />} />
+              <Route path="campanas/:campaignId" element={<CampanaDetalle />} />
               <Route path="nueva" element={<NuevaCampana />} />
               <Route path="audiencias" element={<Audiencias />} />
               <Route path="templates" element={<Templates />} />
               <Route path="metricas" element={<CrmMetricas />} />
+              <Route path="automatizaciones" element={<Automatizaciones />} />
             </Route>
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

@@ -12,6 +12,7 @@ const TABS = [
   { to: 'audiencias', label: 'Audiencias' },
   { to: 'templates', label: 'Templates' },
   { to: 'metricas', label: 'Métricas' },
+  { to: 'automatizaciones', label: 'Automatizaciones' },
 ];
 
 export default function EmailCrmLayout() {
