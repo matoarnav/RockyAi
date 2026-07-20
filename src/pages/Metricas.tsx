@@ -92,13 +92,17 @@ export default function Metricas() {
         <>
           <div className="mini-dash">
             <div className="mini-card c-email">
-              <div className="mini-card-icon">✉</div>
+              <div className="mini-card-icon">
+                <img src="/icons/gmail.svg" alt="" width={18} height={18} />
+              </div>
               <div className="mini-card-label">Envíos del período</div>
               <div className="mini-card-value tabular">{report.email.enviados}</div>
               <div className="mini-card-sub">{openRate} de apertura</div>
             </div>
             <div className="mini-card c-social">
-              <div className="mini-card-icon">◈</div>
+              <div className="mini-card-icon">
+                <img src="/icons/instagram.svg" alt="" width={18} height={18} />
+              </div>
               <div className="mini-card-label">Seguidores Instagram</div>
               <div className="mini-card-value tabular">{report.social.seguidores_actuales ?? '—'}</div>
               <div className="mini-card-sub">

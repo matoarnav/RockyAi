@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePanelData } from '../context/PanelDataContext';
 import { formatTodayEs } from '../api';
@@ -53,7 +53,7 @@ export default function ProjectHome() {
           <Reveal delay={0}>
             <MiniCard
               cls="c-email"
-              icon="✉"
+              icon={<img src="/icons/gmail.svg" alt="" width={18} height={18} />}
               label="Envíos este mes"
               value={summary ? summary.email.enviados_mes : summaryError ? '—' : '…'}
               sub="Email Marketing"
@@ -63,7 +63,7 @@ export default function ProjectHome() {
           <Reveal delay={60}>
             <MiniCard
               cls="c-opens"
-              icon="◎"
+              icon={<img src="/icons/gmail.svg" alt="" width={18} height={18} />}
               label="Aperturas totales"
               value={summary ? summary.email.aperturas_totales : summaryError ? '—' : '…'}
               sub="Histórico de campañas"
@@ -136,7 +136,7 @@ function MiniCard({
   to,
 }: {
   cls: string;
-  icon: string;
+  icon: ReactNode;
   label: string;
   value: string | number;
   sub: string;
