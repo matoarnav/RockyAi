@@ -26,6 +26,11 @@ export const DEFAULTS: Record<AgentKey, AgentConfig> = {
     desc: 'Director de Montaje y Edición Cinematográfica. La Productora de Estudio de la Banda. Toma el guion de Dave y el material del repositorio de video, y arma la receta de montaje con ritmo de corte, transiciones y voz en off — lista para importar en DaVinci Resolve.',
     avatarUrl: '',
   },
+  ri: {
+    name: 'Cameron',
+    desc: 'Market Research & Insight Scout. El Periodista de Gira de la Banda. Se infiltra en Reddit, foros y revistas del mercado objetivo para traer fricciones, deseos y oportunidades reales de usuarios — materia prima cruda para que Dave componga con datos, no con suposiciones.',
+    avatarUrl: '',
+  },
 };
 
 export const AGENT_META: Record<AgentKey, { cls: string; initials: string; role: string; short: string }> = {
@@ -34,9 +39,10 @@ export const AGENT_META: Record<AgentKey, { cls: string; initials: string; role:
   seo: { cls: 'seo', initials: 'SL', role: 'Search, Geographic & AI Engine Optimization Expert', short: 'SEO / GEO / AEO' },
   strategist: { cls: 'strategist', initials: 'DA', role: 'Content & Social Media Strategist', short: 'Content Strategist' },
   fm: { cls: 'fm', initials: 'TH', role: 'Director de Montaje y Edición Cinematográfica', short: 'Filmmaker' },
+  ri: { cls: 'ri', initials: 'CA', role: 'Market Research & Insight Scout', short: 'Research' },
 };
 
-export const AGENT_FUNCTION_KEYS: AgentKey[] = ['ad', 'an', 'seo', 'strategist', 'fm'];
+export const AGENT_FUNCTION_KEYS: AgentKey[] = ['ad', 'an', 'seo', 'strategist', 'fm', 'ri'];
 
 export const TOOL_META: Record<ToolKey, { label: string; icon: string }> = {
   agentes: { label: 'Agentes', icon: '◈' },
