@@ -397,3 +397,71 @@ tbody tr:hover{ background:rgba(255,255,255,0.02); }
   .aud-layout{ grid-template-columns:1fr; }
   .welcome-list{ grid-template-columns:1fr; }
 }
+
+/* ===== PMS (Property Management System) ===== */
+.pms-nav-badge{ margin-left:auto; font-size:8px; letter-spacing:0.05em; text-transform:uppercase; font-weight:800; color:var(--accent-ink); background:var(--sidebar-accent); padding:2px 6px; border-radius:20px; }
+
+.pms-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:24px; flex-wrap:wrap; }
+.pms-head .page-sub{ max-width:560px; }
+
+.lodge-switcher{ display:flex; align-items:center; gap:10px; background:var(--panel); border:1px solid var(--line); border-radius:11px; padding:10px 14px; flex-shrink:0; }
+.lodge-switcher-label{ font-size:9.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--dim-2); font-weight:700; }
+.lodge-switcher-select{ background:rgba(0,0,0,0.25); border:1px solid var(--line); border-radius:7px; color:var(--ink); padding:7px 10px; font-size:12.5px; font-weight:700; cursor:pointer; }
+
+.mini-card.c-pms .mini-card-icon{ background:rgba(202,150,0,0.12); color:var(--accent); }
+
+/* ===== Modales genéricos (Modal.tsx) ===== */
+.modal-box{ max-width:600px; }
+.modal-sub{ font-size:12px; color:var(--dim-2); line-height:1.6; margin:-6px 0 20px; font-weight:500; }
+.modal-hint{ font-size:11.5px; color:var(--ochre); margin:-4px 0 14px; font-weight:500; }
+.modal-row-2{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.modal-row-3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+
+/* ===== Pills de estado del PMS ===== */
+.pill.confirmed{ background:rgba(125,143,106,0.15); color:var(--sage); }
+.pill.confirmed .pill-dot{ background:var(--sage); }
+.pill.pending{ background:rgba(192,138,46,0.15); color:var(--ochre); }
+.pill.pending .pill-dot{ background:var(--ochre); }
+.pill.cancelled{ background:rgba(192,80,58,0.15); color:var(--err); }
+.pill.cancelled .pill-dot{ background:var(--err); }
+.pill.completed{ background:rgba(125,143,106,0.15); color:var(--sage); }
+.pill.paid{ background:rgba(125,143,106,0.15); color:var(--sage); }
+.pill.pending-pay{ background:rgba(163,147,124,0.15); color:var(--dim); }
+.pill.partial{ background:rgba(192,138,46,0.15); color:var(--ochre); }
+.pill.refunded{ background:rgba(192,80,58,0.15); color:var(--err); }
+
+/* ===== Ruta operativa: Base de operacion -> Zona de guiado =====
+   Dos chips de colores distintos a proposito - es la regla de negocio
+   estricta del PMS: nunca se fusionan en un solo campo. */
+.pms-route{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.pms-route-base, .pms-route-zone{ font-size:11px; font-weight:700; padding:4px 10px; border-radius:7px; }
+.pms-route-base{ background:rgba(94,117,131,0.16); color:var(--dust); }
+.pms-route-zone{ background:rgba(138,90,107,0.16); color:var(--plum); }
+.pms-route-arrow{ color:var(--accent); font-weight:700; font-size:13px; }
+
+.pms-route-field-pair{ display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:10px; }
+.pms-route-field-arrow{ color:var(--accent); font-size:16px; font-weight:700; padding-top:16px; }
+
+/* ===== Reservas: panel de experiencias expandido ===== */
+.addon-panel{ padding:14px 4px; }
+.addon-panel-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+
+/* ===== Itinerario operativo ===== */
+.itinerary-daynav{ display:flex; align-items:center; gap:14px; margin:24px 0 26px; flex-wrap:wrap; }
+.itinerary-daynav-current{ display:flex; align-items:center; gap:12px; background:var(--panel); border:1px solid var(--line); border-radius:9px; padding:8px 14px; }
+.itinerary-daynav-current input[type="date"]{ background:rgba(0,0,0,0.25); border:1px solid var(--line); border-radius:6px; color:var(--ink); padding:6px 9px; font-size:12px; }
+.itinerary-daynav-label{ font-size:12.5px; font-weight:700; color:var(--ink); text-transform:capitalize; }
+
+.itinerary-columns{ display:grid; grid-template-columns:1fr 1fr; gap:28px; align-items:start; }
+.itinerary-guest-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.itinerary-stay-badge{ font-size:9.5px; letter-spacing:0.04em; text-transform:uppercase; font-weight:700; padding:3px 9px; border-radius:20px; white-space:nowrap; }
+.itinerary-stay-badge.arrival{ background:rgba(125,143,106,0.18); color:var(--sage); }
+.itinerary-stay-badge.departure{ background:rgba(94,117,131,0.18); color:var(--dust); }
+.itinerary-stay-badge.staying{ background:rgba(163,147,124,0.15); color:var(--dim); }
+
+@media (max-width:900px){
+  .itinerary-columns{ grid-template-columns:1fr; }
+  .modal-row-2, .modal-row-3{ grid-template-columns:1fr; }
+  .pms-route-field-pair{ grid-template-columns:1fr; }
+  .pms-route-field-arrow{ display:none; }
+}

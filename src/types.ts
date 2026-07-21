@@ -214,3 +214,44 @@ export interface AgencyOverview {
   agents: { ready: number; processing: number; error: number; never_run: number; total: number };
   errors: AgencyOverviewError[];
 }
+
+// ===== PMS (Property Management System) =====
+
+export interface PmsGuest {
+  GuestID: string;
+  FullName: string;
+  Contact: { Email?: string; WhatsApp?: string };
+  OriginCountry?: string | null;
+  VIP_Tags: string[];
+  Preferences: Record<string, unknown>;
+  TotalLTV: number | string;
+  UpdatedAt: string;
+}
+
+export interface PmsBooking {
+  BookingID: string;
+  GuestID: string;
+  GuestName?: string;
+  RoomID: string;
+  CheckIn: string;
+  CheckOut: string;
+  Status: 'CONFIRMED' | 'PENDING' | 'CANCELLED';
+  Source: 'Direct' | 'OTA_Headless';
+  Financials: { Currency: string; TotalAmount: number | string; PaymentStatus: 'PAID' | 'PENDING' | 'PARTIAL' | 'REFUNDED' };
+  UpdatedAt: string;
+}
+
+export interface PmsAddon {
+  AddonID: string;
+  BookingID: string;
+  ServiceName: string;
+  Status: 'SCHEDULED' | 'COMPLETED' | 'CANCELLED';
+  Logistics: { OperationBase: string; GuidingZone: string; Date: string; GuideAssigned?: string | null };
+  UpdatedAt: string;
+}
+
+export interface PmsItinerary {
+  date: string;
+  bookings: PmsBooking[];
+  experiences: PmsAddon[];
+}

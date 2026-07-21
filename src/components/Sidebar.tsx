@@ -147,6 +147,14 @@ export default function Sidebar() {
         </NavLink>
       </div>
 
+      <div>
+        <div className="nav-label">Herramientas</div>
+        <NavLink to="/pms" className={({ isActive }) => `config-link${isActive ? ' current' : ''}`}>
+          <span className="ico">⌂</span> PMS · Reservas
+          <span className="pms-nav-badge">Nuevo</span>
+        </NavLink>
+      </div>
+
       {activeProjectId ? (
         <div>
           <div className="nav-label">Proyecto activo</div>
