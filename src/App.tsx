@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import Configuracion from './pages/Configuracion';
 import PmsLayout from './pages/Pms/PmsLayout';
 import PmsResumen from './pages/Pms/PmsResumen';
+import PmsCalendario from './pages/Pms/PmsCalendario';
 import PmsItinerario from './pages/Pms/PmsItinerario';
 import PmsReservas from './pages/Pms/PmsReservas';
 import PmsHuespedes from './pages/Pms/PmsHuespedes';
@@ -44,6 +45,7 @@ function AppRoutes() {
           <Route path="/configuracion" element={<Configuracion />} />
           <Route path="/pms" element={<PmsLayout />}>
             <Route index element={<PmsResumen />} />
+            <Route path="calendario" element={<PmsCalendario />} />
             <Route path="itinerario" element={<PmsItinerario />} />
             <Route path="reservas" element={<PmsReservas />} />
             <Route path="huespedes" element={<PmsHuespedes />} />

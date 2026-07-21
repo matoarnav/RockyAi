@@ -2,7 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { usePmsData } from '../../context/PmsDataContext';
 import { getItinerary } from '../../pmsApi';
 import Reveal from '../../components/Reveal';
-import type { PmsItinerary } from '../../types';
+import BookingDetailModal from './BookingDetailModal';
+import type { PmsBooking, PmsItinerary } from '../../types';
 
 function todayIso() {
   return new Date().toISOString().slice(0, 10);
@@ -32,6 +33,7 @@ export default function PmsItinerario() {
   const [data, setData] = useState<PmsItinerary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [selected, setSelected] = useState<PmsBooking | null>(null);
 
   const load = useCallback(
     (d: string) => {
@@ -91,13 +93,17 @@ export default function PmsItinerario() {
                 {bookings.map((b) => {
                   const label = stayLabel(b.CheckIn, b.CheckOut, date);
                   return (
-                    <div className="result-list-item itinerary-guest-card" key={b.BookingID}>
+                    <div
+                      className="result-list-item itinerary-guest-card row-clickable"
+                      key={b.BookingID}
+                      onClick={() => setSelected(b)}
+                    >
                       <div className="itinerary-guest-row">
                         <strong style={{ color: 'var(--ink)' }}>{b.GuestName}</strong>
                         <span className={`itinerary-stay-badge ${label.cls}`}>{label.text}</span>
                       </div>
                       <div className="cell-sub">
-                        {b.RoomID} · {b.CheckIn} → {b.CheckOut}
+                        {b.RoomID} · {b.PartyMembers} {b.PartyMembers === 1 ? 'persona' : 'personas'} · {b.CheckIn} → {b.CheckOut}
                       </div>
                     </div>
                   );
@@ -118,8 +124,11 @@ export default function PmsItinerario() {
                   const booking = bookingById.get(a.BookingID);
                   return (
                     <div className="result-list-item" key={a.AddonID}>
-                      <div style={{ color: 'var(--ink)', fontWeight: 700, marginBottom: 4 }}>{a.ServiceName}</div>
-                      <div className="cell-sub" style={{ marginBottom: 8 }}>
+                      <div className="itinerary-guest-row">
+                        <span style={{ color: 'var(--ink)', fontWeight: 700 }}>{a.ServiceName}</span>
+                        {a.Logistics.Time && <span className="itinerary-stay-badge staying">{a.Logistics.Time} hrs</span>}
+                      </div>
+                      <div className="cell-sub" style={{ margin: '4px 0 8px' }}>
                         {booking ? booking.GuestName : `Reserva ${a.BookingID}`}
                       </div>
                       <div className="pms-route">
@@ -136,6 +145,8 @@ export default function PmsItinerario() {
           </div>
         </div>
       )}
+
+      {selected && <BookingDetailModal booking={selected} onClose={() => setSelected(null)} />}
     </Reveal>
   );
 }

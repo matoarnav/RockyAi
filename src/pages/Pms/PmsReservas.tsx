@@ -4,6 +4,7 @@ import { listAddons } from '../../pmsApi';
 import Reveal from '../../components/Reveal';
 import NewBookingModal from './NewBookingModal';
 import NewAddonModal from './NewAddonModal';
+import BookingDetailModal from './BookingDetailModal';
 import type { PmsAddon, PmsBooking } from '../../types';
 
 function nights(booking: PmsBooking) {
@@ -21,6 +22,7 @@ export default function PmsReservas() {
   const [addonsByBooking, setAddonsByBooking] = useState<Record<string, PmsAddon[]>>({});
   const [addonsLoading, setAddonsLoading] = useState<string | null>(null);
   const [addonModalFor, setAddonModalFor] = useState<string | null>(null);
+  const [detailFor, setDetailFor] = useState<PmsBooking | null>(null);
 
   const sorted = [...bookings].sort((a, b) => b.CheckIn.localeCompare(a.CheckIn));
 
@@ -81,10 +83,12 @@ export default function PmsReservas() {
               <th>Check-in</th>
               <th>Check-out</th>
               <th>Noches</th>
+              <th>Pax</th>
               <th>Estado</th>
               <th>Origen</th>
               <th>Pago</th>
               <th>Total</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -99,6 +103,7 @@ export default function PmsReservas() {
                     <td className="tabular">{b.CheckIn}</td>
                     <td className="tabular">{b.CheckOut}</td>
                     <td className="tabular">{nights(b)}</td>
+                    <td className="tabular">{b.PartyMembers}</td>
                     <td>
                       <span className={`pill ${b.Status.toLowerCase()}`}>{b.Status}</span>
                     </td>
@@ -109,10 +114,21 @@ export default function PmsReservas() {
                     <td className="tabular">
                       {Number(b.Financials.TotalAmount).toLocaleString('es-CL')} {b.Financials.Currency}
                     </td>
+                    <td>
+                      <button
+                        className="btn btn-ghost btn-sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDetailFor(b);
+                        }}
+                      >
+                        Detalle
+                      </button>
+                    </td>
                   </tr>
                   {isOpen && (
                     <tr>
-                      <td colSpan={9} style={{ background: 'rgba(255,255,255,0.015)' }}>
+                      <td colSpan={11} style={{ background: 'rgba(255,255,255,0.015)' }}>
                         <div className="addon-panel">
                           <div className="addon-panel-head">
                             <span className="desc-label" style={{ margin: 0 }}>
@@ -144,6 +160,7 @@ export default function PmsReservas() {
                                   </div>
                                   <div className="cell-sub" style={{ marginTop: 6 }}>
                                     {a.Logistics.Date}
+                                    {a.Logistics.Time && ` · ${a.Logistics.Time} hrs`}
                                     {a.Logistics.GuideAssigned && ` · Guía: ${a.Logistics.GuideAssigned}`}
                                     {' · '}
                                     <span className={`pill ${a.Status.toLowerCase()}`}>{a.Status}</span>
@@ -164,6 +181,7 @@ export default function PmsReservas() {
       )}
 
       {showNew && <NewBookingModal onClose={() => setShowNew(false)} />}
+      {detailFor && <BookingDetailModal booking={detailFor} onClose={() => setDetailFor(null)} />}
       {addonModalFor && (
         <NewAddonModal
           bookingId={addonModalFor}

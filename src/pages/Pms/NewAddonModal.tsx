@@ -9,6 +9,7 @@ export default function NewAddonModal({ bookingId, onClose, onCreated }: { booki
   const [operationBase, setOperationBase] = useState('');
   const [guidingZone, setGuidingZone] = useState('');
   const [date, setDate] = useState('');
+  const [time, setTime] = useState('');
   const [guideAssigned, setGuideAssigned] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -27,6 +28,7 @@ export default function NewAddonModal({ bookingId, onClose, onCreated }: { booki
           OperationBase: operationBase.trim(),
           GuidingZone: guidingZone.trim(),
           Date: date,
+          ...(time && { Time: time }),
           ...(guideAssigned.trim() && { GuideAssigned: guideAssigned.trim() }),
         },
       });
@@ -61,10 +63,14 @@ export default function NewAddonModal({ bookingId, onClose, onCreated }: { booki
             <input value={guidingZone} onChange={(e) => setGuidingZone(e.target.value)} placeholder="Ej. Cerro Castillo" />
           </div>
         </div>
-        <div className="modal-row-2">
+        <div className="modal-row-3">
           <div className="crm-field">
             <label>Fecha</label>
             <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+          </div>
+          <div className="crm-field">
+            <label>Hora (opcional)</label>
+            <input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
           </div>
           <div className="crm-field">
             <label>Guía asignado (opcional)</label>

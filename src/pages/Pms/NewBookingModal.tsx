@@ -8,6 +8,7 @@ export default function NewBookingModal({ onClose }: { onClose: () => void }) {
   const [roomId, setRoomId] = useState('');
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
+  const [partyMembers, setPartyMembers] = useState('2');
   const [currency, setCurrency] = useState('CLP');
   const [totalAmount, setTotalAmount] = useState('');
   const [paymentStatus, setPaymentStatus] = useState('PENDING');
@@ -27,6 +28,7 @@ export default function NewBookingModal({ onClose }: { onClose: () => void }) {
         RoomID: roomId.trim(),
         CheckIn: checkIn,
         CheckOut: checkOut,
+        PartyMembers: Number(partyMembers) || 1,
         Financials: { Currency: currency, TotalAmount: Number(totalAmount) || 0, PaymentStatus: paymentStatus },
       });
       onClose();
@@ -67,7 +69,7 @@ export default function NewBookingModal({ onClose }: { onClose: () => void }) {
           <label>Cabaña / habitación</label>
           <input autoFocus value={roomId} onChange={(e) => setRoomId(e.target.value)} placeholder="Ej. Cabaña Sur" />
         </div>
-        <div className="modal-row-2">
+        <div className="modal-row-3">
           <div className="crm-field">
             <label>Check-in</label>
             <input type="date" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} />
@@ -75,6 +77,10 @@ export default function NewBookingModal({ onClose }: { onClose: () => void }) {
           <div className="crm-field">
             <label>Check-out</label>
             <input type="date" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} />
+          </div>
+          <div className="crm-field">
+            <label>Personas</label>
+            <input type="number" min="1" value={partyMembers} onChange={(e) => setPartyMembers(e.target.value)} />
           </div>
         </div>
         <div className="modal-row-3">

@@ -238,6 +238,7 @@ export interface PmsBooking {
   Status: 'CONFIRMED' | 'PENDING' | 'CANCELLED';
   Source: 'Direct' | 'OTA_Headless';
   Financials: { Currency: string; TotalAmount: number | string; PaymentStatus: 'PAID' | 'PENDING' | 'PARTIAL' | 'REFUNDED' };
+  PartyMembers: number;
   UpdatedAt: string;
 }
 
@@ -246,7 +247,7 @@ export interface PmsAddon {
   BookingID: string;
   ServiceName: string;
   Status: 'SCHEDULED' | 'COMPLETED' | 'CANCELLED';
-  Logistics: { OperationBase: string; GuidingZone: string; Date: string; GuideAssigned?: string | null };
+  Logistics: { OperationBase: string; GuidingZone: string; Date: string; Time?: string | null; GuideAssigned?: string | null };
   UpdatedAt: string;
 }
 

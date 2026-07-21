@@ -6,6 +6,7 @@ import { useSlidingIndicator } from '../../hooks/useSlidingIndicator';
 
 const TABS = [
   { to: '.', label: 'Resumen', end: true },
+  { to: 'calendario', label: 'Calendario' },
   { to: 'itinerario', label: 'Itinerario' },
   { to: 'reservas', label: 'Reservas' },
   { to: 'huespedes', label: 'Huéspedes' },

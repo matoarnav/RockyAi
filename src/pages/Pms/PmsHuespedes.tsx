@@ -80,6 +80,7 @@ export default function PmsHuespedes() {
                             {guestBookings.map((b) => (
                               <div className="result-list-item" key={b.BookingID}>
                                 <strong style={{ color: 'var(--ink)' }}>{b.RoomID}</strong> · {b.CheckIn} → {b.CheckOut} ·{' '}
+                                {b.PartyMembers} {b.PartyMembers === 1 ? 'persona' : 'personas'} ·{' '}
                                 <span className={`pill ${b.Status.toLowerCase()}`}>{b.Status}</span>
                               </div>
                             ))}
