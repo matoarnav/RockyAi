@@ -215,6 +215,40 @@ export interface AgencyOverview {
   errors: AgencyOverviewError[];
 }
 
+// ===== Gastos AI =====
+
+export interface AiSpendAgentLine {
+  agent_key: string;
+  model: string;
+  input_tokens: number;
+  output_tokens: number;
+  thinking_tokens: number;
+  cost_usd: number;
+}
+
+export interface AiSpendClientLine {
+  project_id: string;
+  cost_usd: number;
+  input_tokens: number;
+  output_tokens: number;
+  thinking_tokens: number;
+  agents: AiSpendAgentLine[];
+}
+
+export interface AiSpendOtherProvider {
+  provider: string;
+  cost_usd: number | null;
+  note: string;
+}
+
+export interface AiSpendOverview {
+  period_month: string;
+  claude: { provider: string; cost_usd: number; input_tokens: number; output_tokens: number; thinking_tokens: number };
+  other_providers: AiSpendOtherProvider[];
+  by_client: AiSpendClientLine[];
+  top_client: string | null;
+}
+
 // ===== PMS (Property Management System) =====
 
 export interface PmsGuest {

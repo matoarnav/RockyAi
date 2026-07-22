@@ -152,6 +152,9 @@ export default function Sidebar() {
         <div className="nav-label">Herramientas</div>
         <NavLink to="/pms" className={({ isActive }) => `config-link${isActive ? ' current' : ''}`}>
           <span className="ico">⌂</span> PMS · Reservas
+        </NavLink>
+        <NavLink to="/gastos-ai" className={({ isActive }) => `config-link${isActive ? ' current' : ''}`}>
+          <span className="ico">$</span> Gastos AI
           <NavBadge>Nuevo</NavBadge>
         </NavLink>
       </div>

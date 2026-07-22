@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import Configuracion from './pages/Configuracion';
+import GastosAI from './pages/GastosAI';
 import PmsLayout from './pages/Pms/PmsLayout';
 import PmsResumen from './pages/Pms/PmsResumen';
 import PmsCalendario from './pages/Pms/PmsCalendario';
@@ -43,6 +44,7 @@ function AppRoutes() {
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/configuracion" element={<Configuracion />} />
+          <Route path="/gastos-ai" element={<GastosAI />} />
           <Route path="/pms" element={<PmsLayout />}>
             <Route index element={<PmsResumen />} />
             <Route path="calendario" element={<PmsCalendario />} />
