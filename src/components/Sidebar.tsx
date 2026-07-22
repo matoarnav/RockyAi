@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { usePanelData } from '../context/PanelDataContext';
 import { AGENT_META, AGENT_FUNCTION_KEYS, TOOL_META, TOOL_KEYS, PROJECT_LOGO } from '../constants';
 import { useSlidingIndicator } from '../hooks/useSlidingIndicator';
+import NavBadge from './NavBadge';
 import type { AgentKey, ToolKey } from '../types';
 
 export default function Sidebar() {
@@ -151,7 +152,7 @@ export default function Sidebar() {
         <div className="nav-label">Herramientas</div>
         <NavLink to="/pms" className={({ isActive }) => `config-link${isActive ? ' current' : ''}`}>
           <span className="ico">⌂</span> PMS · Reservas
-          <span className="pms-nav-badge">Nuevo</span>
+          <NavBadge>Nuevo</NavBadge>
         </NavLink>
       </div>
 
