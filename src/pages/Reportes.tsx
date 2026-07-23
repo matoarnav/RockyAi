@@ -1,9 +1,10 @@
 import { Fragment, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { usePanelData } from '../context/PanelDataContext';
 import { callAction } from '../api';
 import { AGENT_META, DEFAULTS } from '../constants';
 import Reveal from '../components/Reveal';
-import type { AgentKey, AiSpendOverview } from '../types';
+import type { AgencyOverview, AgentKey, AiSpendOverview } from '../types';
 
 const MONTH_LABEL: Record<string, string> = {
   '01': 'enero', '02': 'febrero', '03': 'marzo', '04': 'abril', '05': 'mayo', '06': 'junio',
@@ -19,21 +20,33 @@ function monthLabel(periodMonth: string) {
   return MONTH_LABEL[m] || periodMonth;
 }
 
-export default function GastosAI() {
+export default function Reportes() {
   const { projects } = usePanelData();
+  const navigate = useNavigate();
   const [overview, setOverview] = useState<AiSpendOverview | null>(null);
-  const [loadError, setLoadError] = useState(false);
+  const [spendError, setSpendError] = useState(false);
+  const [agency, setAgency] = useState<AgencyOverview | null>(null);
+  const [agencyError, setAgencyError] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    callAction<AiSpendOverview>('get_ai_spend_overview', { project_ids: projects.map((p) => p.id) })
+    const projectIds = projects.map((p) => p.id);
+    callAction<AiSpendOverview>('get_ai_spend_overview', { project_ids: projectIds })
       .then((data) => {
         if (!cancelled) setOverview(data);
       })
       .catch((e) => {
         console.error('Error cargando el gasto de IA', e);
-        if (!cancelled) setLoadError(true);
+        if (!cancelled) setSpendError(true);
+      });
+    callAction<AgencyOverview>('get_agency_overview', { project_ids: projectIds })
+      .then((data) => {
+        if (!cancelled) setAgency(data);
+      })
+      .catch((e) => {
+        console.error('Error cargando el resumen de agencia', e);
+        if (!cancelled) setAgencyError(true);
       });
     return () => {
       cancelled = true;
@@ -42,32 +55,79 @@ export default function GastosAI() {
   }, [projects.length]);
 
   const projectName = (id: string) => projects.find((p) => p.id === id)?.name || id;
-
   const topClient = overview?.by_client.find((c) => c.project_id === overview.top_client);
   const totalTokens = overview ? overview.claude.input_tokens + overview.claude.output_tokens : 0;
 
   return (
     <div className="main">
-      <div className="eyebrow">Panel</div>
-      <div className="page-title">Gastos AI</div>
+      <div className="eyebrow">General</div>
+      <div className="page-title">Reportes</div>
       <div className="page-sub">
-        Cuánto ha consumido cada IA que usamos este mes, y qué cliente está generando más gasto. No está asociado a
-        ningún proyecto — es una vista agencia-wide.
+        Gasto real en AWS y en APIs de IA, y alertas activas — vista agencia-wide, no está asociada a ningún cliente.
       </div>
 
-      {loadError && <div className="empty-state">No se pudo cargar el gasto de IA. Revisá la sesión e intentá de nuevo.</div>}
+      <div className="section-head" style={{ marginTop: 32 }}>
+        <span className="section-title">Infraestructura AWS</span>
+      </div>
+      {agencyError && <div className="empty-state">No se pudo cargar el gasto de AWS.</div>}
+      {!agencyError && (
+        <div className="mini-dash">
+          <Reveal delay={0}>
+            <div className="mini-card c-pms">
+              <div className="mini-card-icon">☁</div>
+              <div className="mini-card-label">Gasto AWS del mes</div>
+              <div className="mini-card-value tabular">
+                {agency ? (agency.billing.available ? money(agency.billing.month_to_date_usd) : 'No disponible') : '…'}
+              </div>
+              <div className="mini-card-sub">
+                {agency?.billing.budget_usd != null ? `Presupuesto: ${money(agency.billing.budget_usd)}` : 'CloudWatch EstimatedCharges'}
+              </div>
+            </div>
+          </Reveal>
+          <Reveal delay={60}>
+            <div className="mini-card c-pms">
+              <div className="mini-card-icon">◈</div>
+              <div className="mini-card-label">Agentes listos</div>
+              <div className="mini-card-value tabular">{agency ? `${agency.agents.ready}/${agency.agents.total}` : '…'}</div>
+              <div className="mini-card-sub">{agency ? `${agency.agents.processing} procesando · ${agency.agents.never_run} sin correr` : 'Cargando…'}</div>
+            </div>
+          </Reveal>
+        </div>
+      )}
 
-      {!loadError && (
+      <div className="section-head" style={{ marginTop: 36 }}>
+        <span className="section-title">Alertas activas</span>
+      </div>
+      {!agencyError && agency && agency.errors.length === 0 && (
+        <div className="empty-state">Sin alertas activas — ningún agente está en estado de error.</div>
+      )}
+      {!agencyError && agency && agency.errors.length > 0 && (
+        <div className="result-list">
+          {agency.errors.map((e, i) => (
+            <div className="result-list-item row-clickable" key={i} onClick={() => navigate(`/p/${e.project_id}`)}>
+              <div style={{ color: 'var(--ink)', fontWeight: 700, marginBottom: 4 }}>
+                {projectName(e.project_id)} · {AGENT_META[e.agent_key as AgentKey]?.short || e.agent_key}
+              </div>
+              <div className="cell-sub">{e.last_action || 'Error sin detalle registrado'}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="section-head" style={{ marginTop: 36 }}>
+        <span className="section-title">Gasto Claude por cliente</span>
+        {overview && <span className="section-sub">{monthLabel(overview.period_month)}</span>}
+      </div>
+      {spendError && <div className="empty-state">No se pudo cargar el gasto de IA.</div>}
+      {!spendError && (
         <>
           <div className="mini-dash">
             <Reveal delay={0}>
               <div className="mini-card c-pms">
                 <div className="mini-card-icon">$</div>
-                <div className="mini-card-label">Gasto Claude · {overview ? monthLabel(overview.period_month) : '…'}</div>
+                <div className="mini-card-label">Gasto Claude total</div>
                 <div className="mini-card-value tabular">{overview ? money(overview.claude.cost_usd) : '…'}</div>
-                <div className="mini-card-sub">
-                  {overview ? `${totalTokens.toLocaleString('es-CL')} tokens (in + out)` : 'Cargando…'}
-                </div>
+                <div className="mini-card-sub">{overview ? `${totalTokens.toLocaleString('es-CL')} tokens (in + out)` : 'Cargando…'}</div>
               </div>
             </Reveal>
             <Reveal delay={60}>
@@ -80,33 +140,12 @@ export default function GastosAI() {
                 <div className="mini-card-sub">{topClient ? `${money(topClient.cost_usd)} este mes` : 'Ningún agente ha corrido este mes'}</div>
               </div>
             </Reveal>
-            <Reveal delay={120}>
-              <div className="mini-card c-pms">
-                <div className="mini-card-icon">◈</div>
-                <div className="mini-card-label">Tokens de razonamiento (thinking)</div>
-                <div className="mini-card-value tabular">{overview ? overview.claude.thinking_tokens.toLocaleString('es-CL') : '…'}</div>
-                <div className="mini-card-sub">Ya incluidos en el costo de output — no se cobran aparte</div>
-              </div>
-            </Reveal>
-            <Reveal delay={180}>
-              <div className="mini-card c-pms">
-                <div className="mini-card-icon">◎</div>
-                <div className="mini-card-label">Otros proveedores</div>
-                <div className="mini-card-value" style={{ fontSize: 17 }}>
-                  Sin costo trackeado
-                </div>
-                <div className="mini-card-sub">Gemini (tier gratuito) y ElevenLabs (sin uso) — ver detalle abajo</div>
-              </div>
-            </Reveal>
           </div>
 
-          <div className="section-head" style={{ marginTop: 36 }}>
-            <span className="section-title">Gasto por cliente — Anthropic (Claude)</span>
-          </div>
           {overview && overview.by_client.length === 0 ? (
-            <div className="empty-state">Ningún agente registró consumo de tokens este mes todavía.</div>
+            <div className="empty-state" style={{ marginTop: 18 }}>Ningún agente registró consumo de tokens este mes todavía.</div>
           ) : (
-            <table>
+            <table style={{ marginTop: 18 }}>
               <thead>
                 <tr>
                   <th>Cliente</th>
@@ -172,6 +211,11 @@ export default function GastosAI() {
           </div>
         </>
       )}
+
+      <div className="footnote">
+        "Insights" hoy son estos mismos datos derivados (cliente que más gasta, conteo de errores) — no hay un motor
+        de insights generado con IA todavía, eso sería un desarrollo aparte.
+      </div>
     </div>
   );
 }

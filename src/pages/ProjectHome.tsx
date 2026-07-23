@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import { usePanelData } from '../context/PanelDataContext';
 import { callAction, formatRelative } from '../api';
 import { AGENT_META, AGENT_FUNCTION_KEYS, DEFAULTS } from '../constants';
-import type { AiSpendClientLine, AiSpendOverview, ContentPiece, HomeSummary } from '../types';
+import type { AiSpendClientLine, AiSpendOverview, ContentPiece } from '../types';
 import Reveal from '../components/Reveal';
-import PageHeader from '../components/PageHeader';
+import type { ProjectOutletContext } from '../components/ProjectLayout';
 
 function mostRecentPiece(pieces: { fecha: string; piece: ContentPiece }[]): ContentPiece | null {
   if (!pieces.length) return null;
@@ -18,31 +18,13 @@ const currentMonthEs = (() => {
 })();
 
 export default function ProjectHome() {
-  const { agentConfigs, agentStatus, activeProjectName, activeProject, activeProjectId, contentGrid, scopedAction } = usePanelData();
+  const { agentConfigs, agentStatus, activeProject, activeProjectId, contentGrid } = usePanelData();
+  const { summary, summaryError } = useOutletContext<ProjectOutletContext>();
   const navigate = useNavigate();
-  const [summary, setSummary] = useState<HomeSummary | null>(null);
-  const [summaryError, setSummaryError] = useState(false);
   const [spend, setSpend] = useState<AiSpendClientLine | null>(null);
   const [spendError, setSpendError] = useState(false);
 
   const projectAgentKeys = activeProject?.agents?.length ? activeProject.agents : AGENT_FUNCTION_KEYS;
-
-  useEffect(() => {
-    let cancelled = false;
-    setSummary(null);
-    setSummaryError(false);
-    scopedAction<HomeSummary>('get_home_summary')
-      .then((data) => {
-        if (!cancelled) setSummary(data);
-      })
-      .catch((e) => {
-        console.error('Error cargando el resumen del home', e);
-        if (!cancelled) setSummaryError(true);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [activeProjectId, scopedAction]);
 
   useEffect(() => {
     if (!activeProjectId) return;
@@ -61,11 +43,6 @@ export default function ProjectHome() {
       cancelled = true;
     };
   }, [activeProjectId]);
-
-  const activeCount = projectAgentKeys.filter((key) => {
-    const s = agentStatus[key];
-    return s && (s.status === 'READY' || s.status === 'PROCESSING');
-  }).length;
 
   const worstTone = (() => {
     if (!summary) return null;
@@ -95,217 +72,205 @@ export default function ProjectHome() {
   const metaAlert = summary?.system_health.meta_api;
 
   return (
-    <div className="main">
-      <Reveal>
-        <PageHeader
-          projectId={activeProjectId}
-          projectName={activeProjectName}
-          worstTone={worstTone}
-          hasAlert={!!metaAlert && metaAlert.tone !== 'ok' && metaAlert.tone !== 'off'}
-        />
-        <div className="resumen-subline">
-          {activeCount || projectAgentKeys.length}/{projectAgentKeys.length} agentes activos
-        </div>
-
-        <div className="section-head" style={{ marginTop: 20 }}>
-          <span className="section-title">Bloque 1 · Radar Comercial</span>
-        </div>
-        <div className="card2-grid card2-grid-3">
-          <Reveal delay={0}>
-            <div className="card2">
-              <div className="card2-label">Estado del Sistema</div>
-              <div className="sys-health-row">
-                <span className={`sys-dot-lg sys-dot-lg-${worstTone ?? 'off'}`} />
-                <div>
-                  <div className="sys-health-title">
-                    {worstTone === 'ok' ? 'All Systems Operational' : worstTone === 'warn' ? 'Atención en un sistema' : worstTone === 'error' ? 'Hay un error activo' : 'Sin datos todavía'}
-                  </div>
-                  <div className="sys-health-sub">
-                    Agentes activos · {daveStatus?.updated_at ? `Sync ${formatRelative(daveStatus.updated_at)}` : 'sin corridas todavía'}
-                  </div>
+    <Reveal>
+      <div className="section-head" style={{ marginTop: 8 }}>
+        <span className="section-title">Bloque 1 · Radar Comercial</span>
+      </div>
+      <div className="card2-grid card2-grid-3">
+        <Reveal delay={0}>
+          <div className="card2">
+            <div className="card2-label">Estado del Sistema</div>
+            <div className="sys-health-row">
+              <span className={`sys-dot-lg sys-dot-lg-${worstTone ?? 'off'}`} />
+              <div>
+                <div className="sys-health-title">
+                  {worstTone === 'ok' ? 'All Systems Operational' : worstTone === 'warn' ? 'Atención en un sistema' : worstTone === 'error' ? 'Hay un error activo' : 'Sin datos todavía'}
                 </div>
-              </div>
-              {summary && (
-                <div className="sys-mini-grid">
-                  <div className="sys-mini-stat">
-                    <span>Dave</span>
-                    <span className={`sys-mini-value sys-mini-${summary.system_health.dave.tone}`}>{summary.system_health.dave.label}</span>
-                  </div>
-                  <div className="sys-mini-stat">
-                    <span>Jimi</span>
-                    <span className={`sys-mini-value sys-mini-${summary.system_health.jimi.tone}`}>{summary.system_health.jimi.label}</span>
-                  </div>
-                  <div className="sys-mini-stat">
-                    <span>GSC Sync</span>
-                    <span className={`sys-mini-value sys-mini-${summary.system_health.gsc_sync.tone}`}>{summary.system_health.gsc_sync.label}</span>
-                  </div>
-                  <div className="sys-mini-stat">
-                    <span>Meta API</span>
-                    <span className={`sys-mini-value sys-mini-${summary.system_health.meta_api.tone}`}>{summary.system_health.meta_api.label}</span>
-                  </div>
+                <div className="sys-health-sub">
+                  Agentes activos · {daveStatus?.updated_at ? `Sync ${formatRelative(daveStatus.updated_at)}` : 'sin corridas todavía'}
                 </div>
-              )}
-            </div>
-          </Reveal>
-
-          <Reveal delay={60}>
-            <div className="card2">
-              <div className="card2-label">Tráfico Orgánico · GSC</div>
-              <div className="card2-value-row">
-                <span className="card2-value-xl tabular">{summary ? (summary.seo_trafico?.clics_organicos ?? '—') : summaryError ? '—' : '…'}</span>
-                <span className="card2-value-unit">clics</span>
-              </div>
-              {summary?.seo_trafico ? (
-                <div className={`card2-delta card2-delta-${summary.seo_trafico_delta_pct === null ? 'neutral' : summary.seo_trafico_delta_pct >= 0 ? 'ok' : 'bad'}`}>
-                  {summary.seo_trafico_delta_pct !== null ? (
-                    <span className="card2-delta-pill">{summary.seo_trafico_delta_pct >= 0 ? '+' : ''}{summary.seo_trafico_delta_pct}%</span>
-                  ) : (
-                    <span className="card2-delta-pill card2-delta-pill-neutral">Sin comparación</span>
-                  )}
-                  <span className="card2-delta-label">vs. hace 30 días</span>
-                </div>
-              ) : (
-                <div className="card2-delta-label">Sin datos todavía</div>
-              )}
-              <div className="card2-divider" />
-              <div className="card2-mini-row">
-                <span>Impresiones</span>
-                <span className="card2-mini-value">{summary?.seo_trafico?.impresiones ?? '—'}</span>
               </div>
             </div>
-          </Reveal>
-
-          <Reveal delay={120}>
-            <div className="card2">
-              <div className="card2-label">Comunidad · Total</div>
-              <div className="card2-value-row">
-                <span className="card2-value-xl tabular">{summary ? (comunidadTotal ?? '—') : summaryError ? '—' : '…'}</span>
-                <span className="card2-value-unit">seguidores</span>
+            {summary && (
+              <div className="sys-mini-grid">
+                <div className="sys-mini-stat">
+                  <span>Dave</span>
+                  <span className={`sys-mini-value sys-mini-${summary.system_health.dave.tone}`}>{summary.system_health.dave.label}</span>
+                </div>
+                <div className="sys-mini-stat">
+                  <span>Jimi</span>
+                  <span className={`sys-mini-value sys-mini-${summary.system_health.jimi.tone}`}>{summary.system_health.jimi.label}</span>
+                </div>
+                <div className="sys-mini-stat">
+                  <span>GSC Sync</span>
+                  <span className={`sys-mini-value sys-mini-${summary.system_health.gsc_sync.tone}`}>{summary.system_health.gsc_sync.label}</span>
+                </div>
+                <div className="sys-mini-stat">
+                  <span>Meta API</span>
+                  <span className={`sys-mini-value sys-mini-${summary.system_health.meta_api.tone}`}>{summary.system_health.meta_api.label}</span>
+                </div>
               </div>
-              <div className="card2-delta card2-delta-neutral">
-                {summary?.social.instagram.delta_7d_pct != null || summary?.social.youtube.delta_7d_pct != null ? (
-                  <span className="card2-delta-pill card2-delta-pill-neutral">
-                    IG {summary.social.instagram.delta_7d_pct != null ? (summary.social.instagram.delta_7d_pct >= 0 ? '+' : '') + summary.social.instagram.delta_7d_pct + '%' : 's/d'} · YT{' '}
-                    {summary.social.youtube.delta_7d_pct != null ? (summary.social.youtube.delta_7d_pct >= 0 ? '+' : '') + summary.social.youtube.delta_7d_pct + '%' : 's/d'}
-                  </span>
+            )}
+          </div>
+        </Reveal>
+
+        <Reveal delay={60}>
+          <div className="card2">
+            <div className="card2-label">Tráfico Orgánico · GSC</div>
+            <div className="card2-value-row">
+              <span className="card2-value-xl tabular">{summary ? (summary.seo_trafico?.clics_organicos ?? '—') : summaryError ? '—' : '…'}</span>
+              <span className="card2-value-unit">clics</span>
+            </div>
+            {summary?.seo_trafico ? (
+              <div className={`card2-delta card2-delta-${summary.seo_trafico_delta_pct === null ? 'neutral' : summary.seo_trafico_delta_pct >= 0 ? 'ok' : 'bad'}`}>
+                {summary.seo_trafico_delta_pct !== null ? (
+                  <span className="card2-delta-pill">{summary.seo_trafico_delta_pct >= 0 ? '+' : ''}{summary.seo_trafico_delta_pct}%</span>
                 ) : (
                   <span className="card2-delta-pill card2-delta-pill-neutral">Sin comparación</span>
                 )}
-                <span className="card2-delta-label">últimos 7 días</span>
+                <span className="card2-delta-label">vs. hace 30 días</span>
               </div>
-              <div className="card2-divider" />
-              <div className="card2-mini-row">
-                <span>Instagram</span>
-                <span className="card2-mini-value">{summary?.social.instagram.followers ?? '—'}</span>
-              </div>
-              <div className="card2-mini-row">
-                <span>YouTube</span>
-                <span className="card2-mini-value">{summary?.social.youtube.followers ?? '—'}</span>
-              </div>
+            ) : (
+              <div className="card2-delta-label">Sin datos todavía</div>
+            )}
+            <div className="card2-divider" />
+            <div className="card2-mini-row">
+              <span>Impresiones</span>
+              <span className="card2-mini-value">{summary?.seo_trafico?.impresiones ?? '—'}</span>
             </div>
-          </Reveal>
-        </div>
+          </div>
+        </Reveal>
 
-        <div className="section-head" style={{ marginTop: 36 }}>
-          <span className="section-title">Bloque 2 · Operaciones de Agencia</span>
-        </div>
-        <div className="card2-grid card2-grid-2">
-          <Reveal delay={0}>
-            <div className="card2 agent-output-card">
-              <div className="card2-label">⚡ Último Output de Agente</div>
-              {latestPiece ? (
-                <div className="agent-output-body">
-                  <div className="agent-output-main">
-                    <div className="agent-output-headline">{latestPiece.headline}</div>
-                    <div className="agent-output-meta">
-                      {latestPiece.formato} · {latestPiece.copy ? `${latestPiece.copy.trim().split(/\s+/).filter(Boolean).length} palabras` : ''}
-                    </div>
-                    <div className="agent-output-excerpt">{latestPiece.copy?.slice(0, 180)}{(latestPiece.copy?.length ?? 0) > 180 ? '…' : ''}</div>
-                  </div>
-                  <div className="agent-output-side">
-                    <span className="agent-output-pending">⏳ Pending human review</span>
-                    <span className="agent-output-agent">Agente: Dave</span>
-                    <span className="agent-output-time">{daveStatus?.updated_at ? formatRelative(daveStatus.updated_at) : ''}</span>
-                  </div>
-                </div>
-              ) : (
-                <div className="empty-state">Sin piezas de contenido generadas todavía.</div>
-              )}
+        <Reveal delay={120}>
+          <div className="card2">
+            <div className="card2-label">Comunidad · Total</div>
+            <div className="card2-value-row">
+              <span className="card2-value-xl tabular">{summary ? (comunidadTotal ?? '—') : summaryError ? '—' : '…'}</span>
+              <span className="card2-value-unit">seguidores</span>
             </div>
-          </Reveal>
-
-          <Reveal delay={60}>
-            <div className="card2">
-              <div className="card2-label">◆ Claude API · Tokens MTD</div>
-              <div className="card2-value-row">
-                <span className="card2-value-lg tabular">
-                  {spend ? spend.input_tokens + spend.output_tokens : spendError ? '—' : '…'}
+            <div className="card2-delta card2-delta-neutral">
+              {summary?.social.instagram.delta_7d_pct != null || summary?.social.youtube.delta_7d_pct != null ? (
+                <span className="card2-delta-pill card2-delta-pill-neutral">
+                  IG {summary.social.instagram.delta_7d_pct != null ? (summary.social.instagram.delta_7d_pct >= 0 ? '+' : '') + summary.social.instagram.delta_7d_pct + '%' : 's/d'} · YT{' '}
+                  {summary.social.youtube.delta_7d_pct != null ? (summary.social.youtube.delta_7d_pct >= 0 ? '+' : '') + summary.social.youtube.delta_7d_pct + '%' : 's/d'}
                 </span>
-                <span className="card2-value-unit">tokens</span>
-              </div>
-              <div className="card2-cost-row">
-                <span className="card2-cost">{spend ? `$${spend.cost_usd.toFixed(2)}` : '—'}</span>
-                <span className="card2-delta-label">{currentMonthEs}</span>
-              </div>
-              <div className="card2-divider" />
-              <div className="card2-mini-row">
-                <span>Input tokens</span>
-                <span className="card2-mini-value">{spend ? spend.input_tokens.toLocaleString('es-CL') : '—'}</span>
-              </div>
-              <div className="card2-mini-row">
-                <span>Output tokens</span>
-                <span className="card2-mini-value">{spend ? spend.output_tokens.toLocaleString('es-CL') : '—'}</span>
-              </div>
+              ) : (
+                <span className="card2-delta-pill card2-delta-pill-neutral">Sin comparación</span>
+              )}
+              <span className="card2-delta-label">últimos 7 días</span>
             </div>
-          </Reveal>
-        </div>
-
-        {metaAlert && metaAlert.tone !== 'ok' && metaAlert.tone !== 'off' && (
-          <Reveal>
-            <div className={`alert-card alert-card-${metaAlert.tone}`} style={{ marginTop: 24 }}>
-              <span className="alert-card-icon">⚠</span>
-              <div className="alert-card-body">
-                <div className="alert-card-title">{metaAlert.tone === 'error' ? 'Meta API con errores' : 'Meta API necesita atención'}</div>
-                <div className="alert-card-detail">{metaAlert.detail}</div>
-              </div>
-              <a className="alert-card-cta" href="https://developers.facebook.com/tools/explorer/" target="_blank" rel="noreferrer">
-                Revisar permisos
-              </a>
+            <div className="card2-divider" />
+            <div className="card2-mini-row">
+              <span>Instagram</span>
+              <span className="card2-mini-value">{summary?.social.instagram.followers ?? '—'}</span>
             </div>
-          </Reveal>
-        )}
+            <div className="card2-mini-row">
+              <span>YouTube</span>
+              <span className="card2-mini-value">{summary?.social.youtube.followers ?? '—'}</span>
+            </div>
+          </div>
+        </Reveal>
+      </div>
 
-        <div className="section-head" style={{ marginTop: 36 }}>
-          <span className="section-title">Estado de los agentes</span>
-        </div>
-        <div className="services-grid">
-          {projectAgentKeys.map((key, i) => {
-            const meta = AGENT_META[key];
-            const config = agentConfigs[key] || DEFAULTS[key];
-            const status = agentStatus[key];
-            return (
-              <Reveal key={key} delay={i * 60}>
-                <div className="service-row" onClick={() => navigate(`agentes/${key}`)}>
-                  <div className={`avatar ${meta.cls}`} style={{ width: 40, height: 40, fontSize: 12 }}>
-                    <div className="avatar-ring" />
-                    {meta.initials}
+      <div className="section-head" style={{ marginTop: 36 }}>
+        <span className="section-title">Bloque 2 · Operaciones de Agencia</span>
+      </div>
+      <div className="card2-grid card2-grid-2">
+        <Reveal delay={0}>
+          <div className="card2 agent-output-card">
+            <div className="card2-label">⚡ Último Output de Agente</div>
+            {latestPiece ? (
+              <div className="agent-output-body">
+                <div className="agent-output-main">
+                  <div className="agent-output-headline">{latestPiece.headline}</div>
+                  <div className="agent-output-meta">
+                    {latestPiece.formato} · {latestPiece.copy ? `${latestPiece.copy.trim().split(/\s+/).filter(Boolean).length} palabras` : ''}
                   </div>
-                  <div className="service-info">
-                    <div className="service-name">
-                      {config.name} · {meta.short}
-                    </div>
-                    <div className="service-detail">{status?.last_action || 'Todavía no ha corrido'}</div>
-                  </div>
-                  <div className="service-stat">
-                    <div className="service-stat-value tabular">{status?.execution_count_month ?? 0}</div>
-                    <div className="service-stat-label">este mes</div>
-                  </div>
+                  <div className="agent-output-excerpt">{latestPiece.copy?.slice(0, 180)}{(latestPiece.copy?.length ?? 0) > 180 ? '…' : ''}</div>
                 </div>
-              </Reveal>
-            );
-          })}
-        </div>
-      </Reveal>
-    </div>
+                <div className="agent-output-side">
+                  <span className="agent-output-pending">⏳ Pending human review</span>
+                  <span className="agent-output-agent">Agente: Dave</span>
+                  <span className="agent-output-time">{daveStatus?.updated_at ? formatRelative(daveStatus.updated_at) : ''}</span>
+                </div>
+              </div>
+            ) : (
+              <div className="empty-state">Sin piezas de contenido generadas todavía.</div>
+            )}
+          </div>
+        </Reveal>
+
+        <Reveal delay={60}>
+          <div className="card2">
+            <div className="card2-label">◆ Claude API · Tokens MTD</div>
+            <div className="card2-value-row">
+              <span className="card2-value-lg tabular">
+                {spend ? spend.input_tokens + spend.output_tokens : spendError ? '—' : '…'}
+              </span>
+              <span className="card2-value-unit">tokens</span>
+            </div>
+            <div className="card2-cost-row">
+              <span className="card2-cost">{spend ? `$${spend.cost_usd.toFixed(2)}` : '—'}</span>
+              <span className="card2-delta-label">{currentMonthEs}</span>
+            </div>
+            <div className="card2-divider" />
+            <div className="card2-mini-row">
+              <span>Input tokens</span>
+              <span className="card2-mini-value">{spend ? spend.input_tokens.toLocaleString('es-CL') : '—'}</span>
+            </div>
+            <div className="card2-mini-row">
+              <span>Output tokens</span>
+              <span className="card2-mini-value">{spend ? spend.output_tokens.toLocaleString('es-CL') : '—'}</span>
+            </div>
+          </div>
+        </Reveal>
+      </div>
+
+      {metaAlert && metaAlert.tone !== 'ok' && metaAlert.tone !== 'off' && (
+        <Reveal>
+          <div className={`alert-card alert-card-${metaAlert.tone}`} style={{ marginTop: 24 }}>
+            <span className="alert-card-icon">⚠</span>
+            <div className="alert-card-body">
+              <div className="alert-card-title">{metaAlert.tone === 'error' ? 'Meta API con errores' : 'Meta API necesita atención'}</div>
+              <div className="alert-card-detail">{metaAlert.detail}</div>
+            </div>
+            <a className="alert-card-cta" href="https://developers.facebook.com/tools/explorer/" target="_blank" rel="noreferrer">
+              Revisar permisos
+            </a>
+          </div>
+        </Reveal>
+      )}
+
+      <div className="section-head" style={{ marginTop: 36 }}>
+        <span className="section-title">Estado de los agentes</span>
+      </div>
+      <div className="services-grid">
+        {projectAgentKeys.map((key, i) => {
+          const meta = AGENT_META[key];
+          const config = agentConfigs[key] || DEFAULTS[key];
+          const status = agentStatus[key];
+          return (
+            <Reveal key={key} delay={i * 60}>
+              <div className="service-row" onClick={() => navigate(`/agentes/${key}`)}>
+                <div className={`avatar ${meta.cls}`} style={{ width: 40, height: 40, fontSize: 12 }}>
+                  <div className="avatar-ring" />
+                  {meta.initials}
+                </div>
+                <div className="service-info">
+                  <div className="service-name">
+                    {config.name} · {meta.short}
+                  </div>
+                  <div className="service-detail">{status?.last_action || 'Todavía no ha corrido'}</div>
+                </div>
+                <div className="service-stat">
+                  <div className="service-stat-value tabular">{status?.execution_count_month ?? 0}</div>
+                  <div className="service-stat-label">este mes</div>
+                </div>
+              </div>
+            </Reveal>
+          );
+        })}
+      </div>
+    </Reveal>
   );
 }

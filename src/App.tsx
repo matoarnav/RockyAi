@@ -4,17 +4,18 @@ import { PanelDataProvider } from './context/PanelDataContext';
 import Login from './pages/Login';
 import Layout from './components/Layout';
 import Home from './pages/Home';
-import Configuracion from './pages/Configuracion';
-import GastosAI from './pages/GastosAI';
+import Reportes from './pages/Reportes';
 import PmsLayout from './pages/Pms/PmsLayout';
 import PmsResumen from './pages/Pms/PmsResumen';
 import PmsCalendario from './pages/Pms/PmsCalendario';
 import PmsItinerario from './pages/Pms/PmsItinerario';
 import PmsReservas from './pages/Pms/PmsReservas';
 import PmsHuespedes from './pages/Pms/PmsHuespedes';
-import ProjectRoute from './components/ProjectRoute';
+import ProjectLayout from './components/ProjectLayout';
 import ProjectHome from './pages/ProjectHome';
 import Metricas from './pages/Metricas';
+import GastosCliente from './pages/GastosCliente';
+import ConfiguracionCliente from './pages/ConfiguracionCliente';
 import Agentes from './pages/Agentes';
 import AgentDetail from './pages/AgentDetail';
 import EmailCrmLayout from './pages/EmailCrm/EmailCrmLayout';
@@ -43,8 +44,19 @@ function AppRoutes() {
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
-          <Route path="/configuracion" element={<Configuracion />} />
-          <Route path="/gastos-ai" element={<GastosAI />} />
+          <Route path="/reportes" element={<Reportes />} />
+          <Route path="/agentes" element={<Agentes />} />
+          <Route path="/agentes/:key" element={<AgentDetail />} />
+          <Route path="/email-marketing" element={<EmailCrmLayout />}>
+            <Route index element={<Resumen />} />
+            <Route path="campanas" element={<Campanas />} />
+            <Route path="campanas/:campaignId" element={<CampanaDetalle />} />
+            <Route path="nueva" element={<NuevaCampana />} />
+            <Route path="audiencias" element={<Audiencias />} />
+            <Route path="templates" element={<Templates />} />
+            <Route path="metricas" element={<CrmMetricas />} />
+            <Route path="automatizaciones" element={<Automatizaciones />} />
+          </Route>
           <Route path="/pms" element={<PmsLayout />}>
             <Route index element={<PmsResumen />} />
             <Route path="calendario" element={<PmsCalendario />} />
@@ -52,21 +64,11 @@ function AppRoutes() {
             <Route path="reservas" element={<PmsReservas />} />
             <Route path="huespedes" element={<PmsHuespedes />} />
           </Route>
-          <Route path="/p/:projectId" element={<ProjectRoute />}>
+          <Route path="/p/:projectId" element={<ProjectLayout />}>
             <Route index element={<ProjectHome />} />
             <Route path="metricas" element={<Metricas />} />
-            <Route path="agentes" element={<Agentes />} />
-            <Route path="agentes/:key" element={<AgentDetail />} />
-            <Route path="email-crm" element={<EmailCrmLayout />}>
-              <Route index element={<Resumen />} />
-              <Route path="campanas" element={<Campanas />} />
-              <Route path="campanas/:campaignId" element={<CampanaDetalle />} />
-              <Route path="nueva" element={<NuevaCampana />} />
-              <Route path="audiencias" element={<Audiencias />} />
-              <Route path="templates" element={<Templates />} />
-              <Route path="metricas" element={<CrmMetricas />} />
-              <Route path="automatizaciones" element={<Automatizaciones />} />
-            </Route>
+            <Route path="gastos" element={<GastosCliente />} />
+            <Route path="configuracion" element={<ConfiguracionCliente />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
