@@ -5,6 +5,10 @@ interface Kpi {
   label: string;
   value: number | string | null;
   sub?: string;
+  // Solo los valores que son un delta/neto real (ej. "Seguidores IG neto")
+  // llevan signo "+" - un conteo o un promedio absoluto (Posición SEO
+  // media, Contenidos generados) nunca deberia mostrar "+2" o "+14".
+  signed?: boolean;
 }
 
 function KpiCell({ kpi }: { kpi: Kpi }) {
@@ -23,7 +27,8 @@ function KpiCell({ kpi }: { kpi: Kpi }) {
       ease: 'power2.out',
       onUpdate: () => {
         const n = Math.round(counter.n);
-        el.textContent = (isNegative ? '' : n > 0 ? '+' : '') + n.toLocaleString('es-CL');
+        const prefix = kpi.signed && !isNegative && n > 0 ? '+' : '';
+        el.textContent = prefix + n.toLocaleString('es-CL');
       },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps

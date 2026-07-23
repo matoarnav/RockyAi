@@ -1,14 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePanelData } from '../context/PanelDataContext';
-import { callAction, formatRelative, formatTodayEs } from '../api';
-import { AGENT_META, AGENT_FUNCTION_KEYS, DEFAULTS, PROJECT_LOGO } from '../constants';
-import type { AiSpendClientLine, AiSpendOverview, ContentPiece, HealthBadge, HomeSummary } from '../types';
+import { callAction, formatRelative } from '../api';
+import { AGENT_META, AGENT_FUNCTION_KEYS, DEFAULTS } from '../constants';
+import type { AiSpendClientLine, AiSpendOverview, ContentPiece, HomeSummary } from '../types';
 import Reveal from '../components/Reveal';
-
-function healthDot(tone: HealthBadge['tone']) {
-  return <span className={`sys-dot sys-dot-${tone}`} />;
-}
+import PageHeader from '../components/PageHeader';
 
 function mostRecentPiece(pieces: { fecha: string; piece: ContentPiece }[]): ContentPiece | null {
   if (!pieces.length) return null;
@@ -100,32 +97,17 @@ export default function ProjectHome() {
   return (
     <div className="main">
       <Reveal>
-        <div className="resumen-header">
-          <div className="resumen-header-left">
-            {activeProjectId && PROJECT_LOGO[activeProjectId] && (
-              <img className="resumen-header-logo" src={PROJECT_LOGO[activeProjectId]} alt={activeProjectName} />
-            )}
-            <div>
-              <div className="page-title">{activeProjectName}</div>
-              <div className="page-date">
-                <span>
-                  {activeCount || projectAgentKeys.length}/{projectAgentKeys.length} agentes activos
-                </span>
-              </div>
-            </div>
-          </div>
-          <div className="resumen-header-right">
-            {worstTone && (
-              <span className={`sys-pill sys-pill-${worstTone}`}>
-                {healthDot(worstTone)}
-                {worstTone === 'ok' ? 'Operativo' : worstTone === 'warn' ? 'Atención' : worstTone === 'error' ? 'Con errores' : 'Sin datos'}
-              </span>
-            )}
-            <span className="resumen-header-date">{formatTodayEs()}</span>
-          </div>
+        <PageHeader
+          projectId={activeProjectId}
+          projectName={activeProjectName}
+          worstTone={worstTone}
+          hasAlert={!!metaAlert && metaAlert.tone !== 'ok' && metaAlert.tone !== 'off'}
+        />
+        <div className="resumen-subline">
+          {activeCount || projectAgentKeys.length}/{projectAgentKeys.length} agentes activos
         </div>
 
-        <div className="section-head" style={{ marginTop: 28 }}>
+        <div className="section-head" style={{ marginTop: 20 }}>
           <span className="section-title">Bloque 1 · Radar Comercial</span>
         </div>
         <div className="card2-grid card2-grid-3">
@@ -200,10 +182,16 @@ export default function ProjectHome() {
                 <span className="card2-value-xl tabular">{summary ? (comunidadTotal ?? '—') : summaryError ? '—' : '…'}</span>
                 <span className="card2-value-unit">seguidores</span>
               </div>
-              <div className="card2-delta-label">
-                {summary?.social.instagram.delta_7d_pct != null || summary?.social.youtube.delta_7d_pct != null
-                  ? `IG ${summary.social.instagram.delta_7d_pct != null ? (summary.social.instagram.delta_7d_pct >= 0 ? '+' : '') + summary.social.instagram.delta_7d_pct + '%' : 's/d'} · YT ${summary.social.youtube.delta_7d_pct != null ? (summary.social.youtube.delta_7d_pct >= 0 ? '+' : '') + summary.social.youtube.delta_7d_pct + '%' : 's/d'} (7d)`
-                  : 'Sin comparación de 7 días todavía'}
+              <div className="card2-delta card2-delta-neutral">
+                {summary?.social.instagram.delta_7d_pct != null || summary?.social.youtube.delta_7d_pct != null ? (
+                  <span className="card2-delta-pill card2-delta-pill-neutral">
+                    IG {summary.social.instagram.delta_7d_pct != null ? (summary.social.instagram.delta_7d_pct >= 0 ? '+' : '') + summary.social.instagram.delta_7d_pct + '%' : 's/d'} · YT{' '}
+                    {summary.social.youtube.delta_7d_pct != null ? (summary.social.youtube.delta_7d_pct >= 0 ? '+' : '') + summary.social.youtube.delta_7d_pct + '%' : 's/d'}
+                  </span>
+                ) : (
+                  <span className="card2-delta-pill card2-delta-pill-neutral">Sin comparación</span>
+                )}
+                <span className="card2-delta-label">últimos 7 días</span>
               </div>
               <div className="card2-divider" />
               <div className="card2-mini-row">

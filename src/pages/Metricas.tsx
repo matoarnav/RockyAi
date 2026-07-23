@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { usePanelData } from '../context/PanelDataContext';
 import { formatWhen } from '../api';
 import { TOOL_KEYS } from '../constants';
-import type { MetricsReport } from '../types';
+import type { HomeSummary, MetricsReport } from '../types';
 import Reveal from '../components/Reveal';
 import KpiStrip from '../components/KpiStrip';
 import TrendChart from '../components/TrendChart';
 import KeywordMatrix from '../components/KeywordMatrix';
+import PageHeader from '../components/PageHeader';
 
 const RANGE_OPTIONS = [
   { days: 7, label: '7 días' },
@@ -28,6 +29,19 @@ export default function Metricas() {
   const [report, setReport] = useState<MetricsReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [summary, setSummary] = useState<HomeSummary | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    scopedAction<HomeSummary>('get_home_summary')
+      .then((data) => {
+        if (!cancelled) setSummary(data);
+      })
+      .catch((e) => console.error('Error cargando el estado del sistema', e));
+    return () => {
+      cancelled = true;
+    };
+  }, [activeProjectId, scopedAction]);
 
   useEffect(() => {
     let cancelled = false;
@@ -77,14 +91,27 @@ export default function Metricas() {
 
   const watchTimeHoras = report && report.youtube.minutos_vistos_periodo != null ? Math.round((report.youtube.minutos_vistos_periodo / 60) * 10) / 10 : null;
 
+  const worstTone = (() => {
+    if (!summary) return null;
+    const tones = Object.values(summary.system_health).map((h) => h.tone);
+    if (tones.includes('error')) return 'error';
+    if (tones.includes('warn')) return 'warn';
+    if (tones.every((t) => t === 'off')) return 'off';
+    return 'ok';
+  })();
+  const metaAlert = summary?.system_health.meta_api;
+
   return (
     <div className="main">
       <Reveal>
-        <button className="back-link no-print" onClick={() => navigate('..')}>
-          &larr; Volver al home
-        </button>
+        <PageHeader
+          projectId={activeProjectId}
+          projectName={activeProjectName}
+          worstTone={worstTone}
+          hasAlert={!!metaAlert && metaAlert.tone !== 'ok' && metaAlert.tone !== 'off'}
+        />
 
-        <div className="metrics-toolbar">
+        <div className="metrics-toolbar" style={{ marginTop: 20 }}>
           <div>
             <div className="page-title">Métricas del período</div>
             <div className="page-sub">Datos consolidados de todos los canales activos &middot; {activeProjectName}</div>
@@ -116,8 +143,8 @@ export default function Metricas() {
             <KpiStrip
               items={[
                 { label: 'Campañas email', value: report.email.campaigns.length, sub: openRate !== null ? `${openRate}% apertura prom.` : undefined },
-                { label: 'Seguidores IG neto', value: report.social.cambio_neto_periodo },
-                { label: 'Suscriptores YT neto', value: report.youtube.suscriptores_ganados_periodo - report.youtube.suscriptores_perdidos_periodo },
+                { label: 'Seguidores IG neto', value: report.social.cambio_neto_periodo, signed: true },
+                { label: 'Suscriptores YT neto', value: report.youtube.suscriptores_ganados_periodo - report.youtube.suscriptores_perdidos_periodo, signed: true },
                 {
                   label: 'Posición SEO media',
                   value: posicionMedia ?? '—',
