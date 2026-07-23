@@ -190,6 +190,40 @@
 .mini-card-cta{ display:block; margin-top:14px; padding-top:14px; border-top:1px solid var(--line); background:none; border-left:none; border-right:none; border-bottom:none; color:var(--dim-2); font-size:11px; font-weight:700; cursor:pointer; transition:color .15s; }
 .mini-card-cta:hover{ color:var(--accent); }
 
+/* ===== Growth Radar card (MetricRadarCard) ===== */
+.radar-card-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:-4px; }
+.radar-health{ display:inline-flex; align-items:center; cursor:default; }
+.radar-health-dot{ width:7px; height:7px; border-radius:50%; display:block; }
+.radar-health-ok .radar-health-dot{ background:var(--growth); box-shadow:0 0 0 3px var(--growth-bg); }
+.radar-health-warn .radar-health-dot{ background:#d9a441; box-shadow:0 0 0 3px rgba(217,164,65,0.16); }
+.radar-health-error .radar-health-dot{ background:var(--decline); box-shadow:0 0 0 3px var(--decline-bg); }
+.radar-health-off .radar-health-dot{ background:var(--dim-2); }
+.radar-card-value-row{ display:flex; align-items:flex-end; justify-content:space-between; gap:10px; }
+.radar-sparkline{ flex-shrink:0; margin-bottom:2px; }
+.radar-delta{ display:flex; align-items:baseline; gap:5px; margin-top:9px; font-size:11.5px; font-weight:700; }
+.radar-delta-growth{ color:var(--growth); }
+.radar-delta-decline{ color:var(--decline); }
+.radar-delta-neutral{ color:var(--dim-2); font-weight:500; }
+.radar-delta-period{ color:var(--dim-2); font-weight:500; text-transform:uppercase; font-size:9.5px; letter-spacing:0.04em; }
+.radar-subgrid{ display:flex; gap:14px; margin-top:9px; }
+.radar-subgrid-item{ display:flex; flex-direction:column; }
+.radar-subgrid-value{ font-size:13px; font-weight:800; color:var(--ink); }
+.radar-subgrid-label{ font-size:9px; color:var(--dim-2); text-transform:uppercase; letter-spacing:0.04em; margin-top:2px; }
+
+/* ===== Growth Radar multi-cliente (WelcomeCard) ===== */
+.growth-radar{ margin-top:36px; padding-top:30px; border-top:1px solid var(--line); }
+.growth-radar-rows{ display:flex; flex-direction:column; gap:8px; margin-top:14px; text-align:left; }
+.growth-radar-row{ display:flex; align-items:center; justify-content:space-between; gap:14px; background:rgba(255,255,255,0.02); border:1px solid var(--line); border-radius:10px; padding:11px 14px; cursor:pointer; transition:border-color .15s, transform .15s; flex-wrap:wrap; }
+.growth-radar-row:hover{ border-color:var(--dim-2); transform:translateY(-1px); }
+.growth-radar-client{ font-size:12.5px; font-weight:700; color:var(--ink); }
+.growth-radar-chips{ display:flex; gap:8px; flex-wrap:wrap; }
+.growth-radar-chip{ display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:600; padding:3px 8px; border-radius:999px; background:rgba(255,255,255,0.03); border:1px solid var(--line); }
+.growth-radar-chip-label{ color:var(--dim-2); font-size:9.5px; text-transform:uppercase; letter-spacing:0.03em; }
+.growth-radar-chip-growth{ color:var(--growth); border-color:rgba(16,185,129,0.3); }
+.growth-radar-chip-decline{ color:var(--decline); border-color:rgba(239,68,68,0.3); }
+.growth-radar-chip-neutral{ color:var(--dim); }
+.growth-radar-chip-off{ color:var(--dim-2); opacity:0.7; }
+
 .services-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:14px; }
 .service-row{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px 20px; display:flex; align-items:center; gap:16px; cursor:pointer; transition:border-color .15s, transform .15s; }
 .service-row:hover{ border-color:var(--dim-2); transform:translateY(-1px); }

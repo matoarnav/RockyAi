@@ -19,6 +19,12 @@
   --youtube-red: #c4302b;
   --err: #c0503a;
 
+  --growth: #10B981;
+  --growth-bg: rgba(16,185,129,0.14);
+  --decline: #EF4444;
+  --decline-bg: rgba(239,68,68,0.14);
+  --neutral-badge: var(--dim-2);
+
   --sidebar-bg: #faf8f5;
   --sidebar-ink: #2a2a2a;
   --sidebar-dim: #75706a;

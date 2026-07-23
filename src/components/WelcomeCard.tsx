@@ -3,13 +3,31 @@ import { useNavigate } from 'react-router-dom';
 import { usePanelData } from '../context/PanelDataContext';
 import { callAction } from '../api';
 import { AGENT_META } from '../constants';
-import type { AgencyOverview, AgentKey } from '../types';
+import type { AgencyGrowthRadar, AgencyOverview, AgentKey, RadarDirection, RadarMetric } from '../types';
+
+// Chip compacto del Growth Radar multi-cliente: una direccion (creciendo/
+// estancado/bajando/sin datos) + el numero headline, nunca inventa una
+// flecha cuando falta el punto de comparacion.
+function RadarChip({ label, metric }: { label: string; metric: RadarMetric | { value: number | null; direction: RadarDirection } }) {
+  const toneClass =
+    metric.direction === 'growing' ? 'growth' : metric.direction === 'declining' ? 'decline' : metric.direction === 'flat' ? 'neutral' : 'off';
+  const arrow = metric.direction === 'growing' ? '↑' : metric.direction === 'declining' ? '↓' : metric.direction === 'flat' ? '→' : '·';
+  return (
+    <span className={`growth-radar-chip growth-radar-chip-${toneClass}`} title={label}>
+      <span className="growth-radar-chip-label">{label}</span>
+      <span className="growth-radar-chip-arrow">{arrow}</span>
+      <span className="growth-radar-chip-value tabular">{metric.value ?? '—'}</span>
+    </span>
+  );
+}
 
 export default function WelcomeCard() {
   const { projects } = usePanelData();
   const navigate = useNavigate();
   const [overview, setOverview] = useState<AgencyOverview | null>(null);
   const [overviewError, setOverviewError] = useState(false);
+  const [radar, setRadar] = useState<AgencyGrowthRadar | null>(null);
+  const [radarError, setRadarError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -20,6 +38,14 @@ export default function WelcomeCard() {
       .catch((e) => {
         console.error('Error cargando el resumen de la agencia', e);
         if (!cancelled) setOverviewError(true);
+      });
+    callAction<AgencyGrowthRadar>('get_agency_growth_radar', { project_ids: projects.map((p) => p.id) })
+      .then((data) => {
+        if (!cancelled) setRadar(data);
+      })
+      .catch((e) => {
+        console.error('Error cargando el growth radar de la agencia', e);
+        if (!cancelled) setRadarError(true);
       });
     return () => {
       cancelled = true;
@@ -113,6 +139,29 @@ export default function WelcomeCard() {
             </div>
           )}
         </div>
+
+        {projects.length > 0 && (
+          <div className="growth-radar">
+            <div className="welcome-projects-label">Growth Radar</div>
+            {radarError && <div className="welcome-metrics-error">No se pudo cargar el growth radar de la agencia.</div>}
+            {!radarError && !radar && <div className="welcome-metrics-error">Cargando…</div>}
+            {!radarError && radar && (
+              <div className="growth-radar-rows">
+                {radar.clients.map((c) => (
+                  <div className="growth-radar-row" key={c.client_id} onClick={() => navigate(`/p/${c.client_id}`)}>
+                    <div className="growth-radar-client">{projectName(c.client_id)}</div>
+                    <div className="growth-radar-chips">
+                      <RadarChip label="IG" metric={c.social.instagram} />
+                      <RadarChip label="YT" metric={c.social.youtube} />
+                      <RadarChip label="SEO" metric={c.seo} />
+                      <RadarChip label="Email" metric={c.email} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         <div className="welcome-credit">By Matías Araneda</div>
       </div>

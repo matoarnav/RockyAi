@@ -18,6 +18,7 @@ export interface AgentStatus {
   status: 'PROCESSING' | 'READY' | 'ERROR' | 'NUNCA_EJECUTADO' | string;
   last_action: string;
   execution_count: number;
+  execution_count_month?: number;
   updated_at: string;
   timeline: TimelineEntry[];
   tokens_month?: string;
@@ -123,6 +124,23 @@ export interface EmailJourney {
   contact_count: number;
 }
 
+export interface HealthBadge {
+  tone: 'ok' | 'warn' | 'error' | 'off';
+  label: string;
+}
+
+export interface SparklinePoint {
+  fecha: string;
+  valor: number;
+}
+
+export interface SocialDomainSummary {
+  followers: number | null;
+  delta_7d_pct: number | null;
+  sparkline_30d: SparklinePoint[];
+  health: HealthBadge;
+}
+
 export interface HomeSummary {
   email: {
     enviados_mes: number;
@@ -130,10 +148,16 @@ export interface HomeSummary {
     rebotes_mes: number;
     tasa_apertura_pct: number | null;
     tasa_rebote_pct: number | null;
+    ctr_pct: number | null;
+    ctr_note: 'no_tracking_infra' | null;
+    complaint_rate_pct: number | null;
+    complaint_note: 'no_tracking_infra' | null;
   };
   unsubscribed_mes: number;
+  ses_sandbox: { production_access: boolean; max_24h_send: number | null; sent_last_24h: number | null } | null;
   seo: { keyword: string; posicion: number } | null;
   seo_keywords: { top3_count: number; top10_count: number; total_trackeadas: number; ranking_promedio: number } | null;
+  seo_keywords_delta: { top3_delta: number; top10_delta: number; ranking_delta: number } | null;
   seo_trafico: {
     clics_organicos: number | null;
     impresiones: number | null;
@@ -141,11 +165,14 @@ export interface HomeSummary {
     posicion_promedio: number | null;
     snapshot_fecha: string;
   } | null;
+  seo_trafico_delta_pct: number | null;
   content_count: number;
-  instagram_followers: number | null;
-  facebook_followers: number | null;
-  youtube_followers: number | null;
-  tiktok_followers: number | null;
+  social: {
+    instagram: SocialDomainSummary;
+    facebook: SocialDomainSummary;
+    youtube: SocialDomainSummary;
+    tiktok: null;
+  };
 }
 
 export interface MetricsEmailCampaign {
@@ -230,6 +257,25 @@ export interface AgencyOverview {
   billing: { available: boolean; month_to_date_usd: number | null; budget_usd: number | null; checked_at: string };
   agents: { ready: number; processing: number; error: number; never_run: number; total: number };
   errors: AgencyOverviewError[];
+}
+
+export type RadarDirection = 'growing' | 'flat' | 'declining' | 'sin_datos';
+
+export interface RadarMetric {
+  value: number | null;
+  delta_pct?: number | null;
+  direction: RadarDirection;
+}
+
+export interface AgencyGrowthRadarClient {
+  client_id: string;
+  social: { instagram: RadarMetric; facebook: RadarMetric; youtube: RadarMetric };
+  seo: RadarMetric;
+  email: { value: number | null; direction: RadarDirection };
+}
+
+export interface AgencyGrowthRadar {
+  clients: AgencyGrowthRadarClient[];
 }
 
 // ===== Gastos AI =====
