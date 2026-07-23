@@ -83,6 +83,25 @@ export function formatWhen(iso?: string): string {
   }
 }
 
+export function formatRelative(iso?: string): string {
+  if (!iso) return '';
+  try {
+    const withZone = /[zZ+-]\d{0,2}:?\d{0,2}$/.test(iso) ? iso : iso + 'Z';
+    const d = new Date(withZone);
+    if (isNaN(d.getTime())) return iso;
+    const diffMs = Date.now() - d.getTime();
+    const diffMin = Math.round(diffMs / 60000);
+    if (diffMin < 1) return 'Hace un momento';
+    if (diffMin < 60) return `Hace ${diffMin} min`;
+    const diffH = Math.round(diffMin / 60);
+    if (diffH < 24) return `Hace ${diffH} hora${diffH === 1 ? '' : 's'}`;
+    const diffD = Math.round(diffH / 24);
+    return `Hace ${diffD} día${diffD === 1 ? '' : 's'}`;
+  } catch {
+    return iso;
+  }
+}
+
 export function formatTodayEs(): string {
   const s = new Date().toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   return s.charAt(0).toUpperCase() + s.slice(1);

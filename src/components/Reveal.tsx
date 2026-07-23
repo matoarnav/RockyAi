@@ -1,5 +1,9 @@
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
+import gsap from 'gsap';
 
+// Aparicion de componentes vía GSAP (antes era una transicion CSS pura) -
+// mismo trigger por IntersectionObserver, mismo API externo (delay via ms),
+// pero ahora es un tween real que respeta prefers-reduced-motion.
 export default function Reveal({
   children,
   className = '',
@@ -10,19 +14,28 @@ export default function Reveal({
   delay?: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (typeof IntersectionObserver === 'undefined') {
-      setVisible(true);
+
+    const reduceMotion = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) {
+      gsap.set(el, { opacity: 1, y: 0 });
       return;
     }
+
+    gsap.set(el, { opacity: 0, y: 16 });
+
+    if (typeof IntersectionObserver === 'undefined') {
+      gsap.to(el, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', delay: delay / 1000 });
+      return;
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
-          setVisible(true);
+          gsap.to(el, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', delay: delay / 1000 });
           observer.disconnect();
         }
       },
@@ -30,12 +43,11 @@ export default function Reveal({
     );
     observer.observe(el);
     return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const style: CSSProperties | undefined = delay ? { transitionDelay: `${delay}ms` } : undefined;
-
   return (
-    <div ref={ref} className={`reveal-item${visible ? ' is-visible' : ''}${className ? ` ${className}` : ''}`} style={style}>
+    <div ref={ref} className={`reveal-item${className ? ` ${className}` : ''}`}>
       {children}
     </div>
   );

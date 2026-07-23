@@ -4,12 +4,22 @@ import { usePanelData } from '../context/PanelDataContext';
 import { formatWhen } from '../api';
 import { TOOL_KEYS } from '../constants';
 import type { MetricsReport } from '../types';
+import Reveal from '../components/Reveal';
+import KpiStrip from '../components/KpiStrip';
+import TrendChart from '../components/TrendChart';
+import KeywordMatrix from '../components/KeywordMatrix';
 
 const RANGE_OPTIONS = [
   { days: 7, label: '7 días' },
   { days: 30, label: '30 días' },
   { days: 90, label: '90 días' },
 ];
+
+function average(values: (number | null | undefined)[]): number | null {
+  const real = values.filter((v): v is number => v !== null && v !== undefined);
+  if (!real.length) return null;
+  return Math.round((real.reduce((a, b) => a + b, 0) / real.length) * 10) / 10;
+}
 
 export default function Metricas() {
   const { activeProjectName, activeProjectId, activeProject, scopedAction } = usePanelData();
@@ -45,279 +55,214 @@ export default function Metricas() {
     return null;
   }
 
-  const openRate = report && report.email.enviados ? ((report.email.aperturas / report.email.enviados) * 100).toFixed(1) + '%' : '—';
+  const openRate = report && report.email.enviados ? Math.round((report.email.aperturas / report.email.enviados) * 1000) / 10 : null;
+
+  const igPosiciones = report ? report.seo.keyword_matrix.map((k) => k.posicion_actual).filter((p): p is number => p !== null) : [];
+  const igPosicionesAnt = report ? report.seo.keyword_matrix.map((k) => k.posicion_anterior).filter((p): p is number => p !== null) : [];
+  const posicionMedia = igPosiciones.length ? Math.round((igPosiciones.reduce((a, b) => a + b, 0) / igPosiciones.length) * 10) / 10 : null;
+  const posicionMediaAnt = igPosicionesAnt.length ? igPosicionesAnt.reduce((a, b) => a + b, 0) / igPosicionesAnt.length : null;
+  const posicionDelta = posicionMedia !== null && posicionMediaAnt !== null ? Math.round((posicionMediaAnt - posicionMedia) * 10) / 10 : null;
+
+  const top3 = report ? igPosiciones.filter((p) => p <= 3).length : 0;
+  const top10 = report ? igPosiciones.filter((p) => p <= 10).length : 0;
+  const top20 = report ? igPosiciones.filter((p) => p <= 20).length : 0;
+
+  const igAlcanceProm = report ? average(report.social.publicaciones.map((p) => p.alcance)) : null;
+  const igImpresionesProm = report ? average(report.social.publicaciones.map((p) => p.impresiones)) : null;
+  const igEngProm = report ? average(report.social.publicaciones.map((p) => p.engagement_rate_sobre_alcance_pct)) : null;
+
+  const igSparkline = report ? report.social.snapshots.filter((s) => s.seguidores !== null).map((s) => ({ fecha: s.fecha, valor: s.seguidores as number })) : [];
+  const ytSparkline = report ? report.youtube.snapshots.filter((s) => s.suscriptores !== null).map((s) => ({ fecha: s.fecha, valor: s.suscriptores as number })) : [];
+  const seoSparkline = report ? report.seo.clicks_snapshots.map((s) => ({ fecha: s.fecha, valor: s.clics })) : [];
+
+  const watchTimeHoras = report && report.youtube.minutos_vistos_periodo != null ? Math.round((report.youtube.minutos_vistos_periodo / 60) * 10) / 10 : null;
 
   return (
     <div className="main">
-      <button className="back-link no-print" onClick={() => navigate('..')}>
-        &larr; Volver al home
-      </button>
+      <Reveal>
+        <button className="back-link no-print" onClick={() => navigate('..')}>
+          &larr; Volver al home
+        </button>
 
-      <div className="metrics-toolbar no-print">
-        <div>
-          <div className="eyebrow">Herramientas</div>
-          <div className="page-title">Métricas</div>
-          <div className="page-sub">
-            {activeProjectName} &middot; {report ? `${formatDateEs(report.range.from)} — ${formatDateEs(report.range.to)}` : '…'}
+        <div className="metrics-toolbar">
+          <div>
+            <div className="page-title">Métricas del período</div>
+            <div className="page-sub">Datos consolidados de todos los canales activos &middot; {activeProjectName}</div>
+          </div>
+          <div className="metrics-actions no-print">
+            <div className="range-pills">
+              {RANGE_OPTIONS.map((opt) => (
+                <button
+                  key={opt.days}
+                  className={`range-pill${opt.days === days ? ' active' : ''}`}
+                  onClick={() => setDays(opt.days)}
+                  type="button"
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+            <button className="btn btn-primary btn-sm" onClick={() => window.print()} type="button">
+              ⭳ Descargar reporte
+            </button>
           </div>
         </div>
-        <div className="metrics-actions">
-          <div className="range-pills">
-            {RANGE_OPTIONS.map((opt) => (
-              <button
-                key={opt.days}
-                className={`range-pill${opt.days === days ? ' active' : ''}`}
-                onClick={() => setDays(opt.days)}
-                type="button"
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
-          <button className="btn btn-primary btn-sm" onClick={() => window.print()} type="button">
-            ⭳ Descargar reporte
-          </button>
-        </div>
-      </div>
 
-      <div className="print-only report-print-head">
-        <div className="page-title">Reporte de métricas — {activeProjectName}</div>
-        <div className="page-sub">{report ? `${formatDateEs(report.range.from)} — ${formatDateEs(report.range.to)}` : ''}</div>
-      </div>
+        {loading && <div className="empty-state">Cargando métricas…</div>}
+        {!loading && error && <div className="empty-state">No se pudo cargar el reporte. Intenta de nuevo.</div>}
 
-      {loading && <div className="empty-state">Cargando métricas…</div>}
-      {!loading && error && <div className="empty-state">No se pudo cargar el reporte. Intenta de nuevo.</div>}
+        {!loading && !error && report && (
+          <>
+            <KpiStrip
+              items={[
+                { label: 'Campañas email', value: report.email.campaigns.length, sub: openRate !== null ? `${openRate}% apertura prom.` : undefined },
+                { label: 'Seguidores IG neto', value: report.social.cambio_neto_periodo },
+                { label: 'Suscriptores YT neto', value: report.youtube.suscriptores_ganados_periodo - report.youtube.suscriptores_perdidos_periodo },
+                {
+                  label: 'Posición SEO media',
+                  value: posicionMedia ?? '—',
+                  sub: posicionDelta === null ? undefined : posicionDelta > 0 ? `↑ ${posicionDelta} posiciones` : posicionDelta < 0 ? `↓ ${Math.abs(posicionDelta)} posiciones` : 'sin cambio',
+                },
+                { label: 'Contenidos generados', value: report.content.count },
+              ]}
+            />
 
-      {!loading && !error && report && (
-        <>
-          <div className="mini-dash">
-            <div className="mini-card c-email">
-              <div className="mini-card-icon">
-                <img src="/icons/gmail.svg" alt="" width={18} height={18} />
-              </div>
-              <div className="mini-card-label">Envíos del período</div>
-              <div className="mini-card-value tabular">{report.email.enviados}</div>
-              <div className="mini-card-sub">{openRate} de apertura</div>
+            <div className="section-head" style={{ marginTop: 40 }}>
+              <span className="section-title">Social Media &amp; Comunidad</span>
+              <span className="section-sub">Tendencias de alcance e impresiones — últimos {days} días</span>
             </div>
-            <div className="mini-card c-social">
-              <div className="mini-card-icon">
-                <img src="/icons/instagram.svg" alt="" width={18} height={18} />
-              </div>
-              <div className="mini-card-label">Seguidores Instagram</div>
-              <div className="mini-card-value tabular">{report.social.seguidores_actuales ?? '—'}</div>
-              <div className="mini-card-sub">
-                {report.social.cambio_neto_periodo >= 0 ? '+' : ''}
-                {report.social.cambio_neto_periodo} en el período
-              </div>
-            </div>
-            <div className="mini-card c-youtube">
-              <div className="mini-card-icon">
-                <img src="/icons/youtube.svg" alt="" width={18} height={18} />
-              </div>
-              <div className="mini-card-label">Suscriptores YouTube</div>
-              <div className="mini-card-value tabular">{report.youtube.suscriptores_actuales ?? '—'}</div>
-              <div className="mini-card-sub">
-                {report.youtube.suscriptores_actuales != null
-                  ? `${report.youtube.suscriptores_ganados_periodo >= 0 ? '+' : ''}${report.youtube.suscriptores_ganados_periodo - report.youtube.suscriptores_perdidos_periodo} en el período`
-                  : 'Sin conectar todavía'}
-              </div>
-            </div>
-            <div className="mini-card c-seo">
-              <div className="mini-card-icon">
-                <img src="/icons/google.svg" alt="" width={18} height={18} />
-              </div>
-              <div className="mini-card-label">Posición SEO</div>
-              <div className="mini-card-value tabular">{report.seo.posicion_actual ?? '—'}</div>
-              <div className="mini-card-sub">{report.seo.keyword ? `"${report.seo.keyword}"` : 'Sin datos todavía'}</div>
-            </div>
-            <div className="mini-card c-opens">
-              <div className="mini-card-icon">◎</div>
-              <div className="mini-card-label">Contenido generado</div>
-              <div className="mini-card-value tabular">{report.content.count}</div>
-              <div className="mini-card-sub">piezas en el período</div>
-            </div>
-          </div>
-
-          <div className="section-head" style={{ marginTop: 36 }}>
-            <span className="section-title">Email marketing</span>
-          </div>
-          <div className="card" style={{ overflowX: 'auto' }}>
-            <table>
-              <thead>
-                <tr>
-                  <th>Campaña</th>
-                  <th>Enviada</th>
-                  <th className="tabular">Enviados</th>
-                  <th className="tabular">Apertura</th>
-                </tr>
-              </thead>
-              <tbody>
-                {report.email.campaigns.map((c, i) => (
-                  <tr key={i}>
-                    <td>
-                      <div className="cell-name">{c.name || 'Sin nombre'}</div>
-                    </td>
-                    <td className="tabular">{formatWhen(c.sent_at)}</td>
-                    <td className="tabular">{c.enviados}</td>
-                    <td className="tabular">{c.enviados ? ((c.aperturas / c.enviados) * 100).toFixed(1) + '%' : '—'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {!report.email.campaigns.length && <div className="empty-state">Sin campañas enviadas en este período.</div>}
-          </div>
-
-          <div className="section-head" style={{ marginTop: 30 }}>
-            <span className="section-title">Social — Instagram</span>
-          </div>
-          <div className="card" style={{ overflowX: 'auto' }}>
-            <table>
-              <thead>
-                <tr>
-                  <th>Publicación</th>
-                  <th>Fecha</th>
-                  <th className="tabular">Alcance</th>
-                  <th className="tabular">Likes</th>
-                  <th className="tabular">Engagement</th>
-                </tr>
-              </thead>
-              <tbody>
-                {report.social.publicaciones.map((p) => (
-                  <tr key={p.media_id}>
-                    <td>
-                      <a href={p.permalink} target="_blank" rel="noreferrer" className="cell-name" style={{ textDecoration: 'underline' }}>
-                        {p.tipo} · {p.formato}
-                      </a>
-                      <div className="cell-sub">{p.caption}</div>
-                    </td>
-                    <td className="tabular">{formatWhen(p.fecha)}</td>
-                    <td className="tabular">{p.alcance}</td>
-                    <td className="tabular">{p.likes}</td>
-                    <td className="tabular">{p.engagement_rate_sobre_alcance_pct != null ? `${p.engagement_rate_sobre_alcance_pct}%` : '—'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {!report.social.publicaciones.length && <div className="empty-state">Sin publicaciones registradas en este período.</div>}
-          </div>
-
-          <div className="section-head" style={{ marginTop: 30 }}>
-            <span className="section-title">Social — YouTube</span>
-          </div>
-          <div className="card" style={{ overflowX: 'auto' }}>
-            <table>
-              <thead>
-                <tr>
-                  <th>Video</th>
-                  <th className="tabular">Vistas</th>
-                  <th className="tabular">Min. vistos</th>
-                  <th className="tabular">Duración prom.</th>
-                  <th className="tabular">Likes</th>
-                </tr>
-              </thead>
-              <tbody>
-                {report.youtube.top_videos.map((v) => (
-                  <tr key={v.video}>
-                    <td>
-                      <a
-                        href={`https://youtube.com/watch?v=${v.video}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="cell-name"
-                        style={{ textDecoration: 'underline' }}
-                      >
-                        {v.video}
-                      </a>
-                    </td>
-                    <td className="tabular">{v.views}</td>
-                    <td className="tabular">{v.estimatedMinutesWatched}</td>
-                    <td className="tabular">{v.averageViewDuration}s</td>
-                    <td className="tabular">{v.likes}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {!report.youtube.top_videos.length && <div className="empty-state">Sin datos de YouTube en este período.</div>}
-            {!!report.youtube.fuentes_de_trafico.length && (
-              <div style={{ marginTop: 18, paddingTop: 18, borderTop: '1px solid var(--line)' }}>
-                <div className="mini-card-label" style={{ marginBottom: 10 }}>Fuentes de tráfico</div>
-                {report.youtube.fuentes_de_trafico.map((f) => (
-                  <div key={f.insightTrafficSourceType} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-                    <div style={{ width: 140, fontSize: 12, color: 'var(--dim)' }}>{f.insightTrafficSourceType}</div>
-                    <div style={{ flex: 1, background: 'var(--line)', borderRadius: 4, height: 8, overflow: 'hidden' }}>
-                      <div
-                        style={{
-                          width: `${(f.views / report.youtube.fuentes_de_trafico[0].views) * 100}%`,
-                          background: 'var(--youtube-red)',
-                          height: '100%',
-                        }}
-                      />
-                    </div>
-                    <div className="tabular" style={{ width: 60, textAlign: 'right', fontSize: 12 }}>{f.views}</div>
+            <div className="chart-card-grid">
+              <Reveal delay={0}>
+                <div className="card2 chart-card">
+                  <div className="chart-card-head">
+                    <span className="chart-card-title">Instagram</span>
+                    <span className="chart-card-range">últimos {days} días</span>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
+                  <div className="chart-card-stats">
+                    <div>
+                      <span className="chart-card-stat-label">Seguidores</span>
+                      <span className="chart-card-stat-value tabular">{report.social.seguidores_actuales ?? '—'}</span>
+                    </div>
+                    <div>
+                      <span className="chart-card-stat-label">Alcance prom.</span>
+                      <span className="chart-card-stat-value tabular">{igAlcanceProm ?? '—'}</span>
+                    </div>
+                    <div>
+                      <span className="chart-card-stat-label">Impresiones</span>
+                      <span className="chart-card-stat-value tabular">{igImpresionesProm ?? '—'}</span>
+                    </div>
+                    <div>
+                      <span className="chart-card-stat-label">Eng. Rate</span>
+                      <span className="chart-card-stat-value tabular">{igEngProm !== null ? `${igEngProm}%` : '—'}</span>
+                    </div>
+                  </div>
+                  <TrendChart points={igSparkline} color="var(--plum)" formatDate={(f) => formatWhen(f).slice(0, 5)} />
+                </div>
+              </Reveal>
+              <Reveal delay={60}>
+                <div className="card2 chart-card">
+                  <div className="chart-card-head">
+                    <span className="chart-card-title">YouTube</span>
+                    <span className="chart-card-range">últimos {days} días</span>
+                  </div>
+                  <div className="chart-card-stats">
+                    <div>
+                      <span className="chart-card-stat-label">Suscriptores</span>
+                      <span className="chart-card-stat-value tabular">{report.youtube.suscriptores_actuales ?? '—'}</span>
+                    </div>
+                    <div>
+                      <span className="chart-card-stat-label">Visualizaciones</span>
+                      <span className="chart-card-stat-value tabular">{report.youtube.vistas_periodo}</span>
+                    </div>
+                    <div>
+                      <span className="chart-card-stat-label">Watch Time</span>
+                      <span className="chart-card-stat-value tabular">{watchTimeHoras !== null ? `${watchTimeHoras}h` : '—'}</span>
+                    </div>
+                    <div>
+                      <span className="chart-card-stat-label" title="Necesita la duración total del video vía YouTube Data API — no se consulta hoy">
+                        Retención
+                      </span>
+                      <span className="chart-card-stat-value tabular chart-card-stat-nodata">Sin datos</span>
+                    </div>
+                  </div>
+                  <TrendChart points={ytSparkline} color="var(--youtube-red)" formatDate={(f) => formatWhen(f).slice(0, 5)} />
+                </div>
+              </Reveal>
+            </div>
 
-          <div className="section-head" style={{ marginTop: 30 }}>
-            <span className="section-title">SEO — posición</span>
-          </div>
-          <div className="card" style={{ overflowX: 'auto' }}>
-            <table>
-              <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Keyword</th>
-                  <th className="tabular">Posición</th>
-                </tr>
-              </thead>
-              <tbody>
-                {report.seo.snapshots.map((s, i) => (
-                  <tr key={i}>
-                    <td className="tabular">{formatDateEs(s.fecha)}</td>
-                    <td>{s.keyword ?? '—'}</td>
-                    <td className="tabular">{s.posicion ?? '—'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {!report.seo.snapshots.length && <div className="empty-state">Sin snapshots de SEO en este período.</div>}
-          </div>
+            <div className="section-head" style={{ marginTop: 40 }}>
+              <span className="section-title">SEO &amp; Búsqueda Orgánica</span>
+              <span className="section-sub">Tendencia de clics vía Google Search Console</span>
+            </div>
+            <div className="seo-section-grid">
+              <Reveal delay={0}>
+                <div className="card2 chart-card">
+                  <div className="chart-card-head">
+                    <span className="chart-card-title">Clics orgánicos</span>
+                  </div>
+                  <div className="card2-value-row">
+                    <span className="card2-value-xl tabular">{report.seo.clics_organicos_actual ?? '—'}</span>
+                  </div>
+                  <TrendChart points={seoSparkline} color="var(--ok)" formatDate={(f) => formatWhen(f).slice(0, 5)} />
+                  <div className="seo-top-counts">
+                    <div>
+                      <span className="tabular">{top3}</span>
+                      <span>Top 3</span>
+                    </div>
+                    <div>
+                      <span className="tabular">{top10}</span>
+                      <span>Top 10</span>
+                    </div>
+                    <div>
+                      <span className="tabular">{top20}</span>
+                      <span>Top 20</span>
+                    </div>
+                  </div>
+                </div>
+              </Reveal>
+              <Reveal delay={60}>
+                <div className="card2">
+                  <div className="chart-card-head">
+                    <span className="chart-card-title">Matriz de Keywords</span>
+                    <span className="chart-card-range">{report.seo.keyword_matrix.length} trackeadas</span>
+                  </div>
+                  <KeywordMatrix rows={report.seo.keyword_matrix} />
+                </div>
+              </Reveal>
+            </div>
 
-          <div className="section-head" style={{ marginTop: 30 }}>
-            <span className="section-title">Contenido generado</span>
-          </div>
-          <div className="card" style={{ overflowX: 'auto', marginBottom: 30 }}>
-            <table>
-              <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Canal</th>
-                  <th>Pieza</th>
-                </tr>
-              </thead>
-              <tbody>
-                {report.content.piezas.map((p, i) => (
-                  <tr key={i}>
-                    <td className="tabular">{formatDateEs(p.fecha)}</td>
-                    <td>{p.canal}</td>
-                    <td>{p.headline}</td>
+            <div className="section-head" style={{ marginTop: 40 }}>
+              <span className="section-title">Email Marketing</span>
+              <span className="section-sub">Historial de campañas enviadas en el período</span>
+            </div>
+            <div className="card2" style={{ overflowX: 'auto', marginTop: 14, marginBottom: 30 }}>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Campaña</th>
+                    <th>Fecha envío</th>
+                    <th className="tabular">Enviados</th>
+                    <th className="tabular">Tasa apertura</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-            {!report.content.piezas.length && <div className="empty-state">Sin piezas de contenido en este período.</div>}
-          </div>
-        </>
-      )}
+                </thead>
+                <tbody>
+                  {report.email.campaigns.map((c, i) => (
+                    <tr key={i}>
+                      <td>
+                        <div className="cell-name">{c.name || 'Sin nombre'}</div>
+                      </td>
+                      <td className="tabular">{formatWhen(c.sent_at)}</td>
+                      <td className="tabular">{c.enviados}</td>
+                      <td className="tabular">{c.enviados ? `${Math.round((c.aperturas / c.enviados) * 1000) / 10}%` : '—'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {!report.email.campaigns.length && <div className="empty-state">Sin campañas enviadas en este período.</div>}
+            </div>
+          </>
+        )}
+      </Reveal>
     </div>
   );
-}
-
-function formatDateEs(iso: string): string {
-  if (!iso) return '';
-  const d = new Date(iso + 'T00:00:00');
-  if (isNaN(d.getTime())) return iso;
-  return d.toLocaleDateString('es-CL', { day: '2-digit', month: 'short', year: 'numeric' });
 }

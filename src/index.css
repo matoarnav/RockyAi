@@ -25,6 +25,22 @@
   --decline-bg: rgba(239,68,68,0.14);
   --neutral-badge: var(--dim-2);
 
+  /* Tokens precisos extraidos del Figma "Dashboard" (ywVvjJwWGk4oOYLo1U8WZF)
+     para las vistas Resumen/Metricas rediseñadas - conviven con los tokens
+     de arriba, no los reemplazan (se usan solo en las card2-* de esa vista). */
+  --card2-bg: #16181a;
+  --card2-border: rgba(255,255,255,0.07);
+  --card2-label: #5a606b;
+  --card2-value: #e8eaed;
+  --card2-value-dim: #9aa0ab;
+  --ok: #3ecf8e;
+  --ok-bg: rgba(62,207,142,0.12);
+  --warn: #f0a030;
+  --warn-bg: rgba(240,160,48,0.12);
+  --bad: #e5534b;
+  --bad-bg: rgba(229,83,75,0.12);
+  --bad-border: rgba(229,83,75,0.2);
+
   --sidebar-bg: #faf8f5;
   --sidebar-ink: #2a2a2a;
   --sidebar-dim: #75706a;
@@ -51,17 +67,14 @@ button, input, textarea, select{ font-family:inherit; }
 h1, h2, h3{ font-weight:900; letter-spacing:-0.01em; }
 .tabular{ font-variant-numeric: tabular-nums; }
 
-/* ===== Scroll-triggered reveal ===== */
+/* ===== Scroll-triggered reveal (animado con GSAP, ver Reveal.tsx) ===== */
 .reveal-item{
   min-width:0;
   opacity:0;
-  transform:translateY(16px);
-  transition: opacity .6s cubic-bezier(.16,.8,.32,1), transform .6s cubic-bezier(.16,.8,.32,1);
   will-change: opacity, transform;
 }
-.reveal-item.is-visible{ opacity:1; transform:translateY(0); }
 
 @media (prefers-reduced-motion: reduce){
   html{ scroll-behavior:auto; }
-  .reveal-item{ opacity:1; transform:none; transition:none; }
+  .reveal-item{ opacity:1; transform:none; }
 }

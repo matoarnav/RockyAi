@@ -167,6 +167,12 @@ export interface HomeSummary {
   } | null;
   seo_trafico_delta_pct: number | null;
   content_count: number;
+  system_health: {
+    dave: HealthBadge & { detail: string };
+    jimi: HealthBadge & { detail: string };
+    gsc_sync: HealthBadge & { detail: string };
+    meta_api: HealthBadge & { detail: string };
+  };
   social: {
     instagram: SocialDomainSummary;
     facebook: SocialDomainSummary;
@@ -192,8 +198,18 @@ export interface MetricsSocialPost {
   likes: number;
   comentarios: number;
   alcance: number;
+  impresiones: number | null;
   reproducciones: number | null;
   engagement_rate_sobre_alcance_pct: number | null;
+}
+
+export interface KeywordMatrixRow {
+  keyword: string;
+  posicion_actual: number | null;
+  posicion_anterior: number | null;
+  delta: number | null;
+  impresiones: number | null;
+  periodo: string | null;
 }
 
 export interface MetricsSeoSnapshot {
@@ -242,7 +258,14 @@ export interface MetricsReport {
     fuentes_de_trafico: MetricsYoutubeTrafficSource[];
     top_videos: MetricsYoutubeVideo[];
   };
-  seo: { snapshots: MetricsSeoSnapshot[]; posicion_actual: number | null; keyword: string | null };
+  seo: {
+    snapshots: MetricsSeoSnapshot[];
+    posicion_actual: number | null;
+    keyword: string | null;
+    keyword_matrix: KeywordMatrixRow[];
+    clicks_snapshots: { fecha: string; clics: number }[];
+    clics_organicos_actual: number | null;
+  };
   content: { count: number; piezas: MetricsContentPiece[] };
 }
 
