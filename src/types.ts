@@ -124,11 +124,28 @@ export interface EmailJourney {
 }
 
 export interface HomeSummary {
-  email: { enviados_mes: number; aperturas_totales: number };
+  email: {
+    enviados_mes: number;
+    aperturas_mes: number;
+    rebotes_mes: number;
+    tasa_apertura_pct: number | null;
+    tasa_rebote_pct: number | null;
+  };
+  unsubscribed_mes: number;
   seo: { keyword: string; posicion: number } | null;
+  seo_keywords: { top3_count: number; top10_count: number; total_trackeadas: number; ranking_promedio: number } | null;
+  seo_trafico: {
+    clics_organicos: number | null;
+    impresiones: number | null;
+    ctr_promedio_pct: number | null;
+    posicion_promedio: number | null;
+    snapshot_fecha: string;
+  } | null;
   content_count: number;
   instagram_followers: number | null;
+  facebook_followers: number | null;
   youtube_followers: number | null;
+  tiktok_followers: number | null;
 }
 
 export interface MetricsEmailCampaign {
