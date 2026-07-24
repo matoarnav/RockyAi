@@ -518,11 +518,11 @@ tbody tr:hover{ background:rgba(255,255,255,0.02); }
 .trend-chart{ position:relative; margin-top:16px; display:flex; gap:8px; }
 .trend-chart-svg{ flex:1; min-width:0; height:100px; cursor:crosshair; }
 .trend-chart-yaxis{ display:flex; flex-direction:column; justify-content:space-between; font-size:9.5px; color:var(--card2-label); text-align:right; padding:2px 0; width:38px; flex-shrink:0; }
-.trend-chart-axis{ position:absolute; left:0; right:0; bottom:-18px; display:flex; justify-content:space-between; font-size:10px; color:var(--card2-label); }
+.trend-chart-axis{ position:absolute; left:0; right:0; bottom:-16px; display:flex; justify-content:space-between; font-size:10px; color:var(--card2-label); white-space:nowrap; }
 .trend-chart-tooltip{ position:absolute; top:-4px; right:0; background:var(--panel-2); border:1px solid var(--card2-border); border-radius:6px; padding:5px 9px; font-size:11px; display:flex; flex-direction:column; align-items:flex-end; pointer-events:none; }
 .trend-chart-tooltip strong{ color:var(--card2-value); font-size:12.5px; }
 .trend-chart-tooltip span{ color:var(--card2-label); }
-.trend-chart-sparse-note{ position:absolute; left:0; right:0; bottom:-34px; font-size:10.5px; color:var(--card2-label); font-style:italic; }
+.trend-chart-sparse-note{ position:absolute; left:0; right:0; bottom:-38px; font-size:10px; color:var(--card2-label); font-style:italic; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .trend-chart-empty{ padding:24px; text-align:center; color:var(--card2-label); font-size:12px; }
 
 /* ===== KpiStrip ===== */
@@ -536,7 +536,7 @@ tbody tr:hover{ background:rgba(255,255,255,0.02); }
 /* ===== Chart cards (Metricas) ===== */
 .section-sub{ font-size:11.5px; color:var(--dim-2); margin-left:10px; font-weight:500; text-transform:none; letter-spacing:0; }
 .chart-card-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; margin-top:22px; }
-.chart-card{ padding-bottom:44px; position:relative; }
+.chart-card{ padding-bottom:48px; position:relative; }
 .chart-card-head{ display:flex; align-items:baseline; justify-content:space-between; }
 .chart-card-title{ font-size:14px; font-weight:800; color:var(--card2-value); }
 .chart-card-range{ font-size:11px; color:var(--card2-label); }

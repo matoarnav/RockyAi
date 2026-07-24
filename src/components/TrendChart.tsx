@@ -130,7 +130,7 @@ export default function TrendChart({
         </div>
       )}
       {points.length < 4 && (
-        <div className="trend-chart-sparse-note">Historial escaso ({points.length} punto{points.length === 1 ? '' : 's'} real{points.length === 1 ? '' : 'es'}) — se completa con el tiempo</div>
+        <div className="trend-chart-sparse-note">Solo {points.length} punto{points.length === 1 ? '' : 's'} real{points.length === 1 ? '' : 'es'} — se completa con el tiempo</div>
       )}
     </div>
   );
