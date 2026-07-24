@@ -72,6 +72,7 @@ export default function Metricas() {
   const igEngProm = report ? average(report.social.publicaciones.map((p) => p.engagement_rate_sobre_alcance_pct)) : null;
 
   const igSparkline = report ? report.social.snapshots.filter((s) => s.seguidores !== null).map((s) => ({ fecha: s.fecha, valor: s.seguidores as number })) : [];
+  const fbSparkline = report ? report.facebook.snapshots.filter((s) => s.seguidores !== null).map((s) => ({ fecha: s.fecha, valor: s.seguidores as number })) : [];
   const ytSparkline = report ? report.youtube.snapshots.filter((s) => s.suscriptores !== null).map((s) => ({ fecha: s.fecha, valor: s.suscriptores as number })) : [];
   const seoSparkline = report ? report.seo.clicks_snapshots.map((s) => ({ fecha: s.fecha, valor: s.clics })) : [];
 
@@ -118,7 +119,7 @@ export default function Metricas() {
                   value: posicionMedia ?? '—',
                   sub: posicionDelta === null ? undefined : posicionDelta > 0 ? `↑ ${posicionDelta} posiciones` : posicionDelta < 0 ? `↓ ${Math.abs(posicionDelta)} posiciones` : 'sin cambio',
                 },
-                { label: 'Contenidos generados', value: report.content.count },
+                { label: 'Seguidores Facebook', value: report.facebook.seguidores_actuales ?? '—' },
               ]}
             />
 
@@ -155,6 +156,20 @@ export default function Metricas() {
                 </div>
               </Reveal>
               <Reveal delay={60}>
+                <div className="card2 chart-card">
+                  <div className="chart-card-head">
+                    <span className="chart-card-title">Facebook</span>
+                    <span className="chart-card-range">últimos {days} días</span>
+                  </div>
+                  <div className="card2-value-row" style={{ marginTop: 18 }}>
+                    <span className="card2-value-xl tabular">{report.facebook.seguidores_actuales ?? '—'}</span>
+                    <span className="card2-value-unit">seguidores</span>
+                  </div>
+                  <div className="card2-delta-label">{report.facebook.nombre_pagina ?? 'Sin datos todavía'}</div>
+                  <TrendChart points={fbSparkline} color="#1877F2" formatDate={(f) => formatWhen(f).slice(0, 5)} />
+                </div>
+              </Reveal>
+              <Reveal delay={120}>
                 <div className="card2 chart-card">
                   <div className="chart-card-head">
                     <span className="chart-card-title">YouTube</span>

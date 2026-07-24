@@ -535,7 +535,7 @@ tbody tr:hover{ background:rgba(255,255,255,0.02); }
 
 /* ===== Chart cards (Metricas) ===== */
 .section-sub{ font-size:11.5px; color:var(--dim-2); margin-left:10px; font-weight:500; text-transform:none; letter-spacing:0; }
-.chart-card-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:22px; }
+.chart-card-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; margin-top:22px; }
 .chart-card{ padding-bottom:44px; position:relative; }
 .chart-card-head{ display:flex; align-items:baseline; justify-content:space-between; }
 .chart-card-title{ font-size:14px; font-weight:800; color:var(--card2-value); }

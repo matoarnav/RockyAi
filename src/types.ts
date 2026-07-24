@@ -247,6 +247,11 @@ export interface MetricsReport {
     engagement_promedio_pct: number | null;
     publicaciones: MetricsSocialPost[];
   };
+  facebook: {
+    snapshots: { fecha: string; seguidores: number | null }[];
+    seguidores_actuales: number | null;
+    nombre_pagina: string | null;
+  };
   youtube: {
     snapshots: { fecha: string; suscriptores: number | null }[];
     suscriptores_actuales: number | null;

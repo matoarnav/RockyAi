@@ -65,8 +65,8 @@ export default function ProjectHome() {
   const daveStatus = agentStatus.strategist;
 
   const comunidadTotal =
-    summary && (summary.social.instagram.followers !== null || summary.social.youtube.followers !== null)
-      ? (summary.social.instagram.followers ?? 0) + (summary.social.youtube.followers ?? 0)
+    summary && (summary.social.instagram.followers !== null || summary.social.facebook.followers !== null || summary.social.youtube.followers !== null)
+      ? (summary.social.instagram.followers ?? 0) + (summary.social.facebook.followers ?? 0) + (summary.social.youtube.followers ?? 0)
       : null;
 
   const metaAlert = summary?.system_health.meta_api;
@@ -149,9 +149,10 @@ export default function ProjectHome() {
               <span className="card2-value-unit">seguidores</span>
             </div>
             <div className="card2-delta card2-delta-neutral">
-              {summary?.social.instagram.delta_7d_pct != null || summary?.social.youtube.delta_7d_pct != null ? (
+              {summary?.social.instagram.delta_7d_pct != null || summary?.social.facebook.delta_7d_pct != null || summary?.social.youtube.delta_7d_pct != null ? (
                 <span className="card2-delta-pill card2-delta-pill-neutral">
-                  IG {summary.social.instagram.delta_7d_pct != null ? (summary.social.instagram.delta_7d_pct >= 0 ? '+' : '') + summary.social.instagram.delta_7d_pct + '%' : 's/d'} · YT{' '}
+                  IG {summary.social.instagram.delta_7d_pct != null ? (summary.social.instagram.delta_7d_pct >= 0 ? '+' : '') + summary.social.instagram.delta_7d_pct + '%' : 's/d'} · FB{' '}
+                  {summary.social.facebook.delta_7d_pct != null ? (summary.social.facebook.delta_7d_pct >= 0 ? '+' : '') + summary.social.facebook.delta_7d_pct + '%' : 's/d'} · YT{' '}
                   {summary.social.youtube.delta_7d_pct != null ? (summary.social.youtube.delta_7d_pct >= 0 ? '+' : '') + summary.social.youtube.delta_7d_pct + '%' : 's/d'}
                 </span>
               ) : (
@@ -163,6 +164,10 @@ export default function ProjectHome() {
             <div className="card2-mini-row">
               <span>Instagram</span>
               <span className="card2-mini-value">{summary?.social.instagram.followers ?? '—'}</span>
+            </div>
+            <div className="card2-mini-row">
+              <span>Facebook</span>
+              <span className="card2-mini-value">{summary?.social.facebook.followers ?? '—'}</span>
             </div>
             <div className="card2-mini-row">
               <span>YouTube</span>
